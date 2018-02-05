@@ -1,0 +1,13 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/e2timbratura",
+items:[
+{foreignColumnName:"timbratura",operator:3,primaryDataProviderID:"giorno_fine",typeid:23,uuid:"2FAD86DF-37F7-4AA8-89C5-51D9E82100C5"},
+{foreignColumnName:"iddip",operator:0,primaryDataProviderID:"iddip",typeid:23,uuid:"471A3C7C-E94C-4EA0-BD27-FB30653D0B40"},
+{foreignColumnName:"timbratura",operator:4,primaryDataProviderID:"giorno_inizio",typeid:23,uuid:"78A3A671-544A-4438-922F-35F773BC9DD6"}
+],
+joinType:1,
+name:"e2giornaliera_to_e2timbratura",
+primaryDataSource:"db:/ma_presenze/e2giornaliera",
+typeid:22,
+uuid:"7AFD4D86-F139-494B-895A-B7907CBE9004"

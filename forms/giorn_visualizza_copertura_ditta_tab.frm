@@ -1,0 +1,15 @@
+encapsulation:44,
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"8E315E20-1E75-4DD2-8FD3-942D7A3DCEDD"
+}
+],
+name:"giorn_visualizza_copertura_ditta_tab",
+navigatorID:"-1",
+showInMenu:true,
+styleName:"leaf_style",
+typeid:3,
+uuid:"9FBB850D-1E71-4831-9C2C-EE6871945BF8"

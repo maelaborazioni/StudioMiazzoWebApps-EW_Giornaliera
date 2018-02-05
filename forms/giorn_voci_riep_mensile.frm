@@ -1,0 +1,13 @@
+extendsID:"E1B6951E-8C22-4464-9B19-707548D2B2DE",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"AA654948-0D87-42A9-9266-CCB990779F94"
+}
+],
+name:"giorn_voci_riep_mensile",
+size:"400,480",
+typeid:3,
+uuid:"D4C87B3F-0248-4AB7-B432-457B79E9BA9C"

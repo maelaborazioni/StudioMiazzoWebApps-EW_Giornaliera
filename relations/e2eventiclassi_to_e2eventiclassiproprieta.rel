@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/e2eventiclassiproprieta",
+items:[
+{foreignColumnName:"ideventoclasse",operator:0,primaryDataProviderID:"ideventoclasse",typeid:23,uuid:"E152E60D-7D20-46F3-9C0F-F4B2A1B1E4BC"}
+],
+joinType:1,
+name:"e2eventiclassi_to_e2eventiclassiproprieta",
+primaryDataSource:"db:/ma_presenze/e2eventiclassi",
+typeid:22,
+uuid:"2D4D7EA1-72F8-4835-9013-BF3B3B271A93"

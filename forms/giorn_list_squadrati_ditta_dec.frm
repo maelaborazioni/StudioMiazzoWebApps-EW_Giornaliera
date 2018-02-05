@@ -1,0 +1,14 @@
+extendsID:"E1B6951E-8C22-4464-9B19-707548D2B2DE",
+items:[
+{
+height:100,
+partType:5,
+typeid:19,
+uuid:"A8CBEE1C-8B90-4B22-8CDD-165185434B13"
+}
+],
+name:"giorn_list_squadrati_ditta_dec",
+onShowMethodID:"34E033CD-4377-4325-A95E-FF3AF91A2DE8",
+styleName:"leaf_style",
+typeid:3,
+uuid:"C796C69A-DB68-4861-98EE-5C7F7A3143F1"

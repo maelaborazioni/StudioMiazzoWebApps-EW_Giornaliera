@@ -1,0 +1,14 @@
+dataSource:"db:/ma_anagrafiche/lavoratori",
+extendsID:"AD98483D-1C6B-46E0-A6E0-27D343757ED5",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"C21FC364-1689-4F0C-B882-E4AA2E683BA4"
+}
+],
+name:"giorn_selezione_timbr_mancanti_dip",
+styleName:"leaf_style",
+typeid:3,
+uuid:"CF7FDBF0-4B90-4EAB-8EEB-62C12322811C"

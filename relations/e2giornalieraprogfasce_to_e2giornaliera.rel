@@ -1,0 +1,10 @@
+foreignDataSource:"db:/ma_presenze/e2giornaliera",
+items:[
+{foreignColumnName:"giorno",primaryDataProviderID:"giorno",typeid:23,uuid:"694B7172-B977-4C23-BAFA-3330AE43B36B"},
+{foreignColumnName:"iddip",primaryDataProviderID:"iddip",typeid:23,uuid:"E890AB7C-4AB6-4355-8386-900814007AF6"}
+],
+joinType:1,
+name:"e2giornalieraprogfasce_to_e2giornaliera",
+primaryDataSource:"db:/ma_presenze/e2giornalieraprogfasce",
+typeid:22,
+uuid:"64EEC8A8-CC8A-4E13-B854-C00BFF6B35FE"

@@ -1,0 +1,15 @@
+extendsID:"-1",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"772AF357-575A-4762-8CAE-80E101FC8E63"
+}
+],
+name:"giorn_timbr_mancanti_ditta_paginatore",
+showInMenu:true,
+size:"640,480",
+styleName:"leaf_style",
+typeid:3,
+uuid:"706D13A3-EB4A-4989-89BE-D267B7942921"

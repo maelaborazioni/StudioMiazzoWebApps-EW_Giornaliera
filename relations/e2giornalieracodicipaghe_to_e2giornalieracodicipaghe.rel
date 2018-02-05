@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/e2giornalieracodicipaghe",
+items:[
+{foreignColumnName:"idgiornalieracodicipaghe",operator:0,primaryDataProviderID:"idgiornalieracodicipaghe",typeid:23,uuid:"9B2F688C-3F56-4CC1-A79B-D13A6F86FCBF"}
+],
+joinType:1,
+name:"e2giornalieracodicipaghe_to_e2giornalieracodicipaghe",
+primaryDataSource:"db:/ma_presenze/e2giornalieracodicipaghe",
+typeid:22,
+uuid:"A513FF9F-91DA-426F-A616-073FC12D1F2F"

@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/e2tracciati_tipi",
+items:[
+{foreignColumnName:"idtracciatoconversione",operator:0,primaryDataProviderID:"idtracciatoconversione",typeid:23,uuid:"3BDCAA14-CE93-4178-8A98-7F31D1CFCA55"}
+],
+joinType:1,
+name:"ditte_presenzetracciatiore_to_e2tracciati_tipi",
+primaryDataSource:"db:/ma_anagrafiche/ditte_presenzetracciatiore",
+typeid:22,
+uuid:"B4794321-380E-4522-A6F4-24BA98EC1C42"

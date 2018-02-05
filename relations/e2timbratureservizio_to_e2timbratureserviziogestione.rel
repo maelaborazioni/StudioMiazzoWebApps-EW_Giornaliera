@@ -1,0 +1,9 @@
+foreignDataSource:"db:/ma_presenze/e2timbratureserviziogestione",
+items:[
+{foreignColumnName:"causale",primaryDataProviderID:"causale",typeid:23,uuid:"CB80B9C0-335C-4AAD-91C4-17F838B311D3"}
+],
+joinType:1,
+name:"e2timbratureservizio_to_e2timbratureserviziogestione",
+primaryDataSource:"db:/ma_presenze/e2timbratureservizio",
+typeid:22,
+uuid:"8C7B8C13-D119-49B5-A30F-3D2A454F4F74"

@@ -1,0 +1,14 @@
+dataSource:"db:/ma_presenze/e2tabtipiriposo",
+extendsID:"E1B6951E-8C22-4464-9B19-707548D2B2DE",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"07C3D5EC-27E5-4856-9DCB-F46F6F883AC3"
+}
+],
+name:"giorn_tipi_riposo",
+styleName:"leaf_style",
+typeid:3,
+uuid:"73EB4D6A-ED89-4CD1-9A33-8163E466E8CF"

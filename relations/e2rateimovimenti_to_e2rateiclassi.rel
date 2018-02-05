@@ -1,0 +1,9 @@
+foreignDataSource:"db:/ma_presenze/e2rateiclassi",
+items:[
+{foreignColumnName:"classerateo",primaryDataProviderID:"codicerateo",typeid:23,uuid:"30981B9C-E8A2-4DD8-A474-AC8A10F6E1CD"}
+],
+joinType:1,
+name:"e2rateimovimenti_to_e2rateiclassi",
+primaryDataSource:"db:/ma_presenze/e2rateimovimenti",
+typeid:22,
+uuid:"1D97BFE3-A1FB-4F83-8903-6D5DC4A3AFE1"

@@ -1,0 +1,8 @@
+addEmptyValue:1,
+customValues:"AND\r
+OR",
+name:"and_or",
+returnDataProviders:1,
+showDataProviders:1,
+typeid:34,
+uuid:"C90EA8D6-161C-4F42-9820-466D8FF05F7B"

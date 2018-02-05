@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/e2timbratura",
+items:[
+{foreignColumnName:"iddip",operator:0,primaryDataProviderID:"idlavoratore",typeid:23,uuid:"AF21110C-F67F-46A0-A630-A0CE0370695A"}
+],
+joinType:1,
+name:"lavoratori_to_e2timbratura",
+primaryDataSource:"db:/ma_anagrafiche/lavoratori",
+typeid:22,
+uuid:"717BC396-2914-4147-A769-C817BF37251E"

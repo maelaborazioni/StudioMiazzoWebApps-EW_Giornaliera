@@ -1,0 +1,8 @@
+foreignDataSource:"db:/ma_presenze/e2wk_tabattivita",
+items:[
+{foreignColumnName:"idtabattivita",primaryDataProviderID:"idtabattivita",typeid:23,uuid:"9FADD84D-B162-44F8-B79F-47868F877769"}
+],
+name:"e2wk_attivitaeseguitedip_to_e2wk_tabattivita",
+primaryDataSource:"db:/ma_presenze/e2wk_attivitaeseguitedip",
+typeid:22,
+uuid:"C10380F5-0FAA-4BB2-B64A-A53A6E379266"

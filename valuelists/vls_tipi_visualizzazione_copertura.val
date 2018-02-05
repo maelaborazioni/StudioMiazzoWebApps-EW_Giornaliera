@@ -1,0 +1,8 @@
+addEmptyValue:1,
+customValues:"Assenze | 1\r\
+Fasce orarie/turni | 2\r\
+Eventi | 3\r\
+Commesse | 4",
+name:"vls_tipi_visualizzazione_copertura",
+typeid:34,
+uuid:"8FEF9982-8197-438A-B5FA-A40C826C9C33"

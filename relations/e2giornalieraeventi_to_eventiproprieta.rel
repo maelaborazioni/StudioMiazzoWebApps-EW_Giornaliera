@@ -1,0 +1,12 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/eventiproprieta",
+items:[
+{foreignColumnName:"codiceproprieta",operator:0,primaryDataProviderID:"codiceproprieta",typeid:23,uuid:"9D3C9970-B551-4D7F-A7B2-C2B1CB28E097"},
+{foreignColumnName:"idevento",operator:0,primaryDataProviderID:"idevento",typeid:23,uuid:"EF76806B-B0D3-41CE-8627-4B28B8906F5C"}
+],
+joinType:0,
+name:"e2giornalieraeventi_to_eventiproprieta",
+primaryDataSource:"db:/ma_presenze/e2giornalieraeventi",
+typeid:22,
+uuid:"F9004778-1E9D-4B30-82D9-712A956C40F6"

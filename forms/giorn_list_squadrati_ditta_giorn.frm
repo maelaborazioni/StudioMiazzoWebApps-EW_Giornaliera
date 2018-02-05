@@ -1,0 +1,15 @@
+extendsID:"E1B6951E-8C22-4464-9B19-707548D2B2DE",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"061475AA-A6BC-485C-BA67-FFC816350F9A"
+}
+],
+name:"giorn_list_squadrati_ditta_giorn",
+onShowMethodID:"378B717B-1BD0-4782-B041-D77794E3797B",
+size:"400,480",
+styleName:"leaf_style",
+typeid:3,
+uuid:"31D6D36F-A87B-4206-94FF-9376D7A96DAF"

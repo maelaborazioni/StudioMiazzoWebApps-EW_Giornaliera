@@ -1,0 +1,9 @@
+addEmptyValue:1,
+customValues:"Anomalie entrata/uscita | 0\r
+Timbrato minore del riferimento | 1\r
+Tutte le anomalie | 2",
+name:"vls_tipo_anomalie",
+returnDataProviders:1,
+showDataProviders:1,
+typeid:34,
+uuid:"AB5C60F9-6D7F-4152-A701-54DEB71DD69E"

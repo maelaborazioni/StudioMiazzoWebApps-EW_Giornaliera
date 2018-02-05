@@ -1,0 +1,13 @@
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/e2timbratureservizio",
+items:[
+{foreignColumnName:"dataeora",operator:3,primaryDataProviderID:"giorno_succ_caus",typeid:23,uuid:"3705D763-8EA5-40F0-8930-94F19BCE3BF6"},
+{foreignColumnName:"iddip",primaryDataProviderID:"iddip",typeid:23,uuid:"78217AF0-1B2B-41E2-8072-66C558658018"},
+{foreignColumnName:"timbeliminata",primaryDataProviderID:"timb_non_eliminata",typeid:23,uuid:"A1FB679E-FDD3-4F5D-8636-86E8F02F8702"},
+{foreignColumnName:"dataeora",operator:4,primaryDataProviderID:"giorno",typeid:23,uuid:"C90DC121-2F5B-4D1E-B114-6CC207C0C2C3"}
+],
+joinType:1,
+name:"e2giornaliera_to_e2timbratureservizio",
+primaryDataSource:"db:/ma_presenze/e2giornaliera",
+typeid:22,
+uuid:"CDCD7D17-9B23-491D-8CD9-92A08C08FAC2"

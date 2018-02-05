@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/commesse_giornaliera",
+items:[
+{foreignColumnName:"idlavoratore",primaryDataProviderID:"iddip",typeid:23,uuid:"39055185-08A9-47A3-B29E-F30F7F18A6B3"},
+{foreignColumnName:"giorno",primaryDataProviderID:"giorno",typeid:23,uuid:"3BFB0760-4618-43CA-B353-AA0146535F6B"}
+],
+joinType:1,
+name:"e2giornaliera_to_commesse_giornaliera",
+primaryDataSource:"db:/ma_presenze/e2giornaliera",
+typeid:22,
+uuid:"0FBB3B39-7E0C-43FE-A4FA-63D53FA49525"

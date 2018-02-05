@@ -1,0 +1,14 @@
+dataSource:"db:/ma_presenze/e2timbratureservizio",
+extendsID:"0B8B7E86-5691-4AC6-944C-B9CBC8C30A16",
+items:[
+{
+extendsID:"DE85ED82-AED4-4D87-8A4C-6F47CE570108",
+height:30,
+typeid:19,
+uuid:"499AAB96-949E-43E0-8E86-4F1089D7DB61"
+}
+],
+name:"giorn_vista_mensile_timbr_caus_tbl",
+styleName:"leaf_style",
+typeid:3,
+uuid:"11B0EBB4-69A8-4714-9C16-4DB35B2994AC"

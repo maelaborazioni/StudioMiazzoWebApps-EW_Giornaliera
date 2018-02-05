@@ -1,0 +1,10 @@
+deleteRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/e2giornaliera",
+items:[
+{foreignColumnName:"iddip",primaryDataProviderID:"idlavoratore",typeid:23,uuid:"474985FC-AFA5-468D-A06F-7E8B590137A8"}
+],
+joinType:1,
+name:"lavoratori_to_e2giornaliera",
+primaryDataSource:"db:/ma_anagrafiche/lavoratori",
+typeid:22,
+uuid:"4ECF16F1-01B0-4C4A-8F80-04FEDEE65BA5"

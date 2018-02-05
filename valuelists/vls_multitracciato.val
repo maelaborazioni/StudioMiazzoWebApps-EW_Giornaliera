@@ -1,0 +1,12 @@
+addEmptyValue:1,
+customValues:null,
+dataProviderID1:"iddittapresenzetracciatoore",
+dataProviderID2:"descrizione",
+dataSource:null,
+name:"vls_multitracciato",
+relationName:"ditte_to_ditte_presenzetracciatiore",
+returnDataProviders:1,
+showDataProviders:2,
+typeid:34,
+uuid:"BDFC69BD-81B6-479F-8238-C9FCF7E01649",
+valueListType:1

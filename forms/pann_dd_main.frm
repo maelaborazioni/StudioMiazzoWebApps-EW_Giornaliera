@@ -1,0 +1,15 @@
+dataSource:"db:/ma_anagrafiche/lavoratori",
+extendsID:"0764607F-6DC6-4E83-B465-06A59E71F1E0",
+items:[
+{
+extendsID:"F188528A-2109-4BB7-AC21-1F0220B77A7D",
+typeid:16,
+uuid:"ACE81CFD-8420-43AD-8999-2D6152053FED",
+visible:false
+}
+],
+name:"pann_dd_main",
+onRecordSelectionMethodID:"798C1032-F4A1-4EAE-B035-62542D553465",
+styleName:"leaf_style",
+typeid:3,
+uuid:"C86A0D57-E243-43F2-9D80-A5DE0C680E02"

@@ -1,0 +1,15 @@
+dataSource:"db:/ma_anagrafiche/lavoratori",
+extendsID:"C2CB5FF3-B44C-40FB-81B7-BF4356EE9235",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"BBDBB5E1-D9A2-44CA-9E51-BE4D550D9620"
+}
+],
+name:"giorn_selezione_timbr_mancanti_ditta",
+size:"560,480",
+styleName:"leaf_style",
+typeid:3,
+uuid:"0DFD589C-7FBD-47F8-998A-4140919D0732"

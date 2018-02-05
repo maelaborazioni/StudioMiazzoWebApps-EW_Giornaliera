@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_anagrafiche/lavoratori_banche",
+items:[
+{foreignColumnName:"idlavoratore",operator:0,primaryDataProviderID:"idlavoratore",typeid:23,uuid:"1B684F70-29F9-4A8A-A532-73B6FBA407C0"}
+],
+joinType:1,
+name:"lavoratori_to_lavoratori_banche",
+primaryDataSource:"db:/ma_anagrafiche/lavoratori",
+typeid:22,
+uuid:"B319860D-E879-4182-9399-90DBC533BBD7"

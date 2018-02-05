@@ -1,0 +1,11 @@
+addEmptyValue:1,
+dataProviderID1:"causale",
+dataProviderID2:"descrizione",
+dataSource:"db:/ma_presenze/e2timbratureserviziogestione",
+name:"vls_tipo_causalizzazione",
+returnDataProviders:1,
+separator:" -",
+showDataProviders:3,
+typeid:34,
+uuid:"DDAC753D-B3CA-4F87-94ED-2215F10621E0",
+valueListType:1

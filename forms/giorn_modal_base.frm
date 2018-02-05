@@ -1,0 +1,16 @@
+extendsID:"-1",
+items:[
+{
+height:150,
+partType:5,
+typeid:19,
+uuid:"6F37ECFE-04CA-4430-901F-5E2141D3CB97"
+}
+],
+name:"giorn_modal_base",
+navigatorID:"-1",
+onHideMethodID:"ED9C65BB-2C28-4DA2-A29F-F4CD1D9D9A2E",
+size:"400,150",
+styleName:"leaf_style",
+typeid:3,
+uuid:"9E206388-258D-40CD-8591-477BB38070E8"

@@ -1,0 +1,7 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_anagrafiche/lavoratori_giustificativitesta",
+joinType:1,
+name:"richieste_da_evadere_timbr",
+primaryDataSource:"db:/ma_anagrafiche/lavoratori_giustificativitesta",
+typeid:22,
+uuid:"550A8DCB-D7FB-4BDB-AE6D-8381FF536EBE"

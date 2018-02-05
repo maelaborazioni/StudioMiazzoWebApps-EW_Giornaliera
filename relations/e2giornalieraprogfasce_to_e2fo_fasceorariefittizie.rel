@@ -1,0 +1,10 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/e2fo_fasceorariefittizie",
+items:[
+{foreignColumnName:"idfasciafittizia",primaryDataProviderID:"idfasciaorariafittizia",typeid:23,uuid:"2DA085B4-0D2F-4447-8EF3-895B0B673A67"}
+],
+joinType:1,
+name:"e2giornalieraprogfasce_to_e2fo_fasceorariefittizie",
+primaryDataSource:"db:/ma_presenze/e2giornalieraprogfasce",
+typeid:22,
+uuid:"23996638-495D-49D3-B9B5-94F20D3020B7"

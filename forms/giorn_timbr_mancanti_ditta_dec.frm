@@ -1,0 +1,15 @@
+extendsID:"E1B6951E-8C22-4464-9B19-707548D2B2DE",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"4380FBBE-0F29-48CE-80BF-FF80BA5DFF78"
+}
+],
+name:"giorn_timbr_mancanti_ditta_dec",
+onShowMethodID:"8B8C191C-7A15-4EBA-A446-427F24D6184A",
+size:"400,480",
+styleName:"leaf_style",
+typeid:3,
+uuid:"AB91FEFA-4E69-41E6-B249-4B9283135352"

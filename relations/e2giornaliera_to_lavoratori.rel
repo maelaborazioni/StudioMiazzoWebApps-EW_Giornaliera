@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_anagrafiche/lavoratori",
+items:[
+{foreignColumnName:"idlavoratore",operator:0,primaryDataProviderID:"iddip",typeid:23,uuid:"CA7926FC-AE41-4AC8-B8B4-329C40831E74"}
+],
+joinType:1,
+name:"e2giornaliera_to_lavoratori",
+primaryDataSource:"db:/ma_presenze/e2giornaliera",
+typeid:22,
+uuid:"24DF6D59-7EC1-4606-B84E-DE54EB3FF66F"

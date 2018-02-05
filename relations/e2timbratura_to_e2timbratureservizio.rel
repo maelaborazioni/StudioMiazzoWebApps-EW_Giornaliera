@@ -1,0 +1,11 @@
+allowCreationRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/e2timbratureservizio",
+items:[
+{foreignColumnName:"dataeora",operator:4,primaryDataProviderID:"timbratura_giorno_inizio",typeid:23,uuid:"34403F9B-EA97-4158-9FCD-C226CC4883AF"},
+{foreignColumnName:"dataeora",operator:1,primaryDataProviderID:"timbratura_giorno_fine",typeid:23,uuid:"655895DB-9C3F-4AB5-B8DE-843E7F274008"}
+],
+joinType:1,
+name:"e2timbratura_to_e2timbratureservizio",
+primaryDataSource:"db:/ma_presenze/e2timbratura",
+typeid:22,
+uuid:"579BE3B2-DBEA-4EE9-AC7B-AF7035166C04"

@@ -1,0 +1,8 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/e2timbratura",
+joinType:1,
+name:"e2timbratura_to_e2timbratura",
+primaryDataSource:"db:/ma_presenze/e2timbratura",
+typeid:22,
+uuid:"5A58F333-ADB9-436D-94CD-A2DB55BCFE73"

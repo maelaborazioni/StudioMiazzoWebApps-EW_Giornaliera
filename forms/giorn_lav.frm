@@ -1,0 +1,14 @@
+dataSource:"db:/ma_anagrafiche/lavoratori",
+extendsID:"E1B6951E-8C22-4464-9B19-707548D2B2DE",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"B7CC406E-E2CF-4BBA-8F60-288F285ED735"
+}
+],
+name:"giorn_lav",
+styleName:"leaf_style",
+typeid:3,
+uuid:"CB88D809-3905-4DFA-8ADB-61A4493E0533"

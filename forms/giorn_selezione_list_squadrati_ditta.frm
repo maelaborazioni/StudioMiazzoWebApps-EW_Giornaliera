@@ -1,0 +1,15 @@
+dataSource:"db:/ma_anagrafiche/lavoratori",
+extendsID:"C2CB5FF3-B44C-40FB-81B7-BF4356EE9235",
+items:[
+{
+height:480,
+partType:5,
+typeid:19,
+uuid:"91ED1CC4-F4B8-4F41-88A9-B4B4F3860629"
+}
+],
+name:"giorn_selezione_list_squadrati_ditta",
+size:"560,480",
+styleName:"leaf_style",
+typeid:3,
+uuid:"600653CD-380B-4442-A0F3-91BCFAC0917C"

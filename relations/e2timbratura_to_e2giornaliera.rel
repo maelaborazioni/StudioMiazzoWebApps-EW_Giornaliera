@@ -1,0 +1,12 @@
+allowCreationRelatedRecords:false,
+allowParentDeleteWhenHavingRelatedRecords:true,
+foreignDataSource:"db:/ma_presenze/e2giornaliera",
+items:[
+{foreignColumnName:"giorno",operator:0,primaryDataProviderID:"giorno",typeid:23,uuid:"6AED0AD9-E274-4310-868B-1135361D77AA"},
+{foreignColumnName:"iddip",operator:0,primaryDataProviderID:"iddip",typeid:23,uuid:"8609A42C-EED7-4210-8A5C-B91798860ECC"}
+],
+joinType:1,
+name:"e2timbratura_to_e2giornaliera",
+primaryDataSource:"db:/ma_presenze/e2timbratura",
+typeid:22,
+uuid:"061B44B0-1D01-44E5-932C-1B1D35E46678"

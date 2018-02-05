@@ -1,0 +1,9 @@
+allowParentDeleteWhenHavingRelatedRecords:false,
+foreignDataSource:"db:/ma_presenze/e2progscaricoorologi",
+items:[
+{foreignColumnName:"codice",primaryDataProviderID:"tipopercorso",typeid:23,uuid:"EC273E2F-4529-4D0E-8C42-47E7CE10AFE4"}
+],
+name:"e2percorsi_to_e2progscaricoorologi",
+primaryDataSource:"db:/ma_presenze/e2percorsi",
+typeid:22,
+uuid:"395441EA-5B2C-43B7-BD53-E973D07DE6E7"
