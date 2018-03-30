@@ -113,6 +113,31 @@ function apriGestioneDecorrenze(event)
  */
 function confermaElenco(event) 
 {
+	var params = {
+        processFunction: process_modifica_decorrenze_multiple,
+        message: '', 
+        opacity: 0.5,
+        paneColor: '#434343',
+        textColor: '#EC1C24',
+        showCancelButton: false,
+        cancelButtonText: '',
+        dialogName : '',
+        fontType: 'Arial,4,25',
+        processArgs: [event]
+    };
+	plugins.busy.block(params);
+}
+
+/**
+ * @AllowToRunInFind
+ * 
+ * TODO generated, please specify type and doc for the params
+ * @param event
+ *
+ * @properties={typeid:24,uuid:"76DB4B36-37EE-4A08-9DDD-2F2D6F365E42"}
+ */
+function process_modifica_decorrenze_multiple(event)
+{
 	// aggiornamento con le nuove regole inserite
 	var frm = forms['giorn_dip_modifica_decorrenze_tbl_temp'];
 	var fs = frm.foundset;
@@ -222,6 +247,7 @@ function confermaElenco(event)
 		// chiusura finestra ed entrata in giornaliera
 		globals.ma_utl_setStatus(globals.Status.BROWSE, controller.getName());
 		globals.svy_mod_closeForm(event);
+		plugins.busy.unblock();
 		globals.controlloFestivita(vParams, vOpenProg, vProgParams, vPrimoIngresso);
 		
 	} catch (ex) {
@@ -231,6 +257,7 @@ function confermaElenco(event)
 
 	} finally {
 		databaseManager.setAutoSave(autosave);
+		plugins.busy.unblock();
 	}
 }
 
@@ -243,6 +270,7 @@ function confermaElenco(event)
 function onShowForm(_firstShow, _event)
 {
 	_super.onShowForm(_firstShow, _event);
+	plugins.busy.prepare();
 	globals.ma_utl_setStatus(globals.Status.EDIT,controller.getName());
 }
 
