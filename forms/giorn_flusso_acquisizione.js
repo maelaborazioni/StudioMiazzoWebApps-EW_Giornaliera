@@ -19,8 +19,19 @@ function scaricaTimbraturePannello(event)
 
 	var _timbParams = globals.inizializzaParametriFileTimbrature(_idditta,_periodo,_gruppoinst,_gruppolav,globals._tipoConnessione);
 	if(globals.verificaPresenzaFileTimbrature(_timbParams)
-	   || globals.ma_utl_showYesNoQuestion('Nessun nuovo file di timbrature da acquisire presente.\n Si desidera procedere comunque per la riassegnazione di eventuali timbrature precedentemente scartate?','Acquisizione timbrature'))
+	   || globals.ma_utl_showYesNoQuestion('Nessun nuovo file di timbrature da acquisire presente.\n Si desidera procedere comunque per la riassegnazione di eventuali timbrature precedentemente scartate?','Acquisizione timbrature')
+	)
 	{
+//		if(globals.verificaSuperamentoLimiteFileTimbratureScartate(_timbParams)
+//		   && !globals.ma_utl_showYesNoQuestion('Il file delle timbrature scartate o non associate ha superato il numero limite.\n \
+//		                                         L\'operazione di acquisizione potrebbe risultare più lunga del previsto.\n \
+//		                                         Si desidera procedere comunque con l\'acquisizione?\n \
+//		                                         \n \
+//		                                         Nota : è possibile eliminare le timbrature non più necessarie selezionando \
+//		                                         la voce Gestione timbrature scartate dal menu Strumenti','Acquisizione timbrature')
+//		   )
+//		return;
+		
 		var params = {
 	        processFunction: process_scarica_timbrature_pannello,
 	        message: '', 

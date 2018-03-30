@@ -6,6 +6,12 @@ extendsID:"DE85ED82-AED4-4D87-8A4C-6F47CE570108",
 height:30,
 typeid:19,
 uuid:"499AAB96-949E-43E0-8E86-4F1089D7DB61"
+},
+{
+extendsID:"DBBDF078-6D64-4840-9BDB-683A6F6762CB",
+typeid:4,
+uuid:"EAB6868A-9297-4321-A425-B60C544C6E88",
+valuelistID:"A8BC46C0-060C-4070-93E9-9270E67EA372"
 }
 ],
 name:"giorn_vista_mensile_timbr_caus_tbl",

@@ -821,6 +821,9 @@ function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUp
 		   
 		   var recordGiornaliera, c;
 		   
+		   // rollback di eventuali transazioni attive
+		   databaseManager.rollbackTransaction();
+		   
 		   databaseManager.startTransaction();
 		   		   
 		   /**

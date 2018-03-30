@@ -81,7 +81,8 @@ onRightClickMethodID:"6D4115E3-719F-4A9D-8D2B-7ED074AE0E6B",
 size:"48,15",
 styleClass:"table",
 typeid:4,
-uuid:"DBBDF078-6D64-4840-9BDB-683A6F6762CB"
+uuid:"DBBDF078-6D64-4840-9BDB-683A6F6762CB",
+valuelistID:"A8BC46C0-060C-4070-93E9-9270E67EA372"
 },
 {
 labelFor:"fld_indirizzo",
