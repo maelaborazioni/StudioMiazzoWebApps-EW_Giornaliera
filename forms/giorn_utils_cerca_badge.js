@@ -40,30 +40,31 @@ function onShowForm(_firstShow, _event) {
  */
 function cercaBadge(event)
 {
-	var _badgeSql = 'SELECT * FROM [dbo].[F_Badge_AppartenenteA](?,?,?)';
-	var _arrBadge = new Array()
-	var _grInst = globals.getGruppoInstallazioneDitta(forms.giorn_header.lavoratori_to_ditte.idditta);//forms.giorn_header.lavoratori_to_ditte.ditte_to_ditte_sedi_sedeoperativa.ditte_sedi_to_ditte_sedigruppiinst.idgruppoinst
+//	var _badgeSql = 'SELECT * FROM [dbo].[F_Badge_AppartenenteA](?,?,?)';
+//	var _arrBadge = new Array()
+//	var _grInst = globals.getGruppoInstallazioneDitta(forms.giorn_header.lavoratori_to_ditte.idditta);//forms.giorn_header.lavoratori_to_ditte.ditte_to_ditte_sedi_sedeoperativa.ditte_sedi_to_ditte_sedigruppiinst.idgruppoinst
+//	
+//	_arrBadge.push(_grInst,_numerobadge.toString(),utils.dateFormat(_dataricerca,globals.ISO_DATEFORMAT))
+//	
+//	var _dsBadge = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,_badgeSql,_arrBadge,10)
+//	/** @type Date*/
+//	var _decBadge = _dsBadge.getValue(1,7) 	
+//	
+//	if(_dsBadge.getMaxRowIndex() > 0)
+//	{
+//		_infoBadgeMsg = "<html>Alla data " + _dataricerca.getDate() + ' ' + globals.getNomeMese(_dataricerca.getMonth() + 1) + ' ' + _dataricerca.getFullYear()  +  ' il badge '+ _numerobadge + ' risulta appartenente a ' + _dsBadge.getValue(1,10) + ' ' + _dsBadge.getValue(1,11) 
+//		              + '<br/> dipendente della ditta  ' + _dsBadge.getValue(1,3) + ' - ' + _dsBadge.getValue(1,9) 
+//					  + '<br/> con decorrenza ' + _decBadge.toLocaleDateString() + "</html>"
+//		
+//	}
+//	else
+//	{
+//	    _infoBadgeMsg = 'Nessun dipendente trovato per i parametri inseriti'
+//	}
 	
-	_arrBadge.push(_grInst,_numerobadge.toString(),utils.dateFormat(_dataricerca,globals.ISO_DATEFORMAT))
-	
-	var _dsBadge = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,_badgeSql,_arrBadge,10)
-	var _infoBadgeMsg = ''
-	/** @type Date*/
-	var _decBadge = _dsBadge.getValue(1,7) 	
-	
-	if(_dsBadge.getMaxRowIndex() > 0)
-	{
-		_infoBadgeMsg = "<html>Alla data " + _dataricerca.getDate() + ' ' + globals.getNomeMese(_dataricerca.getMonth() + 1) + ' ' + _dataricerca.getFullYear()  +  ' il badge '+ _numerobadge + ' risulta appartenente a ' + _dsBadge.getValue(1,10) + ' ' + _dsBadge.getValue(1,11) 
-		              + '<br/> dipendente della ditta  ' + _dsBadge.getValue(1,3) + ' - ' + _dsBadge.getValue(1,9) 
-					  + '<br/> con decorrenza ' + _decBadge.toLocaleDateString() + "</html>"
-		
-	}
-	else
-	{
-	    _infoBadgeMsg = 'Nessun dipendente trovato per i parametri inseriti'
-	}
-	
-	globals.ma_utl_showInfoDialog(_infoBadgeMsg,'Ricerca badge');
+	var objBadge = globals.isBadgeAssegnato(_numerobadge,_dataricerca,globals.getGruppoInstallazioneLavoratore(forms.giorn_header.idlavoratore));
+	 
+	globals.ma_utl_showInfoDialog(objBadge.message,'Ricerca badge');
 	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
 	globals.svy_mod_closeForm(event);	
 }
