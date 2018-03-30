@@ -60,6 +60,13 @@ function annullaFasceProg(event)
 		                               vAnno || globals.getAnno(),
 									   vMese || globals.getMese(),
 									   globals.TipoGiornaliera.NORMALE);
+	// aggiornamento dati foundset temporaneo
+	var formName = 'giorn_turni_temp';
+    var fs = forms[formName].foundset;
+    var maxBlocchi = fs.getRecord(fs.getSize())['blocco'];
+    for(var b = 1; b <= maxBlocchi; b++)
+        // update visualizzazione
+	    globals.verificaProgrammazioneTurniOrePeriodo(fs.duplicateFoundSet(),b);
 	
 }
 
