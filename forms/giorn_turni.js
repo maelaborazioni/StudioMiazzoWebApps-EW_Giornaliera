@@ -252,7 +252,7 @@ function onRecordSelection(event)
 					      ORDER BY CodiceFascia";
 	var idDitta = globals.getDitta(globals.getIdLavoratoreProgTurni() || forms.giorn_prog_turni_dip.idlavoratore);
 	var arrFasceOrarie = [(globals.getTipologiaDitta(idDitta) != globals.Tipologia.STANDARD 
-			              && globals.getTipoDittaEsterna(idDitta) == 1) ? globals.getDittaRiferimento(idDitta) : idDitta ];
+			              && globals.getTipoDittaEsterna(idDitta) == 0) ? globals.getDittaRiferimento(idDitta) : idDitta ];
 	var dsFasceOrarie = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,
 														  sqlFasceOrarie,
 														  arrFasceOrarie,
