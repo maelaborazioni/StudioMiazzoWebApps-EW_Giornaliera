@@ -632,7 +632,7 @@ function apriPopupMostraTimbr(_event)
 	_popUpMenu.addSeparator();
 	
 	var idDittaProgTurni = (globals.getTipologiaDitta(forms.giorn_header.idditta) != globals.Tipologia.STANDARD
-			                && globals.getTipoDittaEsterna(forms.giorn_header.idditta) == 1) ? 
+			                && globals.getTipoDittaEsterna(forms.giorn_header.idditta) == 0) ? 
 			                		globals.getDittaRiferimento(forms.giorn_header.idditta) : forms.giorn_header.idditta
 	if(globals.ma_utl_hasKey(globals.Key.PROG_TURNI) 
 	   && globals.verificaProgrammazioneTurniDitta(idDittaProgTurni))
@@ -1110,7 +1110,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
 		var arrLav = globals.ma_utl_showLkpWindow({
 		    event							: new JSEvent
 			, lookup						: (globals.getTipologiaDitta(forms.giorn_header.idditta) != globals.Tipologia.STANDARD 
-											   && globals.getTipoDittaEsterna(forms.giorn_header.idditta) == 1) ? 'AG_Lkp_LavoratoriEsterni' : 'AG_Lkp_Lavoratori'
+											   && globals.getTipoDittaEsterna(forms.giorn_header.idditta) == 0) ? 'AG_Lkp_LavoratoriEsterni' : 'AG_Lkp_Lavoratori'
 			, methodToAddFoundsetFilter		: 'FiltraLavoratoriGiornaliera'
 			, allowInBrowse					: true
 			, multiSelect					: true
