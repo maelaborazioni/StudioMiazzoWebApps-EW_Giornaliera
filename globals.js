@@ -3049,11 +3049,7 @@ function compilaDalAl(employeesIds, arrayGiorni, soloNonConteggiati, idDitta, pe
 	var _periodo = periodo != null ? periodo : globals.getPeriodo();
 	var _tipoGiorn = forms.giorn_vista_mensile && forms.giorn_vista_mensile._tipoGiornaliera == globals.TipoGiornaliera.BUDGET ?
 			         globals.TipoGiornaliera.BUDGET : globals.TipoGiornaliera.NORMALE; // TODO da verificare...
-	
-	// nel caso di programmazione negozio, precompilare le fasce non ancora programmate (altrimenti considererebbe il numero di ore teoriche)
-	if(globals.ma_utl_hasKey(globals.Key.NEGOZIO))
-	   inizializzaGiornProgFasceNonCompilate(employeesIds,_periodo,arrayGiorni);
-	
+		
 	var params = globals.inizializzaParametriCompilaConteggio(   _idDitta,
 											                     _periodo,
 											                     _tipoGiorn,
@@ -3071,6 +3067,10 @@ function compilaDalAl(employeesIds, arrayGiorni, soloNonConteggiati, idDitta, pe
 	
 	if (answer)
 	{
+		// nel caso di programmazione negozio, precompilare le fasce non ancora programmate (altrimenti considererebbe il numero di ore teoriche)
+		if(globals.ma_utl_hasKey(globals.Key.NEGOZIO))
+		   inizializzaGiornProgFasceNonCompilate(employeesIds,_periodo,arrayGiorni);
+		
 		//teniamo traccia dei dipendenti che sono stati modificati e che risulteranno da chiudere
 		if(!scopes.giornaliera.cancellaChiusuraDipPerOperazione(employeesIds, _idDitta))
 			return;
@@ -6706,10 +6706,11 @@ function getIndirizzoTimbratura(idTimbratura)
  * del periodo sia conforme a quello iniziale
  * 
  * @param {JSFoundset} fs
+ * @param {Number} [block]
  *
  * @properties={typeid:24,uuid:"DF946538-1C17-445E-A7D7-A4EC4D6986B1"}
  */
-function verificaProgrammazioneTurniOrePeriodo(fs)
+function verificaProgrammazioneTurniOrePeriodo(fs,block)
 {
 	var msgError = "";
 	var frm = forms.giorn_prog_turni_fasce;
@@ -6720,7 +6721,7 @@ function verificaProgrammazioneTurniOrePeriodo(fs)
 	// variabili per verifica totale ore periodo effettive del blocco considerato
 	var totOrePeriodo = 0;
 	
-    var blocco = selRec['blocco'];
+    var blocco = block || selRec['blocco'];
     
     // variabili per verifica turni riposo 
     var numRiposiPrimariTeorico = 0;
@@ -7685,9 +7686,10 @@ function preparaProgrammazioneTurni(_idDip, _anno, _mese, _tipoGiorn)
 				}));
 
 		var _tDataSourceProgTurni = _tDataSetProgTurniList.createDataSource('_tDataSourceProgTurni', types);
-
+		
 		// Disegna la programmazione dei turni
 		disegnaProgrammazioneTurni(_tDataSourceProgTurni);
+    
 	}	
 	
 	return;
@@ -8045,8 +8047,8 @@ function apriGestioneFileTimbrature()
 															grInst,
 															'',
 															'')
-	var url = globals.WS_URL + "/Timbrature/GetFileTimbrature";
-	var response = globals.getWebServiceResponse(url,params);
+	var response = getFileTimbratureScartate(params);
+															
 	if(!response['returnValue'])
 	{
 		globals.ma_utl_showWarningDialog(response['fileString'],'Gestione file timbrature scartate');
@@ -8135,6 +8137,43 @@ function apriGestioneFileTimbrature()
     	globals.ma_utl_showFormInDialog('giorn_manutenzione_timbr','Gestione timbrature non associate');
 	else
 		globals.ma_utl_showWarningDialog('Pannello non aggiunto al tab');
+}
+
+/**
+ * Restituisce il file di testo relativo al file PRESEPI2.DAT delle timbrature scartate
+ *  
+ * @param params
+ *
+ * @properties={typeid:24,uuid:"BA2DF4AB-22AC-4020-B89E-D82B7F4299A5"}
+ */
+function getFileTimbratureScartate(params)
+{
+	var url = globals.WS_URL + "/Timbrature/GetFileTimbrature";
+	var response = globals.getWebServiceResponse(url,params);
+	
+	return response;
+}
+
+/**
+ * Restituisce true se il file con le timbrature scartate ha un numero di timbrature maggiore della soglia di 250
+ * 
+ * @param params
+ *
+ * @properties={typeid:24,uuid:"C527B13D-074B-47C3-9D65-89484797C62A"}
+ */
+function verificaSuperamentoLimiteFileTimbratureScartate(params)
+{
+	var response = getFileTimbratureScartate(params);
+	
+	if(!response['returnValue']) //nessun file di timbrature scartate
+		return false;
+	
+	/** @type {String} */
+	var fileString = response['fileString'];
+	var arrTxt = fileString.split('\r\n');
+	var numTimbrScartate = arrTxt.length;
+	
+	return (numTimbrScartate > 250);
 }
 
 /**
@@ -8500,7 +8539,7 @@ function getRecGiornaliera(idLav,giorno,tipoRecord)
  * @param {Number} idLav
  * @param {Date} dal
  * @param {Date} al
- * @param {String} tipoRecord
+ * @param {String} [tipoRecord]
  * 
  * @return {JSFoundset<db:/ma_presenze/e2giornaliera>}
  * 
@@ -8515,7 +8554,8 @@ function getRecsGiornaliera(idLav,dal,al,tipoRecord)
 	{
 	   fsGiorn.iddip = idLav;
 	   fsGiorn.giorno = globals.dateFormat(dal,globals.ISO_DATEFORMAT) + '...' + globals.dateFormat(al,globals.ISO_DATEFORMAT) + '|yyyyMMdd';
-	   fsGiorn.tipodirecord = tipoRecord;
+	   if(tipoRecord != null)
+	   	  fsGiorn.tipodirecord = tipoRecord;
 	   if(fsGiorn.search())
 		   return fsGiorn;
 	}
@@ -8967,9 +9007,9 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 			var currEvGiornNormale = getRecGiornaliera(arrLav[l],currGiorno,globals.TipoGiornaliera.NORMALE);
 			var currEvGiornBudget = getRecGiornaliera(arrLav[l],currGiorno,globals.TipoGiornaliera.BUDGET);
 			
-		    if(getProgrammazioneFasce(arrLav[l],currGiorno) != null)
+		    if(scopes.giornaliera.getProgrammazioneFasceGiorno(arrLav[l],currGiorno) != null)
 				continue;
-		    else if(currEvGiornNormale != null || currEvGiornBudget != null) 
+		    else  
 		    {
 		    	if(currEvGiornNormale != null)
 			    {
@@ -8990,9 +9030,7 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 			    	if(recsBudget.getSize())
 			    	   continue;
 			    }
-		    }
-		    else
-			{
+		    
 				var assunzione = globals.getDataAssunzione(arrLav[l]);
 				var cessazione = globals.getDataCessazione(arrLav[l]);
 				if(currGiorno < assunzione || cessazione != null && currGiorno > cessazione)
@@ -9021,31 +9059,6 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 			}
 		}
 	}
-}
-
-/**
- * @param {Number} idLav
- * @param {Date} giorno
- * 
- * @return {JSRecord<db:/ma_presenze/e2giornalieraprogfasce>}
- * 
- * @properties={typeid:24,uuid:"9F85579A-0E1A-47AE-BD45-E6F20BB6B794"}
- * @AllowToRunInFind
- */
-function getProgrammazioneFasce(idLav,giorno)
-{
-	/** @type {JSFoundset<db:/ma_presenze/e2giornalieraprogfasce>} */
-	var fsFasceProg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_PROGFASCE);
-	if(fsFasceProg.find())
-	{
-		fsFasceProg.iddip = idLav;
-		fsFasceProg.giorno = giorno;
-		
-		if(fsFasceProg.search())
-			return fsFasceProg.getSelectedRecord();
-	}
-	
-	return null;
 }
 
 /**
@@ -9135,6 +9148,15 @@ function apriProgrammazioneTurniDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _
 	frm.arrBlocchiSquadrati = [];
 	
 	globals.preparaProgrammazioneTurni(_iddip,_anno,_mese,globals.TipoGiornaliera.NORMALE);
+	
+	// aggiornamento dati foundset temporaneo
+	var formName = 'giorn_turni_temp';
+    var fs = forms[formName].foundset;
+    var maxBlocchi = fs.getRecord(fs.getSize())['blocco'];
+    for(var b = 1; b <= maxBlocchi; b++)
+        // update visualizzazione
+	    globals.verificaProgrammazioneTurniOrePeriodo(fs.duplicateFoundSet(),b);
+   
 }
 
 /**
