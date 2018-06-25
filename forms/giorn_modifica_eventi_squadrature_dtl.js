@@ -327,58 +327,25 @@ function AggiornaSelezioneEventoSquadrature(rec,event,idLavoratore)
 	_idevento = rec['idevento'];
 	_ideventoclasse = rec['ideventoclasse'];
 	
-	//TODO verificare comportamente dei controlli sugli informativi statistici
-	var response = {retValue : true,message : ''} //controllaInformativiStatistici(idLavoratore,_periodo,_giornoEvento);
+	var response = controllaInformativiStatistici(idLavoratore,_periodo,_giornoEvento);
 	
-	//se non ci sono blocchi su informativi statistici
-	if (response['retValue'] == true)
+	response = gestioneInformativiStatistici(response);
+	
+	if(response)
 	{
-		if (response['message'] != '')
-			globals.ma_utl_showWarningDialog(response['message'], 'Controllo informativi statistici');
-
-        if (globals.needsCertificate(_ideventoclasse)) 
+		if (globals.needsCertificate(_ideventoclasse)) 
         {
-        	globals.showStorico(_ideventoclasse,
-        		                _giornoEvento,
-								idLavoratore,
-								globals.getDitta(idLavoratore));
+        	globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
         	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
-			globals.svy_mod_closeForm(event);
+				
+        	if(event)
+				globals.svy_mod_closeForm(event);
 		}
-		
-//		// in caso di eventi sospensivi
-//		if (_rec.e2eventi_to_e2eventiclassi.gestitoconperiodi != 0)
-//		{
-//			var _gg = /**globals.getPeriodo()*100 +*/ _giornoEvento;
-//			forms.giorn_eventi_sospensivi.showRiepilogoSospensivi(_idevento,forms.giorn_header.idlavoratore,_gg);
-//			globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
-//			globals.svy_mod_closeForm(_event);
-//		}
-//		else
-			AggiornaProprietaEventoSquadrature(rec);
-		
-	} else {
-
-		//se c'è il blocco viene mostrato il messaggio
-		globals.ma_utl_showWarningDialog(response['message'], 'Controllo informativi statistici')
-		//e resettato l'inserimento dell'evento
-		_idevento = null;
-		_codevento = ''
-		_descevento = '';
-		_ideventoclasse = null;
-		_idpropcl = null;
-		_codprop = '';
-		_descprop = '';
-		_importo = 0;
-		_ore = null;
-		_oldIdEvento = null;
-		_oldCodEvento = '';
-		_oldIdPropCl = null;
-		_oldCodProp = '';
-		_oldOre = -1;
-		_oldImporto = -1;
-		vCoperturaOrarioTeorico = 1;
-
+		else
+		{
+			AggiornaProprietaEvento(rec);
+			controller.focusField(elements.fld_mod_ore.getName(),false);
+		}
 	}
 }
 

@@ -8,6 +8,14 @@ function confermaModificaEvento(event)
 {
 	canClose = true;
 	
+	if(event.getElementName() != 'btn_mod_conferma')
+	{
+	    var response = controllaInformativiStatistici();
+		response = gestioneInformativiStatistici(response);
+		
+        return;
+	}
+	
 	var arrGgSel = globals.getGiorniSelezionatiEv();
 	var arrGiorniSel = [];
 	var anno = globals.getAnno();

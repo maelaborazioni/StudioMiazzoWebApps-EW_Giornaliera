@@ -301,62 +301,71 @@ function AggiornaSelezioneEvento(_rec,_event){
 	
 	var response = controllaInformativiStatistici();
 	
-	//se non ci sono blocchi su informativi statistici
-	if (response['retValue'] == true)
+	response = gestioneInformativiStatistici(response);
+	
+	if(response)
 	{
-		if (response.message && response.message != '')
-		{
-			globals.ma_utl_showWarningDialog(response.message, 'Controllo informativi statistici');
-            return false;
-		}
-        if (globals.needsCertificate(_ideventoclasse)) 
+		if (globals.needsCertificate(_ideventoclasse)) 
         {
         	globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
         	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
-			
+				
         	if(_event)
 				globals.svy_mod_closeForm(_event);
 		}
-		
-//		// in caso di eventi sospensivi
-//		if (_rec.e2eventi_to_e2eventiclassi.gestitoconperiodi != 0)
-//		{
-//			var _gg = /**globals.getPeriodo()*100 +*/ _giornoEvento;
-//			forms.giorn_eventi_sospensivi.showRiepilogoSospensivi(_idevento,forms.giorn_header.idlavoratore,_gg);
-//			globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
-//			globals.svy_mod_closeForm(_event);
-//		}
-//		else
-		AggiornaProprietaEvento(_rec);
-				
-	} 
-	else 
-	{
-		//se c'è il blocco viene mostrato il messaggio
-		var innerMsg = response['innerMessage'] ? ("<p><strong>Dettagli</strong><br/>"  + response['innerMessage'] + '</p>') : ''
-		globals.ma_utl_showWarningDialog(response.message +  innerMsg, 'Controllo informativi statistici');
-		//e resettato l'inserimento dell'evento
-		_idevento = null;
-		_codevento = ''
-		_descevento = '';
-		_ideventoclasse = null;
-		_idpropcl = null;
-		_codprop = '';
-		_descprop = '';
-		_importo = 0;
-		_ore = null;
-		_oldIdEvento = null;
-		_oldCodEvento = '';
-		_oldIdPropCl = null;
-		_oldCodProp = '';
-		_oldOre = -1;
-		_oldImporto = -1;
-		vCoperturaOrarioTeorico = 1;
-		
-		return false;
+		else
+		{
+			AggiornaProprietaEvento(_rec);
+			controller.focusField(elements.fld_mod_ore.getName(),false);
+		}
 	}
 	
-	return true;
+//	//se non ci sono blocchi su informativi statistici
+//	if (response['retValue'] == true)
+//	{
+//		if (response.message && response.message != '')
+//		{
+//			globals.ma_utl_showWarningDialog(response.message, 'Controllo informativi statistici');
+//            return false;
+//		}
+//        if (globals.needsCertificate(_ideventoclasse)) 
+//        {
+//        	globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
+//        	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
+//			
+//        	if(_event)
+//				globals.svy_mod_closeForm(_event);
+//		}
+//
+//		AggiornaProprietaEvento(_rec);
+//	} 
+//	else 
+//	{
+//		//se c'è il blocco viene mostrato il messaggio
+//		var innerMsg = response['innerMessage'] ? ("<p><strong>Dettagli</strong><br/>"  + response['innerMessage'] + '</p>') : ''
+//		globals.ma_utl_showWarningDialog(response.message +  innerMsg, 'Controllo informativi statistici');
+//		//e resettato l'inserimento dell'evento
+//		_idevento = null;
+//		_codevento = ''
+//		_descevento = '';
+//		_ideventoclasse = null;
+//		_idpropcl = null;
+//		_codprop = '';
+//		_descprop = '';
+//		_importo = 0;
+//		_ore = null;
+//		_oldIdEvento = null;
+//		_oldCodEvento = '';
+//		_oldIdPropCl = null;
+//		_oldCodProp = '';
+//		_oldOre = -1;
+//		_oldImporto = -1;
+//		vCoperturaOrarioTeorico = 1;
+//		
+//		return false;
+//	}
+//	
+//	return true;
 }
 
 /**
@@ -554,8 +563,6 @@ function onDataChangeEvento(oldValue, newValue, event) {
 		if (forms.giorn_vista_mensile._tipoGiornaliera == globals.TipoGiornaliera.BUDGET)
 		{
 			_foundset.usainbudget = 1;
-			// TODO aggiungere la gestione degli eventi con periodi?
-			//_foundset.e2eventi_to_e2eventiclassi.gestitoconperiodi = 0;
 			_foundset.e2eventi_to_e2eventiclassi.gestitoconstorico = 0;
 		}
 		_foundset.search();
@@ -667,7 +674,45 @@ function onDataChangeOre(oldValue, newValue, event)
 		_ore = oldValue;
 	else
 		_totOre = _totOre - oldValue * 100 + newValue * 100;
+	
+	// controllo informativi statistici per i casi con controllo su ore
+    var response = controllaInformativiStatistici();
+	
+	//se non ci sono blocchi su informativi statistici
+	if (response['retValue'] == true)
+	{
+		if (response.message && response.message != '')
+		{
+			globals.ma_utl_showWarningDialog(response.message, 'Controllo informativi statistici');
+            return false;
+		}
+	} 
+	else 
+	{
+		//se c'è il blocco viene mostrato il messaggio
+		var innerMsg = response['innerMessage'] ? ("<p><strong>Dettagli</strong><br/>"  + response['innerMessage'] + '</p>') : ''
+		globals.ma_utl_showWarningDialog(response.message +  innerMsg, 'Controllo informativi statistici');
+		//e resettato l'inserimento dell'evento
+		_idevento = null;
+		_codevento = ''
+		_descevento = '';
+		_ideventoclasse = null;
+		_idpropcl = null;
+		_codprop = '';
+		_descprop = '';
+		_importo = 0;
+		_ore = null;
+		_oldIdEvento = null;
+		_oldCodEvento = '';
+		_oldIdPropCl = null;
+		_oldCodProp = '';
+		_oldOre = -1;
+		_oldImporto = -1;
+		vCoperturaOrarioTeorico = 1;
 		
+		return false;
+	}
+	
 	verificaOrarioTeorico();
 	
 	return true;
@@ -762,23 +807,27 @@ function verificaOrarioTeorico()
  * 
  * @param {Number} [idLav]
  * @param {Number} [periodo]
- * @param {Number} [giorno]
+ * @param {Array<Number>} [giorni]
  * 
  * @return Object
  * 
  * @properties={typeid:24,uuid:"352C06A3-D7AF-4488-A25E-7F711953537D"}
  */
-function controllaInformativiStatistici(idLav,periodo,giorno)
+function controllaInformativiStatistici(idLav,periodo,giorni)
 {
 	// eventuale blocco informativi statistici
-	var url = globals.WS_URL + '/Eventi/ControllaInformativi';
+// TODO caso evento multiplo	
+//	var giorniSelezionati = giorni ? giorni : globals.getGiorniSelezionatiEv();
+//	var url = giorniSelezionati.length == 1 ? globals.WS_URL + '/Eventi/ControllaInformativi' : globals.WS_URL + '/Eventi/ControllaInformativiMultiplo';
+	var giorniSelezionati = giorni ? [giorni] : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg];
+    var url = globals.WS_URL + '/Eventi/ControllaInformativi';
 	var params = {
 		periodo : periodo ? periodo : globals.getPeriodo(),
-		giorniselezionati: giorno ? giorno : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg],
+		giorniselezionati: giorniSelezionati,
 		iddipendenti: idLav ? [idLav] : [forms.giorn_header.idlavoratore],
 		idditta: forms.giorn_header.idditta,
 		idevento: _idevento,
-		ore: 0,
+		ore: _ore != null ? _ore * 100 : 0, 
 		codproprieta: '',
 		tipoconnessione : globals._tipoConnessione
 	};
@@ -790,6 +839,52 @@ function controllaInformativiStatistici(idLav,periodo,giorno)
 		globals.ma_utl_showErrorDialog('Controlla informativi non riuscito', 'Errore del server');
 		return null;
 	}
+}
+
+/**
+ * TODO generated, please specify type and doc for the params
+ * @param {Object} response
+ *
+ * @properties={typeid:24,uuid:"FFFB8853-8C0A-4DDE-9603-96F17B707E9C"}
+ */
+function gestioneInformativiStatistici(response)
+{
+	//se non ci sono blocchi su informativi statistici
+	if (response['retValue'] == true)
+	{
+		if (response.message && response.message != '')
+		{
+			globals.ma_utl_showWarningDialog(response.message, 'Controllo informativi statistici');
+            return false;
+		}
+    } 
+	else 
+	{
+		//se c'è il blocco viene mostrato il messaggio
+		var innerMsg = response['innerMessage'] ? ("<p><strong>Dettagli</strong><br/>"  + response['innerMessage'] + '</p>') : ''
+		globals.ma_utl_showWarningDialog(response.message +  innerMsg, 'Controllo informativi statistici');
+		//e resettato l'inserimento dell'evento
+		_idevento = null;
+		_codevento = ''
+		_descevento = '';
+		_ideventoclasse = null;
+		_idpropcl = null;
+		_codprop = '';
+		_descprop = '';
+		_importo = 0;
+		_ore = null;
+		_oldIdEvento = null;
+		_oldCodEvento = '';
+		_oldIdPropCl = null;
+		_oldCodProp = '';
+		_oldOre = -1;
+		_oldImporto = -1;
+		vCoperturaOrarioTeorico = 1;
+		
+		return false;
+	}
+	
+	return true;
 }
 
 /**
