@@ -64,7 +64,8 @@ function refreshCoperturaAssenze(event) {
 	
     // filtro su tutte le ditte standard del gruppo
     if(abilitataVCTutti || abilitataGestore)
-       	foundset.idditta = globals.getDitteStandard();
+       	foundset.idditta = globals.getDitte();
+    
     // filtro sui lavoratori appartenenti allo stesso livello gerarchico nel caso di nodo foglia
     else if(abilitataVCLivello)
     	foundset.idlavoratore = globals.getLavoratoriLivelloGerarchico(globals.svy_sec_lgn_user_org_id);
@@ -75,8 +76,8 @@ function refreshCoperturaAssenze(event) {
     // se indicato un gruppo considera solo i dipendenti del gruppo specificato
 	if (frm.vGroupId != -1 || frm.vArrGroupId.length > 0) 
 	{
-		if (globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)) 
-		{
+//		if (globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)) 
+//		{
 			// recupero dell'array con tutti i lavoratori appartenenti a i gruppi scelti
 			if(frm.vArrGroupId.length)
 			{
@@ -94,40 +95,40 @@ function refreshCoperturaAssenze(event) {
 			}
 			else
 				foundset.idlavoratore = globals.getLavoratoriReparto(frm.vGroupId);
-		}
-		else
-		{
-			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
-			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
-			
-			if (fsUserRight.find())
-			{
-				fsUserRight.group_id = (frm.vArrGroupId && frm.vArrGroupId.length) ? frm.vArrGroupId : frm.vGroupId;
-				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
-				if (fsUserRight.search()) 
-				{
-					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
-					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
-					if (fsSecLavoratori.find()) 
-					{
-						fsSecLavoratori.exclude = 0;
-						fsSecLavoratori.idchiave = globals.foundsetToArray(fsUserRight.sec_user_right_to_sec_security_key, 'security_key_id');
-						fsSecLavoratori.search();
-						foundset.idlavoratore = globals.foundsetToArray(fsSecLavoratori, 'idlavoratore');
-					} 
-					else
-					{
-						globals.ma_utl_showErrorDialog('Errore nel recupero dei dati dei lavoratori associati alla chiave', 'Visualizza copertura');
-						return;
-					}
-				}
-			}
-			else 
-			{
-				globals.ma_utl_showErrorDialog('Errore nel recupero dei dati delle chiavi utenti', 'Visualizza copertura');
-				return;
-			}
-		}
+//		}
+//		else
+//		{
+//			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+//			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
+//			
+//			if (fsUserRight.find())
+//			{
+//				fsUserRight.group_id = (frm.vArrGroupId && frm.vArrGroupId.length) ? frm.vArrGroupId : frm.vGroupId;
+//				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
+//				if (fsUserRight.search()) 
+//				{
+//					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+//					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
+//					if (fsSecLavoratori.find()) 
+//					{
+//						fsSecLavoratori.exclude = 0;
+//						fsSecLavoratori.idchiave = globals.foundsetToArray(fsUserRight.sec_user_right_to_sec_security_key, 'security_key_id');
+//						fsSecLavoratori.search();
+//						foundset.idlavoratore = globals.foundsetToArray(fsSecLavoratori, 'idlavoratore');
+//					} 
+//					else
+//					{
+//						globals.ma_utl_showErrorDialog('Errore nel recupero dei dati dei lavoratori associati alla chiave', 'Visualizza copertura');
+//						return;
+//					}
+//				}
+//			}
+//			else 
+//			{
+//				globals.ma_utl_showErrorDialog('Errore nel recupero dei dati delle chiavi utenti', 'Visualizza copertura');
+//				return;
+//			}
+//		}
 	}
 	
 	// filtro su sede di lavoro
@@ -390,7 +391,7 @@ function refreshCoperturaAssenze(event) {
 			'ftr_dati_lavoratori_gerarchia'
 		);
 	
-	forms[frmContName].elements.tab_legenda.visible = true;
+//	forms[frmContName].elements.tab_legenda.visible = showLegenda;
 }
 
 /**
@@ -406,7 +407,7 @@ function refreshCoperturaAssenze(event) {
 function refreshCoperturaTurni(event) {
 
 	// identificazione da quale form opzioni è stato generato l'evento
-	var frmName = event.getFormName();
+	var frmName = event.getFormName() || event.data.formname;
 	// associazione del nome della form contenitore
 	var frmContName = forms.giorn_prog_turni_visualizza_copertura.controller.getName();
 	
@@ -438,7 +439,7 @@ function refreshCoperturaTurni(event) {
 	
     // filtro su tutte le ditte standard del gruppo
     if(abilitataVCTutti || abilitataGestore)
-       	foundset.idditta = globals.getDitteStandard();
+       	foundset.idditta = globals.getDitte();
     // filtro sui lavoratori appartenenti allo stesso livello gerarchico nel caso di nodo foglia
     else if(abilitataVCLivello)
     	foundset.idlavoratore = globals.getLavoratoriLivelloGerarchico(globals.svy_sec_lgn_user_org_id);
@@ -449,8 +450,8 @@ function refreshCoperturaTurni(event) {
     // se indicato un gruppo considera solo i dipendenti del gruppo specificato
 	if (frm.vGroupId != -1 || frm.vArrGroupId.length > 0) 
 	{
-		if (globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)) 
-		{
+//		if (globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)) 
+//		{
 			// recupero dell'array con tutti i lavoratori appartenenti a i gruppi scelti
 			if(frm.vArrGroupId.length)
 			{
@@ -468,40 +469,40 @@ function refreshCoperturaTurni(event) {
 			}
 			else
 				foundset.idlavoratore = globals.getLavoratoriReparto(frm.vGroupId);
-		}
-		else
-		{
-			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
-			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
-			
-			if (fsUserRight.find())
-			{
-				fsUserRight.group_id = (frm.vArrGroupId && frm.vArrGroupId.length) ? frm.vArrGroupId : frm.vGroupId;
-				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
-				if (fsUserRight.search()) 
-				{
-					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
-					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
-					if (fsSecLavoratori.find()) 
-					{
-						fsSecLavoratori.exclude = 0;
-						fsSecLavoratori.idchiave = globals.foundsetToArray(fsUserRight.sec_user_right_to_sec_security_key, 'security_key_id');
-						fsSecLavoratori.search();
-						foundset.idlavoratore = globals.foundsetToArray(fsSecLavoratori, 'idlavoratore');
-					} 
-					else
-					{
-						globals.ma_utl_showErrorDialog('Errore nel recupero dei dati dei lavoratori associati alla chiave', 'Visualizza copertura');
-						return;
-					}
-				}
-			}
-			else 
-			{
-				globals.ma_utl_showErrorDialog('Errore nel recupero dei dati delle chiavi utenti', 'Visualizza copertura');
-				return;
-			}
-		}
+//		}
+//		else
+//		{
+//			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+//			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
+//			
+//			if (fsUserRight.find())
+//			{
+//				fsUserRight.group_id = (frm.vArrGroupId && frm.vArrGroupId.length) ? frm.vArrGroupId : frm.vGroupId;
+//				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
+//				if (fsUserRight.search()) 
+//				{
+//					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+//					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
+//					if (fsSecLavoratori.find()) 
+//					{
+//						fsSecLavoratori.exclude = 0;
+//						fsSecLavoratori.idchiave = globals.foundsetToArray(fsUserRight.sec_user_right_to_sec_security_key, 'security_key_id');
+//						fsSecLavoratori.search();
+//						foundset.idlavoratore = globals.foundsetToArray(fsSecLavoratori, 'idlavoratore');
+//					} 
+//					else
+//					{
+//						globals.ma_utl_showErrorDialog('Errore nel recupero dei dati dei lavoratori associati alla chiave', 'Visualizza copertura');
+//						return;
+//					}
+//				}
+//			}
+//			else 
+//			{
+//				globals.ma_utl_showErrorDialog('Errore nel recupero dei dati delle chiavi utenti', 'Visualizza copertura');
+//				return;
+//			}
+//		}
 	}
 	
 	// filtro su sede di lavoro
@@ -529,30 +530,23 @@ function refreshCoperturaTurni(event) {
 	// verifichiamo se è stato selezionato uno specifico gruppo di fasce 
 	/** @type{Array<Number>}*/
 	var arrFasceRaggruppamento = [];
-	if(frm.vChkGruppoFasce)
-	   arrFasceRaggruppamento = globals.getFasceOrarieDaRaggruppamento(frm.vIdGruppoFasce);
+	// tutte le fasce di raggruppamento (eventualmente solo quelle del raggruppamento indicato)
+	if(frm.vIdGruppoFasce)
+		arrFasceRaggruppamento = globals.getFasceOrarieDaRaggruppamento(frm.vIdGruppoFasce);
+	var arrCodiciTurno = [];
+	arrCodiciTurno = globals.getCodiciTurno(arrFasceRaggruppamento);
+	
 	var typesRiep = [JSColumn.TEXT];
 	var columnsRiep = ['Intestazione'];
-	var rows = arrFasceRaggruppamento.length == 0 ? 7 : 1; // TODO correggere numero righe in base a numero di gruppi di fasce
-		
+	var rows = arrCodiciTurno.length ? arrCodiciTurno.length + 1 : 1; 
+	
 	var dsRiep = databaseManager.createEmptyDataSet(rows,columnsRiep);
 	dsRiep.setValue(1,1,'DIPENDENTI PRESENTI');
 		
-	for(var ar = 0; ar < arrFasceRaggruppamento.length; ar++)
-	{
-		// TODO aggiungere righe di riepilogo 		
-	}
-	//TEST
-	if(arrFasceRaggruppamento.length == 0)
-	{
-		dsRiep.setValue(2,1,'T1')
-		dsRiep.setValue(3,1,'T2')
-		dsRiep.setValue(4,1,'T3')
-		dsRiep.setValue(5,1,'PWG')
-		dsRiep.setValue(6,1,'PWN')
-		dsRiep.setValue(7,1,'G')
-	}
-	
+	for(var ar = 0; ar < arrCodiciTurno.length; ar++)
+		// aggiungere righe di riepilogo
+		dsRiep.setValue(ar + 2, 1, arrCodiciTurno[ar]); 		
+		
 	for(var G = 1; G <= numGiorni; G++)
 	{
 		// per eventuale gestione della visualizzazione del codice evento
@@ -563,13 +557,6 @@ function refreshCoperturaTurni(event) {
 		dsRiep.addColumn('perc_cop_'+ G,G + 1,JSVariable.NUMBER);
 	}
 	
-//	for(G = 1; G <= numGiorni; G++)
-//	{
-//		// per eventuale gestione della visualizzazione del codice evento
-//		types.push(JSColumn.TEXT);
-//		dsCop.addColumn('giorno_'+ G,G + 3,JSVariable.TEXT);
-//	}
-		
 	// ciclo su tutti i lavoratori
 	for(var l = 1; l <= size; l++)
 	{
@@ -707,13 +694,7 @@ function refreshCoperturaTurni(event) {
 	for (g = 1; g <= numGiorni; g++) 
 	{
 		_giorno = new Date(_dal.getFullYear(),_dal.getMonth(),_dal.getDate() + (g - 1));
-		var numDipPresenti = 0;
-		var numDipPresentiT1 = 0;
-		var numDipPresentiT2 = 0;
-		var numDipPresentiT3 = 0;
-		var numDipPresentiPWG = 0;
-		var numDipPresentiPWN = 0;
-		var numDipPresentiG = 0;
+		var numDipPresenti = null;
 		
 		for(l = 1; l <= size; l++)
 		{
@@ -728,43 +709,17 @@ function refreshCoperturaTurni(event) {
 						globals.getTotaleOreSostitutiveInBudget(dsCop.getValue(l,1),_giorno,_giorno) + globals.getTotaleOreSostitutiveRichieste(dsCop.getValue(l,1),_giorno,_giorno) == 0)
 			{
 				numDipPresenti++;
-				if(arrFasceRaggruppamento.length == 0)
-				{
-					var str = dsCop.getValue(l,g + 3);
-					var firstIndex = utils.stringPosition(str,'_',0,1);
-					var prefix = utils.stringLeft(str,firstIndex - 1);
-					switch(prefix)
-					{
-						case 'T1':
-							numDipPresentiT1++;
-							break;
-						case 'T2':
-						numDipPresentiT2++;
-						break;	
-						case 'T3':
-						numDipPresentiT3++;
-						break;
-						case 'PWG':
-						numDipPresentiPWG++;
-						break;
-						case 'PWN':
-						numDipPresentiPWN++;
-						break;
-					}
-				}
+				var str = dsCop.getValue(l,g + 3);
+				var firstIndex = utils.stringPosition(str,'_',0,1);
+				var prefix = utils.stringLeft(str,firstIndex - 1);
+				for(var t = 2; t <= dsRiep.getMaxRowIndex(); t++)
+					if(prefix == dsRiep.getValue(t,1))
+						dsRiep.setValue(t, g + 1, dsRiep.getValue(t, g + 1) + 1);
 			}
 		}
 		
 		dsRiep.setValue(1,g + 1,numDipPresenti);
-		if(arrFasceRaggruppamento.length == 0)
-		{
-			dsRiep.setValue(2,g + 1,numDipPresentiT1);
-			dsRiep.setValue(3,g + 1,numDipPresentiT2);
-			dsRiep.setValue(4,g + 1,numDipPresentiT3);
-			dsRiep.setValue(5,g + 1,numDipPresentiPWG);
-			dsRiep.setValue(6,g + 1,numDipPresentiPWN);
-			dsRiep.setValue(7,g + 1,numDipPresentiG);
-		}
+		
 	}
 	
 	// nel caso di nessun dipendente presente nella selezione mostriamo un messaggio
@@ -816,7 +771,7 @@ function refreshCoperturaTurni(event) {
 		);
 		
 	
-	forms[frmContName].elements.tab_legenda.visible = true;
+//	forms[frmContName].elements.tab_legenda.visible = showLegenda;
 }
 
 /**
@@ -855,7 +810,7 @@ function refreshCoperturaCalendario(event) {
     // filtro su tutte le ditte standard del gruppo
     if(abilitataVCTutti)
     {
-    	foundset.idditta = globals.getDitteStandard();
+    	foundset.idditta = globals.getDitte();
     }
     // filtro sui lavoratori appartenenti allo stesso livello gerarchico nel caso di nodo foglia
     else if(abilitataVCLivello)
@@ -867,11 +822,11 @@ function refreshCoperturaCalendario(event) {
         	foundset.idditta = idDitta;
     }
     
- // se indicato un gruppo considera solo i dipendenti del gruppo specificato
+    // se indicato un gruppo considera solo i dipendenti del gruppo specificato
 	if (frm.vGroupId != -1 || frm.vArrGroupId.length > 0) 
 	{
-		if (globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)) 
-		{
+//		if (globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)) 
+//		{
 			// recupero dell'array con tutti i lavoratori appartenenti a i gruppi scelti
 			if(frm.vArrGroupId.length)
 			{
@@ -889,40 +844,40 @@ function refreshCoperturaCalendario(event) {
 			}
 			else
 				foundset.idlavoratore = globals.getLavoratoriReparto(frm.vGroupId);
-		}
-		else
-		{
-			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
-			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
-			
-			if (fsUserRight.find())
-			{
-				fsUserRight.group_id = (frm.vArrGroupId && frm.vArrGroupId.length) ? frm.vArrGroupId : frm.vGroupId;
-				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
-				if (fsUserRight.search()) 
-				{
-					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
-					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
-					if (fsSecLavoratori.find()) 
-					{
-						fsSecLavoratori.exclude = 0;
-						fsSecLavoratori.idchiave = globals.foundsetToArray(fsUserRight.sec_user_right_to_sec_security_key, 'security_key_id');
-						fsSecLavoratori.search();
-						foundset.idlavoratore = globals.foundsetToArray(fsSecLavoratori, 'idlavoratore');
-					} 
-					else
-					{
-						globals.ma_utl_showErrorDialog('Errore nel recupero dei dati dei lavoratori associati alla chiave', 'Visualizza copertura');
-						return;
-					}
-				}
-			}
-			else 
-			{
-				globals.ma_utl_showErrorDialog('Errore nel recupero dei dati delle chiavi utenti', 'Visualizza copertura');
-				return;
-			}
-		}
+//		}
+//		else
+//		{
+//			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+//			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
+//			
+//			if (fsUserRight.find())
+//			{
+//				fsUserRight.group_id = (frm.vArrGroupId && frm.vArrGroupId.length) ? frm.vArrGroupId : frm.vGroupId;
+//				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
+//				if (fsUserRight.search()) 
+//				{
+//					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+//					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
+//					if (fsSecLavoratori.find()) 
+//					{
+//						fsSecLavoratori.exclude = 0;
+//						fsSecLavoratori.idchiave = globals.foundsetToArray(fsUserRight.sec_user_right_to_sec_security_key, 'security_key_id');
+//						fsSecLavoratori.search();
+//						foundset.idlavoratore = globals.foundsetToArray(fsSecLavoratori, 'idlavoratore');
+//					} 
+//					else
+//					{
+//						globals.ma_utl_showErrorDialog('Errore nel recupero dei dati dei lavoratori associati alla chiave', 'Visualizza copertura');
+//						return;
+//					}
+//				}
+//			}
+//			else 
+//			{
+//				globals.ma_utl_showErrorDialog('Errore nel recupero dei dati delle chiavi utenti', 'Visualizza copertura');
+//				return;
+//			}
+//		}
 	}
 	
 	// filtro su sede di lavoro
@@ -1073,9 +1028,9 @@ function refreshCoperturaGiornaliera(event)
 		foundset.cessazione = '^||>=' + utils.dateFormat(_dal,globals.ISO_DATEFORMAT) + '|yyyyMMdd';
    }
 	
-   // filtro su tutte le ditte standard del gruppo
+   // filtro su tutte le ditte del gruppo
    if(abilitataVCTutti || abilitataGestore)
-      	foundset.idditta = globals.getDitteStandard();
+      	foundset.idditta = globals.getDitte();
    // filtro sui lavoratori appartenenti allo stesso livello gerarchico nel caso di nodo foglia
    else if(abilitataVCLivello)
    	foundset.idlavoratore = globals.getLavoratoriLivelloGerarchico(globals.svy_sec_lgn_user_org_id);
@@ -1083,11 +1038,11 @@ function refreshCoperturaGiornaliera(event)
    if(frm.vIdDitta && frm.vIdDitta != -1)
    	foundset.idditta = frm.vIdDitta;
    
-// se indicato un gruppo considera solo i dipendenti del gruppo specificato
+    // se indicato un gruppo considera solo i dipendenti del gruppo specificato
 	if (frm.vGroupId != -1 || frm.vArrGroupId.length > 0) 
 	{
-		if (globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)) 
-		{
+//		if (globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)) 
+//		{
 			// recupero dell'array con tutti i lavoratori appartenenti a i gruppi scelti
 			if(frm.vArrGroupId.length)
 			{
@@ -1105,40 +1060,40 @@ function refreshCoperturaGiornaliera(event)
 			}
 			else
 				foundset.idlavoratore = globals.getLavoratoriReparto(frm.vGroupId);
-		}
-		else
-		{
-			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
-			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
-			
-			if (fsUserRight.find())
-			{
-				fsUserRight.group_id = (frm.vArrGroupId && frm.vArrGroupId.length) ? frm.vArrGroupId : frm.vGroupId;
-				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
-				if (fsUserRight.search()) 
-				{
-					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
-					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
-					if (fsSecLavoratori.find()) 
-					{
-						fsSecLavoratori.exclude = 0;
-						fsSecLavoratori.idchiave = globals.foundsetToArray(fsUserRight.sec_user_right_to_sec_security_key, 'security_key_id');
-						fsSecLavoratori.search();
-						foundset.idlavoratore = globals.foundsetToArray(fsSecLavoratori, 'idlavoratore');
-					} 
-					else
-					{
-						globals.ma_utl_showErrorDialog('Errore nel recupero dei dati dei lavoratori associati alla chiave', 'Visualizza copertura');
-						return;
-					}
-				}
-			}
-			else 
-			{
-				globals.ma_utl_showErrorDialog('Errore nel recupero dei dati delle chiavi utenti', 'Visualizza copertura');
-				return;
-			}
-		}
+//		}
+//		else
+//		{
+//			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+//			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
+//			
+//			if (fsUserRight.find())
+//			{
+//				fsUserRight.group_id = (frm.vArrGroupId && frm.vArrGroupId.length) ? frm.vArrGroupId : frm.vGroupId;
+//				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
+//				if (fsUserRight.search()) 
+//				{
+//					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+//					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
+//					if (fsSecLavoratori.find()) 
+//					{
+//						fsSecLavoratori.exclude = 0;
+//						fsSecLavoratori.idchiave = globals.foundsetToArray(fsUserRight.sec_user_right_to_sec_security_key, 'security_key_id');
+//						fsSecLavoratori.search();
+//						foundset.idlavoratore = globals.foundsetToArray(fsSecLavoratori, 'idlavoratore');
+//					} 
+//					else
+//					{
+//						globals.ma_utl_showErrorDialog('Errore nel recupero dei dati dei lavoratori associati alla chiave', 'Visualizza copertura');
+//						return;
+//					}
+//				}
+//			}
+//			else 
+//			{
+//				globals.ma_utl_showErrorDialog('Errore nel recupero dei dati delle chiavi utenti', 'Visualizza copertura');
+//				return;
+//			}
+//		}
 	}
 	
 	// filtro su sede di lavoro
@@ -1366,7 +1321,7 @@ function refreshCoperturaCommesse(event)
     // filtra la/e ditta/e di riferimento od il filtro su tutte le ditte standard del gruppo
     if(abilitataVCTutti)
     {
-    	foundset.idditta = globals.getDitteStandard();
+    	foundset.idditta = globals.getDitte();
     }
     // filtro sui lavoratori appartenenti allo stesso livello gerarchico nel caso di nodo foglia
     else if(abilitataVCLivello)
@@ -1602,45 +1557,6 @@ function onShowForm(_firstShow, _event)
 {
 	_super.onShowForm(_firstShow, _event);
 	plugins.busy.prepare();
-	
-//	var frm = forms.giorn_visualizza_copertura_situazione;
-//	if(globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]] 
-//	   && globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].dal != null)
-//	   frm.vDal = globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].dal;
-//	if(globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]]
-//	   && globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].al != null)
-//	   frm.vAl = globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].al;
-//	
-//	var numGiorni = Math.floor((frm.vAl - frm.vDal)/86400000) + 1;
-//	var idDitta = globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].idditta;
-//    
-//	if(idDitta && idDitta != -1)
-//	    elements.lbl_ragione_sociale.text = globals.getCodDitta(idDitta) + ' - ' + globals.getRagioneSociale(idDitta);
-//	else
-//		elements.lbl_ragione_sociale.text = "";
-//	
-//	var numDip    = globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].numdip
-//	var ds        = globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].datasource;
-//            
-//    if(elements.tab_copertura.getMaxTabIndex() == 0)
-//	{
-//	   elements.tab_copertura.removeAllTabs();	
-//	   frm.goToEditVisualizzaSituazione(_event);
-//	}
-//	else
-//	   switch(frm.vTipoVisualizzazione)
-//	   {
-//		   case 1:
-//		       globals.disegnaVisualizzazioneCoperturaAssenze(ds, idDitta, numGiorni, numDip, frm.vDal, frm.controller.getName());
-//			   break;
-//		   case 2:
-//		       globals.disegnaVisualizzazioneCoperturaTurni(ds, idDitta, numGiorni, numDip, frm.vDal, frm.controller.getName());
-//			   break;
-//		   default:
-//			   break;
-//		   
-//	   }
-	   	
 }
 
 /** 

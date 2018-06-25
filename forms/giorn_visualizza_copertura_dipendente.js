@@ -174,7 +174,7 @@ function disegnaGiornalieraLavoratore(idLavoratore,dal,al,datasource)
     	var gDay = new Date(dal.getFullYear(),dal.getMonth(),dal.getDate() + (g - 1));
     	var gFormat = globals.dateFormat(gDay,globals.ISO_DATEFORMAT);
     	var strTimbr = globals.getTimbratureGiornoStr(idLavoratore,gDay);
-    	var strTimbrCaus = globals.haTimbratureCausalizzate(globals.getDitta(idLavoratore)) ? globals.getTimbratureServizioGiornoStr(idLavoratore,gDay) : '';
+    	var strTimbrCaus = scopes.giornaliera.haTimbratureCausalizzate(globals.getDitta(idLavoratore)) ? globals.getTimbratureServizioGiornoStr(idLavoratore,gDay) : '';
     	
     	var newFld = newFormGiorn.newField('giorno_' + gFormat,JSColumn.NUMBER,dxCod + dxDesc + dxProp + dxEv * (g - 1),0,dxEv,20);
     	    newFld.name = 'fld_giorno_' + gFormat;

@@ -324,10 +324,11 @@ function goToEditVisualizzaSituazione(event) {
     if(elements.chk_sede)
     {
     	elements.chk_sede.enabled = true;
-//	    elements.btn_lkp_sede.enabled = false;
+	    elements.btn_lkp_sede.enabled = false;
     }
     if(elements.chk_centro_di_costo)
     {
+    	elements.chk_centro_di_costo.enabled = true;
 	    elements.btn_lkp_centro_di_costo.enabled = false;
     }
     if(elements.chk_solo_ditta)
@@ -482,20 +483,20 @@ function onDataChangeChkCdc(oldValue, newValue, event) {
 	if(elements.fld_centro_di_costo)
 		elements.fld_centro_di_costo.enabled = newValue;
 	
-	if(newValue && vIdDitta == -1)
-	{
-		globals.ma_utl_showWarningDialog('Selezionare prima la ditta per la quale filtrare i centri di costo','Visualizza copertura');
-		newValue = 0;
-	}
-	else
-	{		
+//	if(newValue && vIdDitta == -1)
+//	{
+//		globals.ma_utl_showWarningDialog('Selezionare prima la ditta per la quale filtrare i centri di costo','Visualizza copertura');
+//		newValue = 0;
+//	}
+//	else
+//	{		
 		if(!newValue)
 		{
 			vCodCentroDiCosto = '';
 			vArrCodCentroDiCosto = [];
 			vCentroDiCosto = '';
 		}
-	}
+//	}
 	
 	globals.ma_utl_setStatus(globals.Status.EDIT,controller.getName());
 	
@@ -554,7 +555,8 @@ function FiltraCdc(fs)
 	var fsCl = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,'ditte_classificazioni');
 	if(fsCl.find())
 	{
-	    fsCl.idditta = vIdDitta;
+		if(vChkCentroDiCosto && vIdDitta)
+	       fsCl.idditta = vIdDitta;
  	    fsCl.descrizione = 'Centro di costo';
         if(fsCl.search())
         {
@@ -625,10 +627,10 @@ function onDataChangeChkSoloDitta(oldValue, newValue, event)
 		vSede = '';
 		
 		// pulisci eventuale centro di costo su cui filtrare
-		vChkCentroDiCosto = 0;
-		vCentroDiCosto = '';
-		vCodCentroDiCosto = null;
-		vArrCodCentroDiCosto = [];
+//		vChkCentroDiCosto = 0;
+//		vCentroDiCosto = '';
+//		vCodCentroDiCosto = null;
+//		vArrCodCentroDiCosto = [];
 				
 		// pulisci eventuale dipendente precedentemente selezionato
 		vChkDip = 0;
@@ -643,8 +645,8 @@ function onDataChangeChkSoloDitta(oldValue, newValue, event)
 	if(elements.chk_sede)
 		elements.chk_sede.enabled =	 enabled;
 				
-	if(elements.chk_centro_di_costo)
-		elements.chk_centro_di_costo.enabled = enabled;			
+//	if(elements.chk_centro_di_costo)
+//		elements.chk_centro_di_costo.enabled = enabled;			
 	
 	if(elements.chk_dipendente)
 		elements.chk_dipendente.enabled = true;
@@ -813,7 +815,9 @@ function onShowForm(_firstShow, _event)
     	
     	var rec;
     	
-    	if(globals.ma_utl_hasModule(globals.Module.AUTORIZZAZIONI) && globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA))
+    	if(globals.ma_utl_hasModule(globals.Module.AUTORIZZAZIONI) &&
+    	  (globals.ma_utl_hasKey(globals.Key.AUTORIZZAZIONI) ||
+    					globals.ma_utl_hasKey(globals.Key.AUT_GERARCHIA)))
     	{
     		var y = 20;
     		
@@ -825,7 +829,7 @@ function onShowForm(_firstShow, _event)
     		elements.fld_al.setLocation(elements.fld_al.getLocationX(),y);
     		elements.btn_calendar_al.setLocation(elements.btn_calendar_al.getLocationX(),y);
     		
-    		if(globals.ma_utl_hasKey(globals.Key.RICHIESTA_PERMESSI_CR))
+    		if(globals.ma_utl_hasKey(globals.Key.AUTORIZZAZIONI) || globals.ma_utl_hasKey(globals.Key.RICHIESTA_PERMESSI_CR))
     		{
 	    		elements.lbl_gruppo.visible =
 	    			elements.fld_gruppo.visible =
@@ -860,12 +864,12 @@ function onShowForm(_firstShow, _event)
 	    			elements.fld_ditta.visible = 
 	    					elements.chk_solo_ditta.visible = true;
 	    			    		
-	    		rec = globals.getSingolaDitta(globals.Tipologia.STANDARD);			
-	    		if(rec)
-	    		{
-	    			vChkSingolaDitta = 1;
-	    			vIdDitta = rec.idditta;
-	    		}
+//	    		rec = globals.getSingolaDitta(globals.Tipologia.STANDARD);			
+//	    		if(rec)
+//	    		{
+//	    			vChkSingolaDitta = 1;
+//	    			vIdDitta = rec.idditta;
+//	    		}
 	    		
 				elements.lbl_gruppo.visible =
 		    		elements.fld_gruppo.visible =
@@ -905,11 +909,11 @@ function onShowForm(_firstShow, _event)
 	    		
 	    		// ri-allineamento originale opzioni fasce di raggruppamento		
 				if(elements.lbl_gruppo_fascia)
-					elements.lbl_gruppo_fascia.setLocation(elements.lbl_gruppo_fascia.getLocationX(),34);
+				   elements.lbl_gruppo_fascia.setLocation(elements.lbl_gruppo_fascia.getLocationX(),34);
 				if(elements.chk_gruppo_fascia)
-					elements.chk_gruppo_fascia.setLocation(elements.chk_gruppo_fascia.getLocationX(),34);
+				   elements.chk_gruppo_fascia.setLocation(elements.chk_gruppo_fascia.getLocationX(),34);
 				if(elements.fld_gruppo_fascia)
-					elements.fld_gruppo_fascia.setLocation(elements.fld_gruppo_fascia.getLocationX(),34);
+				   elements.fld_gruppo_fascia.setLocation(elements.fld_gruppo_fascia.getLocationX(),34);
 	    	}
        	}
        	else
