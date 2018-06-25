@@ -128,282 +128,14 @@ function onRenderTimbr(event)
  */
 function onRecordSelection(event, _form)
 {
+	var currIdGiornaliera = -1;
+	
 	if (foundset && foundset.getSize() > 0 && foundset['idgiornaliera']) 
-	{
-		var selection_form = forms.giorn_mostra_timbr.getSelectionForm();
-		if(selection_form)
-		   selection_form.foundset.setSelectedIndex(foundset.getSelectedIndex());
-
-		forms.giorn_mostra_timbr.foundset.loadRecords(foundset['idgiornaliera']);
-		forms.giorn_mostra_timbr.aggiornaRiepiloghiGiorno(foundset['idgiornaliera']);
-		forms.giorn_mostra_timbr.aggiornaBadgeEffettivo();
+		currIdGiornaliera = foundset['idgiornaliera'];
 		
-		var _anno = globals.getAnno();
-		var _mese = globals.getMese();
-		var _giorno = parseInt(foundset['giornomese'], 10);
-
-		calcolaRiepTimbr(_anno, _mese, _giorno);
-	}
-	else
-		forms.giorn_mostra_timbr.aggiornaBadgeEffettivo();
-	
-}
-
-/**  
- * Calcola la somma delle ore lavorate nella giornata sulla base delle timbrature
- * e ne disegna il riepilogo
- * 
- * @param {Number} _anno
- * @param {Number} _mese
- * @param {number} _giorno
- * 
- * @properties={typeid:24,uuid:"36027172-FBD6-4B75-B42C-26C9E5E0C3B2"}
- * @SuppressWarnings(unused)
- */
-function calcolaRiepTimbr(_anno,_mese,_giorno){
-	
-	var _trFormName = 'giorn_mostra_timbr_riepilogo_tbl'
-	var _trFormNameTemp = 'giorn_mostra_timbr_riepilogo_tbl_temp'
-	var _idDip = forms.giorn_header.foundset.idlavoratore ? forms.giorn_header.foundset.idlavoratore 
-			                                                : forms.giorn_cart_header.idlavoratore;
-	var _gg = 10000 * _anno + 100 * _mese + _giorno; 
-    var _ggPrec ;
-	if(_giorno != 1)
-		_ggPrec = _gg - 1;
-	else{
-		if(_mese == 1)
-		   _ggPrec = 10000 * (_anno - 1) + 100 * 12 + 31;
-		else
-		   _ggPrec = 10000 * _anno + 100 * (_mese - 1) + globals.getTotGiorniMese(_mese-1,_anno); 
-		
-	}
-	
-	var _timbrQuery = " SELECT * FROM E2Timbratura \
-						WHERE \
-							(idDip = ?)	AND (LEFT(Timbratura, 8) = ?) AND (TimbEliminata = 0) AND (GGSucc = 1) \
-						OR \
-							(idDip = ?)	AND (LEFT(Timbratura, 8) = ?) AND (TimbEliminata = 0) AND (GGSucc = 0) \
-						ORDER BY \
-							Timbratura";
-							
-    var _timbrArr = [_idDip, _ggPrec, _idDip, _gg]
-    
-	var _trDataSetTimbrGiorno = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE, _timbrQuery, _timbrArr, -1)
-
-	var arrCurrGiorno = new Array()
-	var _arInd = -1
-	var _trSenso = false
-	var _trSensoPrec = false
-	var _trSensoCamb = false
-
-	/** @type {Number}*/
-	var _trTimbrPrec = -1
-	/** @type {Number}*/
-	var _trTimbr = -1
-	/** @type {String}*/
-	var _timbrPrec = ''
-	/** @type {String}*/
-	var _timbr = ''
-	/** @type {String}*/
-	var _timbrOreMin = ''
-	/** @type {Object} */
-	var _objOre 
-	/** @type {Number} */
-	var _minuti
-	/** @type {String} */
-	var delta = '0000'
-	/** @type {String} */
-	var totOrario = '0000'
-
-	
-	for (var i = 1; i <= _trDataSetTimbrGiorno.getMaxRowIndex(); i++) {
-
-		_trTimbr = _trDataSetTimbrGiorno.getValue(i, 5)
-		_trSenso = _trDataSetTimbrGiorno.getValue(i, 4)
-		_trSensoCamb = _trDataSetTimbrGiorno.getValue(i, 7)
-		_timbr = utils.stringLeft(utils.stringRight(_trTimbr.toString(), 4), 2) + ':' + utils.stringRight(utils.stringRight(_trTimbr.toString(), 4), 2)
-		_objOre = globals.getOreEffettiveDaTimbr(_trTimbr.toString(),0)
-		_minuti = globals.getMinDaTimbrFormattata(_trTimbr)
-		_timbrOreMin = _objOre.ore + '.' + _minuti
-		if (i > 1) {
-
-			if ( (!_trDataSetTimbrGiorno.getValue(i - 1, 4) && !_trDataSetTimbrGiorno.getValue(i - 1, 7)) || (_trDataSetTimbrGiorno.getValue(i - 1, 4) && _trDataSetTimbrGiorno.getValue(i - 1, 7)))
-				_trSensoPrec = 0
-			else
-				_trSensoPrec = 1
-
-		}
-
-		//timbratura in entrata
-		if ( (!_trSenso && !_trSensoCamb) || (_trSenso && _trSensoCamb)) {
-
-			arrCurrGiorno.push(new Array(3))
-			_arInd = arrCurrGiorno.length - 1
-			arrCurrGiorno[_arInd][0] = _timbrOreMin
-			_timbrPrec = _timbrOreMin
-			arrCurrGiorno[_arInd][1] = '--.--'
-			arrCurrGiorno[_arInd][2] = '--.--'
-
-			if (i > 1 && !_trSensoPrec)
-				totOrario = '----'
-		}
-		//timbratura in uscita
-		else {
-			if (i == 1) {
-
-				arrCurrGiorno.push(new Array(3))
-				_arInd = arrCurrGiorno.length - 1
-				arrCurrGiorno[_arInd][0] = '--.--'
-				arrCurrGiorno[_arInd][1] = _timbrOreMin
-				arrCurrGiorno[_arInd][2] = '--.--'
-				totOrario = '----'
-
-			} else {
-				//la timbratura precedente era una entrata
-				if (!_trSensoPrec) {
-
-					arrCurrGiorno[_arInd][1] = _timbrOreMin
-					delta = deltaOrario(_timbr, _timbrPrec)
-					arrCurrGiorno[_arInd][2] = utils.stringLeft(delta, 2) + ':' + utils.stringRight(delta, 2)
-					totOrario = totaleOrario(totOrario, delta)
-				}
-				//la timbratura precedente era un'altra uscita
-				else {
-					arrCurrGiorno.push(new Array(3))
-					_arInd = arrCurrGiorno.length - 1
-					arrCurrGiorno[_arInd][0] = '--.--'
-					arrCurrGiorno[_arInd][1] = _timbrOreMin
-					arrCurrGiorno[_arInd][2] = ''
-					totOrario = '----'
-				}
-			}
-		}
-
-	}
-
-	var _trDataSetTimbrRiep = databaseManager.createEmptyDataSet(0, new Array('Entrata', 'Uscita', 'Totale'))
-
-	//arrCurrGiorno.push(new Array('', '', utils.stringLeft(totOrario,2) + ':' + utils.stringRight(totOrario,2)))
-	forms.giorn_mostra_timbr_riepilogo.elements.lbl_mostra_timbr_riep_totale.text = 'Totale giornata : ' + utils.stringLeft(totOrario, 2) + ' Ore - ' + utils.stringRight(totOrario, 2) + ' Minuti'
-
-	for (var tr = 0; tr < arrCurrGiorno.length; tr++) 
-		_trDataSetTimbrRiep.addRow(tr + 1, arrCurrGiorno[tr])
-
-	var _trDataSourceTimbrRiep = _trDataSetTimbrRiep.createDataSource('_trDataSetTimbrRiep', [JSColumn.TEXT, JSColumn.TEXT, JSColumn.TEXT])
-
-	if (forms[_trFormNameTemp] == null) 
-	{
-		forms.giorn_mostra_timbr_riepilogo.elements.tab_timbr_riepilogo_tbl.removeAllTabs();
-		history.removeForm(_trFormNameTemp);
-		solutionModel.removeForm(_trFormNameTemp);
-	
-	    var tempForm = solutionModel.cloneForm(_trFormNameTemp, solutionModel.getForm(_trFormName))
-	    solutionModel.getForm(_trFormNameTemp).dataSource = _trDataSourceTimbrRiep
-	    solutionModel.getForm(_trFormNameTemp).getField('fld_entrata').dataProviderID = 'Entrata'
-	    solutionModel.getForm(_trFormNameTemp).getField('fld_uscita').dataProviderID = 'Uscita'
-	    solutionModel.getForm(_trFormNameTemp).getField('fld_totale').dataProviderID = 'Totale'
-
-	    forms.giorn_mostra_timbr_riepilogo.elements.tab_timbr_riepilogo_tbl.addTab(_trFormNameTemp);
-	}
-}
-
-/**
- *
- * @param {String} _delta
- * @param {String} _totOrPrec
- *
- * @return {String}
- *
- * @properties={typeid:24,uuid:"844CE4BE-1649-4AE4-8E56-FAD658CD9FB6"}
- */
-function totaleOrario(_totOrPrec, _delta) {
-
-	if(_totOrPrec == '----')
-		
-		return '----'
-	
-	else{	
-		
-		var tH = parseInt(utils.stringLeft(_delta, 2), 10)
-		var tM = parseInt(utils.stringRight(_delta, 2), 10)
-		var tpH = parseInt(utils.stringLeft(_totOrPrec, 2), 10)
-		var tpM = parseInt(utils.stringRight(_totOrPrec, 2), 10)
-		var deltaH = -1
-		var deltaM = -1
-		var dH = ''
-		var dM = ''
-
-		if ( (tM + tpM) > 60) {
-
-			tH = tH + 1
-			tM = tM - 60
-		}
-
-		deltaH = (tH + tpH)
-		deltaM = (tM + tpM)
-
-		if (deltaH < 10)
-			dH = '0' + deltaH.toString()
-		else
-			dH = deltaH.toString()
-
-		if (deltaM < 10)
-			dM = '0' + deltaM.toString()
-		else
-			dM = deltaM.toString()
-
-		return dH + dM
-	}
-}
-
-/**
- * Calcola il delta dell'orario
- *
- * @param {String} _timbr
- * @param {String} _timbrPrec
- *
- * @return {String}
- *
- * @properties={typeid:24,uuid:"B2E7C05F-19A5-4921-9AE2-63C34A2AAC1B"}
- */
-function deltaOrario(_timbr, _timbrPrec) {
-
-	var tH,tM,tpH,tpM
-	var deltaH = -1
-	var deltaM = -1
-	var dH = ''
-	var dM = ''
-
-	if (_timbr == '--.--' || _timbrPrec == '--.--')
-	    return '----'
-	
-	tH = parseInt(utils.stringLeft(_timbr, 2), 10)
-	tM = parseInt(utils.stringRight(_timbr, 2), 10)
-	tpH = parseInt(utils.stringLeft(_timbrPrec, 2), 10)
-	tpM = parseInt(utils.stringRight(_timbrPrec, 2), 10)
-	
-	
-	if ( (tM - tpM) < 0) {
-
-		tM = tM + 60
-		tH = tH - 1
-	}
-
-	deltaH = (tH - tpH)
-	deltaM = (tM - tpM)
-
-	if (deltaH < 10)
-		dH = '0' + deltaH.toString()
-	else
-		dH = deltaH.toString()
-
-	if (deltaM < 10)
-		dM = '0' + deltaM.toString()
-	else
-		dM = deltaM.toString()
-
-	return dH + dM
-	//return 'Ore : ' + deltaH.toString() + ' - Minuti : ' + deltaM.toString()
+	forms.giorn_mostra_timbr.foundset.loadRecords(currIdGiornaliera);
+	forms.giorn_mostra_timbr.aggiornaRiepiloghiGiorno(currIdGiornaliera);
+	forms.giorn_mostra_timbr.aggiornaBadgeEffettivo();
 }
 
 /**
@@ -728,10 +460,24 @@ function aggiungiTimbraturaDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _menuT
  */
 function aggiungiTimbratureMultiDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event,_soloCartolina)
 {
-	var frm = forms.giorn_aggiungi_timbr_tab;
-	_soloCartolina ? frm.vSoloCartolina = true : frm.vSoloCartolina = false;
-	frm.vSelectedGiorno = foundset.getSelectedIndex() - globals.offsetGg;
-	globals.ma_utl_showFormInDialog(frm.controller.getName(),'Timbrature multiple');
+	if(_soloCartolina)
+	{
+		// caso web
+		if(globals.ma_utl_hasKey(globals.Key.TIMBR_DIPENDENTE_WEB))
+		   globals.aggiungi_timbratura_dipendente_immediata(true);
+		// caso standard
+		else if(globals.ma_utl_hasKey(globals.Key.TIMBR_DIPENDENTE))
+		   globals.aggiungi_timbratura_dipendente(true);
+		else
+			globals.ma_utl_showWarningDialog('L\'utente non dispone dell\'autorizzazione ad inserire le timbrature','Timbrature dipendente');
+	}
+	else
+	{	
+		var frm = forms.giorn_aggiungi_timbr_tab;
+		_soloCartolina ? frm.vSoloCartolina = true : frm.vSoloCartolina = false;
+		frm.vSelectedGiorno = foundset.getSelectedIndex() - globals.offsetGg;
+		globals.ma_utl_showFormInDialog(frm.controller.getName(),'Timbrature multiple');
+	}
 }
 
 /**
