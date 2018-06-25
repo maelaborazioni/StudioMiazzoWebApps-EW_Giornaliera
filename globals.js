@@ -2763,13 +2763,14 @@ function showOperazioneSingola(operazione, form, arrayGiorni, arrayDipendenti)
  * @param {Number} employeesId
  * @param {Array} [arrayGiorni]
  * @param {Boolean} [askYesNo]
+ * @param {Number} [periodo]
  *
  * @properties={typeid:24,uuid:"23AB96FD-5D4D-47A6-88CB-C5A59F9F7F66"}
  */
-function compilaDalAlSingolo(employeesId, arrayGiorni, askYesNo)
+function compilaDalAlSingolo(employeesId, arrayGiorni, askYesNo, periodo)
 {
 	/** @type {Number} */
-	var _periodo = globals.getPeriodo();
+	var _periodo = periodo != null ? periodo : globals.getPeriodo();
 	
 	var params = globals.inizializzaParametriCompilaConteggio(
 	                     forms.giorn_header.idditta,
@@ -2809,6 +2810,36 @@ function compilaDalAlSingolo(employeesId, arrayGiorni, askYesNo)
 			
 	} else
 		return;
+}
+
+/**
+ * @param {Number} employeesId
+ * @param {Array<Number>} arrayGiorni
+ * @param {Number} periodo
+ *
+ * @properties={typeid:24,uuid:"E6DE4764-BCE7-46B1-A44C-D46786CC910F"}
+ */
+function compilaDalAlSingoloSync(employeesId, arrayGiorni, periodo)
+{
+	/** @type {Number} */
+	var _periodo = periodo != null ? periodo : globals.getPeriodo();
+	
+	var params = globals.inizializzaParametriCompilaConteggio(
+	                     forms.giorn_header.idditta,
+	                     _periodo,
+	                     forms.giorn_vista_mensile._tipoGiornaliera,
+	                     globals._tipoConnessione,
+	                     arrayGiorni,
+	                     [employeesId],
+						 false
+	             );
+	
+	//lanciamo il calcolo per la compilazione 
+	var url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? WS_MULTI_URL + "/Giornaliera/CompilaDalAl" : WS_URL + "/Eventi/CompilaDalAl"
+	
+	var response = globals.getWebServiceResponse(url + 'Singolo', params);
+	if (!response['returnValue'])
+		globals.ma_utl_showErrorDialog('Si è verificato un errore durante l\'aggiornamento della giornaliera, riprovare', 'Inserimento timbratura dipendente');
 }
 
 /**
@@ -6952,86 +6983,88 @@ function salvaFasceProgrammate(event)
  */
 function process_salva_prog_fasce()
 {
-	/** @type {RuntimeForm<giorn_turni>}*/
-	var frm = forms['giorn_turni_temp']; 
-	var fs = frm.foundset.duplicateFoundSet();
-	/** @type {JSFoundset<db:/ma_presenze/e2giornalieraprogfasce>} */
-	var fsFasceProg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_PROGFASCE);
-	
-	var idLavoratore = forms.giorn_prog_turni_fasce.vIdLavoratore || globals.getIdLavoratoreProgTurni();
-	
-	// ottenimento dei dati relativi ai giorni modificati
-	var dsGiorniModificati = databaseManager.createEmptyDataSet(0,['giorno','idfascia','tiporiposo']);
-	for(var g = 1; g <= fs.getSize(); g++)
-	{		
-		var cont = 1;
-		if(fs.getRecord(g)['modificato'])
-		{
-			dsGiorniModificati.addRow(new Array(utils.dateFormat(fs.getRecord(g)['giorno'],globals.ISO_DATEFORMAT),
-                                                fs.getRecord(g)['giorno'],
-				                                fs.getRecord(g)['idfasciaorariaprog'] != null ? fs.getRecord(g)['idfasciaorariaprog'] : fs.getRecord(g)['idfasciaoraria'],
-                                                fs.getRecord(g)['tiporiposoprog'] != null ? fs.getRecord(g)['tiporiposoprog'] : fs.getRecord(g)['tiporiposo']));
-		   cont++;
-		}
-	}
-	
-	var numGiorniModificati = dsGiorniModificati.getMaxRowIndex(); 
-	if(numGiorniModificati > 0)
+	try
 	{
-		// eliminazione di eventuali fasce programmate precedentemente inserite per il dipendente nei giorni modificati
-		var sqlProgfasce = "DELETE FROM E2GiornalieraProgFasce WHERE idDip = ? AND Giorno IN (" + 
-		                   dsGiorniModificati.getColumnAsArray(1).map(function(pf){return '\'' + pf + '\''}).join(',') + ")";
-		var success = plugins.rawSQL.executeSQL(globals.Server.MA_PRESENZE,
-			                                   globals.Table.GIORNALIERA_PROGFASCE,
-											   sqlProgfasce,
-											   [idLavoratore]);
-		if(!success)
-		{
-			globals.ma_utl_showWarningDialog('Errore durante la cancellazione delle fasce esistenti','Programmazione fasce');
-			application.output(plugins.rawSQL.getException().getMessage(), LOGGINGLEVEL.ERROR);
-			plugins.busy.unblock();
-			return;
-		}
-		plugins.rawSQL.flushAllClientsCache(globals.Server.MA_PRESENZE,
-			                                globals.Table.GIORNALIERA_PROGFASCE);
-		// inserimento delle nuove fasce programmate
-		databaseManager.startTransaction();
+		/** @type {RuntimeForm<giorn_turni>}*/
+		var frm = forms['giorn_turni_temp']; 
+		var fs = frm.foundset.duplicateFoundSet();
+		/** @type {JSFoundset<db:/ma_presenze/e2giornalieraprogfasce>} */
+		var fsFasceProg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_PROGFASCE);
 		
-		for(var i = 1; i <= numGiorniModificati; i++)
-		{
-			if(fsFasceProg.newRecord())
+		var idLavoratore = forms.giorn_prog_turni_fasce.vIdLavoratore || globals.getIdLavoratoreProgTurni();
+		
+		// ottenimento dei dati relativi ai giorni modificati
+		var dsGiorniModificati = databaseManager.createEmptyDataSet(0,['giorno','idfascia','tiporiposo']);
+		for(var g = 1; g <= fs.getSize(); g++)
+		{		
+			var cont = 1;
+			if(fs.getRecord(g)['modificato'])
 			{
-				fsFasceProg.iddip = idLavoratore;
-				fsFasceProg.giorno = dsGiorniModificati.getValue(i,2);
-				fsFasceProg.idfasciaoraria = dsGiorniModificati.getValue(i,3);
-				fsFasceProg.tiporiposo = dsGiorniModificati.getValue(i,4);
-									
+				dsGiorniModificati.addRow(new Array(utils.dateFormat(fs.getRecord(g)['giorno'],globals.ISO_DATEFORMAT),
+	                                                fs.getRecord(g)['giorno'],
+					                                fs.getRecord(g)['idfasciaorariaprog'] != null ? fs.getRecord(g)['idfasciaorariaprog'] : fs.getRecord(g)['idfasciaoraria'],
+	                                                fs.getRecord(g)['tiporiposoprog'] != null ? fs.getRecord(g)['tiporiposoprog'] : fs.getRecord(g)['tiporiposo']));
+			   cont++;
 			}
 		}
-			
-		if(!databaseManager.commitTransaction())
+		
+		var numGiorniModificati = dsGiorniModificati.getMaxRowIndex(); 
+		if(numGiorniModificati > 0)
 		{
-			forms.giorn_prog_turni_fasce.setStatusError('Errore durante l\'inserimento della programmazione fasce');
-			databaseManager.rollbackTransaction();
-			plugins.busy.unblock();
-			return;
+			// eliminazione di eventuali fasce programmate precedentemente inserite per il dipendente nei giorni modificati
+			var sqlProgfasce = "DELETE FROM E2GiornalieraProgFasce WHERE idDip = ? AND Giorno IN (" + 
+			                   dsGiorniModificati.getColumnAsArray(1).map(function(pf){return '\'' + pf + '\''}).join(',') + ")";
+			var success = plugins.rawSQL.executeSQL(globals.Server.MA_PRESENZE,
+				                                   globals.Table.GIORNALIERA_PROGFASCE,
+												   sqlProgfasce,
+												   [idLavoratore]);
+			if(!success)
+			{
+				application.output(plugins.rawSQL.getException().getMessage(), LOGGINGLEVEL.ERROR);
+				throw new Error('Errore durante la cancellazione delle fasce esistenti');
+			}
+			plugins.rawSQL.flushAllClientsCache(globals.Server.MA_PRESENZE,
+				                                globals.Table.GIORNALIERA_PROGFASCE);
+			// inserimento delle nuove fasce programmate
+			databaseManager.startTransaction();
+			
+			for(var i = 1; i <= numGiorniModificati; i++)
+			{
+				if(fsFasceProg.newRecord())
+				{
+					fsFasceProg.iddip = idLavoratore;
+					fsFasceProg.giorno = dsGiorniModificati.getValue(i,2);
+					fsFasceProg.idfasciaoraria = dsGiorniModificati.getValue(i,3);
+					fsFasceProg.tiporiposo = dsGiorniModificati.getValue(i,4);
+										
+				}
+			}
+				
+			if(!databaseManager.commitTransaction())
+				throw new Error('Errore durante l\'inserimento della programmazione fasce');
+			else
+			{
+				forms.giorn_prog_turni_fasce.isEditing = false;
+				forms.giorn_prog_turni_fasce.elements.btn_salva.enabled = false;
+				forms.giorn_prog_turni_fasce.setStatusSuccess('Salvataggio fasce avvenuto correttamente!');
+				
+				// TODO verificare variabile forms.giorn_prog_turni_fasce.isFromSituazioneTurni per determinare il tipo di ridisegno
+				globals.preparaProgrammazioneTurni(idLavoratore,
+												   forms.giorn_prog_turni_fasce.vAnno || globals.getAnno(),
+												   forms.giorn_prog_turni_fasce.vMese || globals.getMese(),
+												   globals.TipoGiornaliera.NORMALE);
+			}    
 		}
-		else
-		{
-			forms.giorn_prog_turni_fasce.isEditing = false;
-			forms.giorn_prog_turni_fasce.elements.btn_salva.enabled = false;
-			forms.giorn_prog_turni_fasce.setStatusSuccess('Salvataggio fasce avvenuto correttamente!');
-			
-			// TODO verificare variabile forms.giorn_prog_turni_fasce.isFromSituazioneTurni per determinare il tipo di ridisegno
-			globals.preparaProgrammazioneTurni(idLavoratore,
-				                               globals.getAnno(),
-											   globals.getMese(),
-											   globals.TipoGiornaliera.NORMALE);
-			plugins.busy.unblock();
-		}    
 	}
-	
-	plugins.busy.unblock();
+	catch(ex)
+	{
+		forms.giorn_prog_turni_fasce.setStatusError(ex.message);
+		databaseManager.rollbackTransaction();
+	}
+	finally
+	{
+		plugins.busy.unblock();
+	}
 }
 
 /**
@@ -7533,8 +7566,6 @@ function preparaProgrammazioneTurni(_idDip, _anno, _mese, _tipoGiorn)
 			
 		forms.giorn_prog_turni_fasce.setStatusWarning('Il dipendente non ha associato regole che permettano la distribuzione di orario');
 		forms.giorn_prog_turni.elements.fld_search.readOnly = false;
-//		globals.ma_utl_showInfoDialog('Il dipendente non ha associato regole che permettano la distribuzione di orario',
-//			                          'Programmazione turni');
 		return;
 	}
 	
@@ -7764,29 +7795,6 @@ function disegnaProgrammazioneTurni(_dataSource)
 	    forms.giorn_prog_turni_fasce.elements.tab_prog_turni_turni.addTab(_tempFormName);
 
 	}
-}
-
-/**
- * Verifica se la ditta utilizza o meno le timbrature causalizzate in modo da poter gestire 
- * la visualizzazione dello specifico tab in vista mensile
- * 
- * @param {Number} idDitta
- *
- * @properties={typeid:24,uuid:"C790B8F9-53F9-4DD7-93E2-5E6A6A492D29"}
- * @AllowToRunInFind
- */
-function haTimbratureCausalizzate(idDitta)
-{
-	/** @type {JSFoundset <db:/ma_presenze/e2timbratureserviziogestione>} */
-	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE_SERVIZIOGESTIONE);
-	if(fs.find())
-	{
-		fs.idditta = idDitta;
-		if(fs.search())
-			return true;
-	}
-	
-	return false;
 }
 
 /**
@@ -8177,22 +8185,30 @@ function verificaSuperamentoLimiteFileTimbratureScartate(params)
 }
 
 /**
+ * @param {Boolean} [daCartolina]
+ * 
  * @properties={typeid:24,uuid:"71C08F41-48A1-464D-890F-9E0A39BE08F3"}
  */
-function aggiungi_timbratura_dipendente()
+function aggiungi_timbratura_dipendente(daCartolina)
 {
 	var frm = forms.giorn_aggiungi_timbr_dipendente;
+	if(daCartolina != null)
+		frm.vDaCartolina = daCartolina;
 	globals.ma_utl_showFormInDialog(frm.controller.getName(),'Inserisci timbratura');
 }
 
 /**
+ * @param {Boolean} [daCartolina]
+ * 
  * @properties={typeid:24,uuid:"E5F9432C-0678-42C4-A9FA-85CE835A08C1"}
  */
-function aggiungi_timbratura_dipendente_immediata()
+function aggiungi_timbratura_dipendente_immediata(daCartolina)
 {
-	var form = forms.giorn_aggiungi_timbr_immediata_dtl;
-	globals.ma_utl_setStatus(globals.Status.EDIT,form.controller.getName());
-	globals.ma_utl_showFormInDialog(form.controller.getName(),'Inserisci timbratura');
+	var frm = forms.giorn_aggiungi_timbr_immediata_dtl;
+	if(daCartolina != null)
+		frm.vDaCartolina = daCartolina;
+	globals.ma_utl_setStatus(globals.Status.EDIT,frm.controller.getName());
+	globals.ma_utl_showFormInDialog(frm.controller.getName(),'Inserisci timbratura');
 }
 
 /**
@@ -9310,9 +9326,7 @@ function disegnaVisualizzazioneCoperturaTurni(dSCop, frmName, frmContName, dal, 
 				    var str = giorno_" + i + ";\
 					var desc = null;\
 					var firstIndex = utils.stringPosition(str,'_',0,1);\
-					var secondIndex = utils.stringPosition(str,'_',0,2);\
 					var prefix = utils.stringLeft(str,firstIndex - 1);\
-					var suffix = utils.stringRight(str,str.length - secondIndex);\
 					\
 					desc = prefix;\
 					\
@@ -9752,7 +9766,7 @@ function disegnaVisualizzazioneCoperturaCalendario(dSCop, idDitta, numGiorni, nu
  * 
  * Restituisce gli identificativi delle fasce orarie appartenenti al raggruppamento desiderato
  *
- * @param {Number} idRaggrFasce
+ * @param {Number} [idRaggrFasce]
  * 
  * @return {Array<Number>}
  * 
@@ -9767,12 +9781,55 @@ function getFasceOrarieDaRaggruppamento(idRaggrFasce)
 	var fsFasce = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.FASCE_ORARIE_RAGGRUPPAMENTI);
 	if(fsFasce.find())
 	{
-		fsFasce.iddittaraggruppamentofascia = idRaggrFasce;
-		if(fsFasce.search())
-		   arrFasce = globals.foundsetToArray(fsFasce,'idfasciaoraria');	
+		if(idRaggrFasce && idRaggrFasce > 0)
+		{	fsFasce.iddittaraggruppamentofascia = idRaggrFasce;
+			if(fsFasce.search())
+			   arrFasce = globals.foundsetToArray(fsFasce,'idfasciaoraria');
+		}
 	}
 	
 	return arrFasce;
+}
+
+/**
+ * @AllowToRunInFind
+ * 
+ * Restituisce i distinti codici alternativi (tipi turno) delle fasce selezionate
+ * 
+ * @param {Array<Number>} [arrFasce]
+ * @return {Array<String>} 
+ * 
+ * @properties={typeid:24,uuid:"A5745336-EEB2-4471-B25A-5BE0BBB93AE4"}
+ */
+function getCodiciTurno(arrFasce)
+{
+	/** @type Array<Number> */
+	var arrCodiciTurno = [];
+	
+	/** @type Array<String> */
+	var arrCodiciTurnoDistinti = [];
+	
+	/** @type {JSFoundset<db:/ma_presenze/e2fo_fasceorarie>}*/
+	var fsFasce = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.FASCE_ORARIE);
+	if(fsFasce.find())
+	{
+		if(arrFasce != null && arrFasce.length)
+			fsFasce.idfasciaoraria = arrFasce;
+		if(fsFasce.search())
+		{
+		   fsFasce.sort('codalternativo asc');	
+		   arrCodiciTurno = globals.foundsetToArray(fsFasce,'codalternativo');	
+		}
+	}
+	
+	// recuperiamo solo i codici distinti
+	for(var c = 0; c < arrCodiciTurno.length; c++)
+	{
+		if(arrCodiciTurnoDistinti.indexOf(arrCodiciTurno[c]) == -1 && arrCodiciTurno[c] != null)
+			arrCodiciTurnoDistinti.push(arrCodiciTurno[c].toString());
+	}
+	
+	return arrCodiciTurnoDistinti;
 }
 
 /**
