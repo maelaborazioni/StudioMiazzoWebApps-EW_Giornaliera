@@ -70,7 +70,6 @@ function annullaFasceProg(event)
 	
 }
 
-
 /**
  * Callback method for when form is shown.
  *
@@ -90,7 +89,6 @@ function onShow(firstShow, event)
 		elements.btn_salva.enabled = false;
 	
 	elements.tab_prog_turni_turni.readOnly = false;
-			
 }
 
 /**
@@ -107,10 +105,15 @@ function onShow(firstShow, event)
 function onHide(event) 
 {
 	_super.onHide(event);
+	
+	elements.tab_prog_turni_turni.readOnly = false;
+	
 	// eventuale ridisegno della giornaliera correntemente visualizzata 
 	var selTabName = forms.svy_nav_fr_openTabs.vTabObjects[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]];
     if(selTabName && utils.stringLeft(selTabName.program,16) == 'LEAF_Giornaliera')
        forms.giorn_header.preparaGiornaliera();
-        
+    else if(utils.stringLeft(selTabName.program,22) == 'PT_VisualizzaCopertura')
+       forms.giorn_prog_turni_visualizza_copertura_situazione.fromOutsideRefresh();
+    
     return true;
 }
