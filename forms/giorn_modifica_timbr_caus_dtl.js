@@ -122,7 +122,7 @@ function confermaModificaTimbr(event)
 				_timbrGg.setHours(parseInt(utils.stringLeft(timbratura_oremin, 2), 10));
 				_timbrGg.setMinutes(parseInt(utils.stringRight(timbratura_oremin, 2), 10));
 				recTimbr.dataeora = _timbrGg;
-				
+												
 				if(!databaseManager.commitTransaction()) 
 				{
 					globals.ma_utl_showErrorDialog('Inserimento timbratura non riuscito, riprovare. </br> Ripristinare le timbrature per verificare la presenza di eventuali doppioni.', 'Modifica timbratura');
@@ -139,6 +139,11 @@ function confermaModificaTimbr(event)
 				// analizza pre conteggio
 				forms.giorn_timbr.analizzaPreConteggio(_gg);
 	
+				// se la timbratura è stata inserita per una giornata non ancora compilata viene eseguita 
+				// la compilazione di base che ve a creare il record nella tabella e2giornaliera
+				if(globals.getIdGiornalieraDaIdLavGiorno(idLav,_timbrGg) == null)
+				   globals.compilaDalAlSingolo(idLav,[_gg]);
+				
 				// situazione anomalia partenza
 				var anomaliaPost = globals.getAnomalieGiornata(idLav, utils.dateFormat(_timbrGg, globals.ISO_DATEFORMAT));
 				

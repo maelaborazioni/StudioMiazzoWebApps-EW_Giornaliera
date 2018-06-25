@@ -242,7 +242,7 @@ function process_timbratura_multipla(event)
 			// se la timbratura è stata inserita per una giornata non ancora compilata viene eseguita 
 			// la compilazione di base che ve a creare il record nella tabella e2giornaliera
 			if(globals.getIdGiornalieraDaIdLavGiorno(idLav,vGiornoTimbr) == null)
-			   globals.compilaDalAlSingolo(idLav,[vGiornoTimbr.getDate()]);
+			   globals.compilaDalAlSingoloSync(idLav,[vGiornoTimbr.getDate()],vGiornoTimbr.getFullYear() * 100 + vGiornoTimbr.getMonth() + 1);
 			
 			// situazione anomalia partenza
 			var anomaliaPost = globals.getAnomalieGiornata(idLav, utils.dateFormat(vGiornoTimbr, globals.ISO_DATEFORMAT));

@@ -73,17 +73,26 @@ function onShowForm(_firstShow, _event) {
  * @param {JSEvent} event the event that triggered the action
  * @param {Number}  [idlavoratore]
  * @param {Date} [day]
+ * @param {Boolean} [daCartolina]
  *
  * @properties={typeid:24,uuid:"FB953547-A9EF-4A7C-BA13-8C60544160AD"}
  */
-function confermaAggiungiTimbr(event,idlavoratore,day) {
+function confermaAggiungiTimbr(event,idlavoratore,day,daCartolina) {
+	
+	var nrBadge = globals.getNrBadge(idlavoratore ? idlavoratore : foundset.iddip,day); 
+	if(nrBadge == null)
+	{
+		globals.ma_utl_showWarningDialog('Nessun numero di badge associato al dipendente. L\'inserimento non può avvenire','Inserimento timbratura immediata');
+		globals.ma_utl_setStatus(globals.Status.BROWSE,event.getFormName());
+		globals.svy_mod_closeForm(event);
+	}
 	
 	databaseManager.setAutoSave(false);
 	
 	if(foundset.newRecord())
 	{
 		foundset.iddip = idlavoratore;
-		foundset.nr_badge = globals.getNrBadge(foundset.iddip,day);
+		foundset.nr_badge = nrBadge;
 		foundset.senso = _senso;
 		foundset.indirizzo = _orologio;
 		foundset.timbeliminata = false;
@@ -106,8 +115,17 @@ function confermaAggiungiTimbr(event,idlavoratore,day) {
 		globals.ma_utl_showWarningDialog('Inserimento non riuscito, si prega di riprovare','Inserimento timbratura immediata');
 	}
 	else
-  	    globals.ma_utl_showWarningDialog('Timbratura inserita correttamente!','Inserimento timbratura immediata');
-  	    
+	{
+		// se la timbratura è stata inserita per una giornata non ancora compilata viene eseguita 
+		// la compilazione di base che ve a creare il record nella tabella e2giornaliera
+		if(globals.getIdGiornalieraDaIdLavGiorno(idlavoratore,day) == null)
+		   globals.compilaDalAlSingoloSync(idlavoratore,[_gg],day.getFullYear() * 100 + day.getMonth() + 1);
+		
+		if(daCartolina)
+			forms.giorn_header.preparaGiornaliera(false,null,true);
+		else
+			globals.ma_utl_showWarningDialog('Timbratura inserita correttamente!','Inserimento timbratura immediata');
+	}   
 	globals.ma_utl_setStatus(globals.Status.BROWSE,event.getFormName());
 	globals.svy_mod_closeForm(event);
 }

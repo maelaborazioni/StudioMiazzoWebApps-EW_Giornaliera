@@ -130,12 +130,6 @@ function process_timbratura(event)
 				var _hh;
 				var _mm;
 				
-				// TODO caso solo cartolina
-				//			if (_solocartolina)
-				//			    /** @type {JSRecord<db:/ma_presenze/e2timbraturedipendenti>} */
-				//				recTimbr = fsTimbr.getRecord(fsTimbr.newRecord(false));
-				//			else
-	
 				recTimbr = foundset.getSelectedRecord();
 				recTimbr['iddip'] = idLav;
 				recTimbr['nr_badge'] = globals.getNrBadge(idLav, _timbrGg);

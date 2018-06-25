@@ -11,6 +11,19 @@ typeid:4,
 uuid:"02BF2E64-DF71-403F-B9EC-F2DDF39E1F50"
 },
 {
+formIndex:8,
+location:"220,30",
+name:"lbl_info",
+onActionMethodID:"67E7E890-4230-4021-A569-D6F45D0AB006",
+showClick:false,
+size:"20,20",
+styleClass:"btn_info",
+toolTipText:"Visualizza tutte le timbrature della giornata",
+transparent:true,
+typeid:7,
+uuid:"275B362E-F03B-42C6-A086-FC5C17651089"
+},
+{
 dataProviderID:"_ggSucc",
 extendsID:"93330D1A-48C4-4C96-A2C1-0A452F60F497",
 location:"405,25",
@@ -26,7 +39,7 @@ uuid:"4A3D23BA-55C8-49A1-8A07-85379B2226C3"
 },
 {
 extendsID:"B7F15ED7-DA92-46C9-89F1-5AB06E72D911",
-location:"170,60",
+location:"181,60",
 onActionMethodID:"895EAA9D-C879-4058-897F-49D9085CD269",
 rolloverCursor:12,
 typeid:7,
@@ -43,10 +56,16 @@ uuid:"78EAC5F3-FB5D-4196-A8FE-D385AA048CFD"
 },
 {
 extendsID:"BDA53240-C6B3-40B8-8C54-0850CB1650AA",
-location:"199,60",
+location:"210,60",
 rolloverCursor:12,
 typeid:7,
 uuid:"A5D07D43-99A8-47FC-9B6C-CE36BD3436B2"
+},
+{
+extendsID:"E14DE136-5487-48B3-99C6-1C31CBD390C2",
+height:95,
+typeid:19,
+uuid:"B7E272D2-0E28-4C4F-8495-4B51D9EA8E9F"
 },
 {
 extendsID:"2710DA05-813F-485A-9852-9EAF11EE6CD7",
@@ -72,7 +91,7 @@ visible:false
 }
 ],
 name:"giorn_aggiungi_timbr_immediata_dtl",
-size:"240,480",
+size:"250,480",
 styleName:"leaf_style",
 typeid:3,
 uuid:"56633565-71D4-4295-A176-B88F61AD0D20"
