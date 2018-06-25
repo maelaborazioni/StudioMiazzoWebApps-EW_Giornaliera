@@ -76,8 +76,30 @@ function AggiornaSediInstallazione(_rec){
  * @properties={typeid:24,uuid:"0B4FBCDA-8B18-47D3-BC72-A1DB400ED57E"}
  * @AllowToRunInFind
  */
-function confermaDittaPeriodo(event)
+function confermaDittaPeriodoCartolina(event)
 {	
+	var params = {
+        processFunction: process_ditta_periodo_cartolina,
+        message: '', 
+        opacity: 0.5,
+        paneColor: '#434343',
+        textColor: '#EC1C24',
+        showCancelButton: false,
+        cancelButtonText: '',
+        dialogName : '',
+        fontType: 'Arial,4,25',
+        processArgs: [event]
+    };
+	plugins.busy.block(params);
+}
+
+/**
+ * @param {JSEvent} event
+ *
+ * @properties={typeid:24,uuid:"569D3EFC-41A4-4195-AD15-90AE4959C7A8"}
+ */
+function process_ditta_periodo_cartolina(event)
+{
 	// Controlla che i campi siano compilati
 	if(!isFilled())
 	{
@@ -90,7 +112,8 @@ function confermaDittaPeriodo(event)
 	globals.svy_mod_closeForm(event);
 	
 	globals.apriCartolina(event, _idditta, _anno, _mese, _anno, _mese, _idgruppoinst, _codgrlav,_to_sec_user$user_id.sec_user_to_sec_user_to_lavoratori.idlavoratore);	
-	
+
+	plugins.busy.unblock();
 }
 
 /** *
@@ -102,22 +125,17 @@ function confermaDittaPeriodo(event)
  */
 function onShowForm(_firstShow, _event) 
 {
-	//_super.onShowForm(_firstShow, _event);
+	plugins.busy.prepare();
 	
 	elements.fld_cod_ditta.readOnly = false
 	elements.fld_mese.readOnly = false
 	elements.fld_anno.readOnly = false
-//	if(elements.btn_selditta)
-//	   elements.btn_selditta.enabled = true
-//	if(elements.btn_selgruppoinst)
-//	   elements.btn_selgruppoinst.enabled = false
-//    if(elements.fld_cod_gr_inst)
-//	   elements.fld_cod_gr_inst.enabled = false
-//    if(elements.fld_gruppo_inst)
-//       elements.fld_gruppo_inst.enabled = false
-//	if(elements.btn_selgruppoinst)
-//       elements.btn_selgruppoinst.enabled = true
-			
+	if(elements.btn_selditta)
+	   elements.btn_selditta.enabled = false
+	
+	_anno = globals.TODAY.getFullYear();
+	_mese = globals.TODAY.getMonth() + 1;
+		
     controller.focusField('fld_cod_ditta',true);
 }
 

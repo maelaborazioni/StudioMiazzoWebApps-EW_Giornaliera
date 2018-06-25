@@ -12,54 +12,53 @@ function apriPopupCartolinaDipendente(_event)
 	var _popUpMenu = plugins.window.createPopupMenu();
 	
 	var _popUpMenuTimbr = _popUpMenu.addMenu('Gestione timbrature ');
-//	    if(_anomalia)
-//	    	_popUpMenuTimbr.setEnabled(true);
-//	    else
-//	        _popUpMenuTimbr.setEnabled(false);
 	
-	//	var _addTimbr = _popUpMenuTimbr.addMenuItem('Aggiungi una timbratura ',aggiungiTimbraturaDaMenu);
-	//	_addTimbr.methodArguments = [_event,true];
 	var _addTimbrMulti = _popUpMenuTimbr.addMenuItem('Aggiungi timbrature ',aggiungiTimbratureMultiDaMenu);
 		_addTimbrMulti.methodArguments = [_event,true];
-	var _delTimbr = _popUpMenuTimbr.addMenuItem('Elimina la timbratura ',eliminazioneTimbratura);
-	    _delTimbr.methodArguments = [_event,true];
-	    var indirizzoTimbratura = _idTimbratura ? scopes.giornaliera.getOrologioTimbratura(_idTimbratura) : null;
-	    _delTimbr.enabled = indirizzoTimbratura != null 
-//		                       && !globals.isGiornoConteggiato(_idLavoratore,forms[_event.getFormName()].foundset.getSelectedRecord()['giorno'])
-		                       && (indirizzoTimbratura == globals.TipiTimbratura.WEB 
-		                       	   || indirizzoTimbratura == globals.TipiTimbratura.MANUALE
-							       || indirizzoTimbratura == globals.TipiTimbratura.CAUSALIZZATA)
-	   
+	
+	if(globals.ma_utl_hasKey(globals.Key.TIMBR_DIPENDENTE_ELIMINA))
+	{
+		var _delTimbr = _popUpMenuTimbr.addMenuItem('Elimina la timbratura ',eliminazioneTimbratura);
+		    _delTimbr.methodArguments = [_event,true];
+		    var indirizzoTimbratura = _idTimbratura ? scopes.giornaliera.getOrologioTimbratura(_idTimbratura) : null;
+		    _delTimbr.enabled = indirizzoTimbratura != null 
+			                       && !globals.isGiornoConteggiato(forms[_event.getFormName()].foundset.getSelectedRecord()['idlavoratore'],forms[_event.getFormName()].foundset.getSelectedRecord()['giorno'])
+			                       && (indirizzoTimbratura == globals.TipiTimbratura.WEB 
+			                       	   || indirizzoTimbratura == globals.TipiTimbratura.MANUALE
+								       || indirizzoTimbratura == globals.TipiTimbratura.CAUSALIZZATA)
+	}
+	
 	_popUpMenuTimbr.addSeparator();
 	
-// TODO verificare se vale la pena di riabilitarlo		                      
-//	var _teoricoTimbr = _popUpMenuTimbr.addMenuItem('Completa con teorico ',completaConOrarioTeorico);
-//    _teoricoTimbr.methodArguments = [_event,true,_idLavoratore,_giorno];
-//		
-//    _popUpMenu.addSeparator();
+    // TODO verificare se vale la pena di riabilitarlo		                      
+	//	var _teoricoTimbr = _popUpMenuTimbr.addMenuItem('Completa con teorico ',completaConOrarioTeorico);
+	//    _teoricoTimbr.methodArguments = [_event,true,_idLavoratore,_giorno];
+		
+    _popUpMenu.addSeparator();
     
-// TODO verificare se vale la pena di riabilitarlo
-//    var _popUpMenuEv = _popUpMenu.addMenu('Gestione assenze ');
-//         if(_squadrato)
-//        	 _popUpMenuEv.setEnabled(true);
-//         else
-//             _popUpMenuEv.setEnabled(false);
-//    var _gestEv = _popUpMenuEv.addMenuItem('Vai alla gestione assenze ',vaiAllaGestioneAssenze);     
-//        _gestEv.methodArguments = [_event];
-//        _gestEv.enabled = globals.ma_utl_hasKey(globals.Key.RICHIESTA_PERMESSI);
+    // TODO verificare se vale la pena di riabilitarlo
+	//    var _popUpMenuEv = _popUpMenu.addMenu('Gestione assenze ');
+	//         if(_squadrato)
+	//        	 _popUpMenuEv.setEnabled(true);
+	//         else
+	//             _popUpMenuEv.setEnabled(false);
+	//    var _gestEv = _popUpMenuEv.addMenuItem('Vai alla gestione assenze ',vaiAllaGestioneAssenze);     
+	//        _gestEv.methodArguments = [_event];
+	//        _gestEv.enabled = globals.ma_utl_hasKey(globals.Key.RICHIESTA_PERMESSI);
 	
     // la parte di operazioni sulle stampe è visibile solamente a chi può poi accedere allo storico operazioni
     // per poter scaricare il file generato    
-    if(globals.ma_utl_hasKey(globals.Key.STORICO_OPERAZIONI))
-    {
-	    var _popUpMenuStampe = _popUpMenuTimbr.addMenu('Stampe');
-	    var _popUpMenuStampeCart = _popUpMenuStampe.addMenuItem('Cartolina mensile',stampaCartolinaMensileDipendente);
-	    _popUpMenuStampeCart.methodArguments = [_event,globals.getAnno(),globals.getMese()];
-	    var _popUpMenuStampeAnomalie = _popUpMenuStampe.addMenuItem('Anomalie timbrature',stampaAnomalieTimbratureDipendente);
-	    var periodo = globals.getPeriodo();
-	    _popUpMenuStampeAnomalie.methodArguments = [_event,globals.getFirstDatePeriodo(periodo),globals.getLastDatePeriodo(periodo)];
-    }
-	if(_source != null)
+//    if(globals.ma_utl_hasKey(globals.Key.STORICO_OPERAZIONI))
+//    {
+//	    var _popUpMenuStampe = _popUpMenuTimbr.addMenu('Stampe');
+//	    var _popUpMenuStampeCart = _popUpMenuStampe.addMenuItem('Cartolina mensile',stampaCartolinaMensileDipendente);
+//	    _popUpMenuStampeCart.methodArguments = [_event,globals.getAnno(),globals.getMese()];
+//	    var _popUpMenuStampeAnomalie = _popUpMenuStampe.addMenuItem('Anomalie timbrature',stampaAnomalieTimbratureDipendente);
+//	    var periodo = globals.getPeriodo();
+//	    _popUpMenuStampeAnomalie.methodArguments = [_event,globals.getFirstDatePeriodo(periodo),globals.getLastDatePeriodo(periodo)];
+//    }
+	
+    if(_source != null)
 		_popUpMenu.show(_source);
 }
 
@@ -300,29 +299,6 @@ function onRenderTimbrCartolina(event)
 }
 
 /**
- * Handle record selected.
- *
- * @param {JSEvent} event the event that triggered the action
- * @param _form
- *
- * @private
- *
- * @properties={typeid:24,uuid:"D2C80294-4DC7-414F-8119-1FC96CE377B8"}
- */
-function onRecordSelection(event, _form) 
-{
-	if (foundset.getSize() > 0 && foundset['idgiornaliera'])
-	{		
-		forms.giorn_mostra_timbr_cartolina.foundset.loadRecords(foundset['idgiornaliera']);
-		forms.giorn_mostra_timbr_cartolina.aggiornaRiepilogoTimbrature(foundset['idgiornaliera']);
-		forms.giorn_mostra_timbr_cartolina.aggiornaRiepilogoTimbratureCausalizzate(foundset['idgiornaliera']);
-    }
-    else
-    	forms.giorn_mostra_timbr.aggiornaBadgeEffettivo();
-}
-
-/**
- * TODO generated, please specify type and doc for the params
  * @param _itemInd
  * @param _parItem
  * @param _isSel
@@ -570,4 +546,25 @@ function modificaTimbraturaDipendente(_event)
 	{
 		databaseManager.setAutoSave(autosave);
 	}
+}
+/**
+ * Handle record selected.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ * @param _form
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"19BE79FB-3FA0-4007-9A28-B45C9C957F8E"}
+ */
+function onRecordSelection(event, _form) 
+{
+	var currIdGiornaliera = -1;
+	
+	if (foundset && foundset.getSize() > 0 && foundset['idgiornaliera']) 
+		currIdGiornaliera = foundset['idgiornaliera'];
+		
+	forms.giorn_mostra_timbr_cartolina.foundset.loadRecords(currIdGiornaliera);
+	forms.giorn_mostra_timbr_cartolina.aggiornaRiepiloghiGiorno(currIdGiornaliera);
+	forms.giorn_mostra_timbr_cartolina.aggiornaBadgeEffettivo();				
 }

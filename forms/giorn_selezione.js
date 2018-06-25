@@ -70,7 +70,6 @@ function AggiornaSediInstallazione(_rec){
 
 
 /**
- *
  * @param {JSEvent} event the event that triggered the action
  *
  * @private
@@ -93,10 +92,11 @@ function confermaDittaPeriodo(event)
         processArgs: [event]
     };
 	plugins.busy.block(params);
-	
 }
 
 /**
+ * Operazione di apertura della giornaliera
+ * 
  * @param {JSEvent} event
  *
  * @properties={typeid:24,uuid:"34E51643-32C4-4C68-A910-949A3C99DBEF"}
@@ -371,8 +371,9 @@ function onDataChangeDitta(oldValue, newValue, event)
 	var _foundsetGrInst = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.SEDI_INSTALLAZIONE);
 	/** @type {JSFoundset<db:/ma_anagrafiche/ditte_presenzegruppigestione>} */
 	var _foundsetGruppi = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE_PRESENZE_GRUPPI);				
-			
-	_foundset.addFoundSetFilterParam('ditte_to_ditte_presenze.ore_gestioneepi2', '=', 1);
+	
+	var arrDitteEpi = globals.getDitteGestiteEpi2();
+	_foundset.addFoundSetFilterParam('idditta','IN',arrDitteEpi);
 	_foundset.addFoundSetFilterParam('codice', '=', newValue);
 	_foundset.loadAllRecords();
 	
