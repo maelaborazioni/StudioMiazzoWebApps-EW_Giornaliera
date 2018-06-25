@@ -23,6 +23,12 @@ var vFileString = null;
  */
 var vNrBadge = null;
 /**
+ * @type {Date}
+ *
+ * @properties={typeid:35,uuid:"BACFBED2-27FD-4707-8120-E4E1152BF309",variableType:93}
+ */
+var vAl = null;
+
 /**
  * Perform the element default action.
  *
@@ -79,8 +85,10 @@ function process_conferma_eliminazione(event)
 		// recupero delle righe non selezionate del dataset
 		var frmName = 'giorn_manutenzione_timbr_tbl_temp';
 		var fs = forms[frmName].foundset;
-			
-		// recupero delle stringhe di timbratura relative ai record delle timbrature da eliminare
+		
+		// recupero delle stringhe di timbratura relative ai record delle timbrature non da eliminare
+		// (per ricostruire il file delle timbrature non associate aggiornato) 
+		fs.loadAllRecords();
 		var strNewTimbr = '';
 		for(var t = 1; t <= fs.getSize(); t++)
 			if(fs.getRecord(t)['selected'] == 0)
@@ -101,7 +109,7 @@ function process_conferma_eliminazione(event)
 		if(response['returnValue'])
 		   globals.ma_utl_showWarningDialog(response['returnMessage'],'Gestione file timbrature non associate');
 		else
-		   globals.ma_utl_showErrorDialog('Errore l\'operazione : ' + response['returnMessage'],'Gestione file timbrature non associate');		
+		   globals.ma_utl_showErrorDialog('Errore durante l\'operazione : ' + response['returnMessage'],'Gestione file timbrature non associate');		
 		}
 	catch(ex)
 	{
@@ -128,6 +136,8 @@ function process_conferma_eliminazione(event)
 function onShow(firstShow, event) 
 {
 	plugins.busy.prepare();
+	vAl = null;
+	vNrBadge = null;
 }
 
 /**
@@ -147,7 +157,11 @@ function onActionFilter(event)
 	
 	if(fs.find())
 	{
-		fs['badge'] = vNrBadge;
+		if(vNrBadge)
+			fs['badge'] = vNrBadge;
+		if(vAl)
+			fs['giorno'] = '<=' + globals.dateFormat(vAl,globals.ISO_DATEFORMAT) + '|yyyyMMdd';
+		
 		fs.search();
 	
 		elements.btn_filter.enabled = false;
@@ -171,7 +185,7 @@ function onActionUnfilter(event)
 	
 	fs.loadAllRecords();
 	vNrBadge= null;	
-	
+	vAl = null;
 	elements.btn_filter.enabled = true;
 	elements.btn_unfilter.enabled = false;
 }
