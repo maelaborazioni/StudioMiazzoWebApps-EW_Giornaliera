@@ -259,7 +259,10 @@ function onSelLimitaAlPeriodo(oldValue, newValue, event) {
 function annullaSelezioneFiltri(event) {
 	
 	globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].filtro_anag = false;
-    globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());	
+	globals.ma_utl_setStatus(globals.Status.BROWSE,forms.giorn_filtri_anagrafici.controller.getName());
+	globals.ma_utl_setStatus(globals.Status.BROWSE,forms.giorn_filtri_timbrature.controller.getName());
+	globals.ma_utl_setStatus(globals.Status.BROWSE,forms.giorn_filtri_giornaliera.controller.getName());
+	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());	
 	globals.azzeraFiltri();
 	globals.svy_mod_closeForm(event);
 	
