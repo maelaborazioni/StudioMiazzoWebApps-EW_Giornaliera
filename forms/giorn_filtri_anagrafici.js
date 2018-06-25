@@ -194,6 +194,13 @@ var vSediLavoroStringText = '';
 var vIdDitta = -1;
 
 /**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"3B497828-790D-42D5-A15F-5587E8CB6544",variableType:4}
+ */
+var vIdDittaClassificazione = -1;
+
+/**
  * @param {JSEvent} event
  * @param {Number} oldValue
  * @param {Number} newValue
@@ -238,9 +245,28 @@ function onDataChangeRaggruppamento(oldValue, newValue, event)
 	vRaggruppamentiDettaglioString = '';
 	
 	elements.fld_raggruppamento.enabled = newValue;
+	//elements.chk_group_raggruppamento.enabled = newValue;
+	
 	if(!newValue)
 		vRaggruppamentiDettaglio = null;
-	
+	else
+	{
+		var realValues = new Array();
+		var displayValues = new Array();
+		
+		var ds = globals.getRaggruppamentiDitta(idditta);
+		if(ds && ds.getMaxRowIndex())
+		{
+			for(var r = 1; r <= ds.getMaxRowIndex(); r++)
+			{
+				// iddittaclassificazione
+				realValues.push(ds.getValue(r,1) + ' ' + ds.getValue(r,2));
+				// codice + ' - ' + descrizione
+				displayValues.push(ds.getValue(r,2) + ' - ' + ds.getValue(r,3))
+			}
+		}		
+		application.setValueListItems('vls_raggruppamenti',displayValues,realValues);
+	}
 	return onDataChangeFilter(oldValue, newValue, event);
 }
 
@@ -260,9 +286,10 @@ function onDataChangeRaggruppamento(oldValue, newValue, event)
 function onDataChangeRaggruppamentoDettaglio(oldValue, newValue, event)
 {
 	var split = newValue.split(" ");
-	vRaggruppamentoTipoCampo = split[0];
+//	vRaggruppamentoTipoCampo = split[0];
     vRaggruppamentoCodice = split[1];
-    
+    vIdDittaClassificazione = split[0];
+	
     vRaggruppamentiDettaglioString = '';
 	reset('vRaggruppamentiDettaglio');
 	return true;
@@ -368,9 +395,32 @@ function filterGruppiLavoratori(fs)
  */
 function filterRaggruppamento(fs)
 {
+	if(vRaggruppamentoTipoCampo == null)
+	{
+		globals.ma_utl_showWarningDialog('Selezionare un tipo di raggruppamento','Filtri anagrafici per stampa');
+	    return null;
+	}
+	
 	return filter(fs
 		          , 'SELECT idDettaglio FROM [dbo].[F_Ditta_Raggruppamenti_Al](?,?,?)'
 				  , [vIdDitta, vDateTo, vRaggruppamentoTipoCampo]);
+}
+
+/**
+ * @param {JSFoundSet<db:/ma_anagrafiche/ditte_classificazioni>} fs
+ * 
+ * @return {JSFoundSet}
+ *
+ * @properties={typeid:24,uuid:"573A6A41-D826-4D6E-AA22-22604EBD95B3"}
+ */
+function filterRaggruppamentoDettaglio(fs)
+{
+	fs.addFoundSetFilterParam('iddittaclassificazione','IN',vIdDittaClassificazione);
+	return fs;
+	
+//	return filter(fs
+//		          , 'SELECT idDettaglio FROM [dbo].[F_Ditta_Raggruppamenti_Al](?,?,?)'
+//				  , [vIdDitta, vDateTo, vRaggruppamentoTipoCampo]);
 }
 
 /**
@@ -506,7 +556,7 @@ function updateGruppoLavoratori(record)
  *
  * @properties={typeid:24,uuid:"AE7917A4-E403-44DD-8559-3FC384C42B1E"}
  */
-function updateRaggruppamento(records)
+function updateRaggruppamentoDettaglio(records)
 {
 	if(records)
 	{
@@ -538,7 +588,8 @@ function updateRaggruppamento(records)
 function onShowForm(firstShow, event)
 {
 	vDateTo = globals.TODAY;
-    
+    resetAll();
+	
 	foundset.removeFoundSetFilterParam('ftr_idditta');
     foundset.addFoundSetFilterParam('idditta','=',forms.giorn_header.idditta,'ftr_idditta');
     foundset.loadAllRecords();

@@ -5,10 +5,10 @@ dataProviderID:"vGruppoLavoratoriString",
 displayType:1,
 editable:false,
 enabled:false,
-location:"45,280",
+location:"50,230",
 name:"fld_gruppo_lavoratori",
 scrollbars:32,
-size:"205,20",
+size:"195,20",
 typeid:4,
 uuid:"0987AA14-4007-4202-8789-068818924178",
 visible:false
@@ -27,7 +27,7 @@ null,\
 }",
 enabled:false,
 horizontalAlignment:0,
-location:"25,280",
+location:"30,230",
 name:"btn_gruppo_lavoratori",
 onActionMethodID:"09683411-0331-4A08-BF5E-656611194522",
 rolloverCursor:12,
@@ -111,7 +111,7 @@ typeid:4,
 uuid:"22BA4511-D05D-4C94-BAD1-7BE216D2A52A"
 },
 {
-height:210,
+height:260,
 partType:5,
 typeid:19,
 uuid:"2792FE2B-12EE-45F4-970E-E8B616BFB71A"
@@ -188,7 +188,7 @@ null,\
 null,\
 \"'AG_Lkp_ClassificazioniDettaglio'\",\
 null,\
-\"'filterRaggruppamento'\",\
+\"'filterRaggruppamentoDettaglio'\",\
 null,\
 null,\
 \"'codice'\",\
@@ -196,7 +196,7 @@ null,\
 null,\
 null,\
 \"true\",\
-\"'updateRaggruppamento'\",\
+\"'updateRaggruppamentoDettaglio'\",\
 null,\
 null,\
 null,\
@@ -330,7 +330,7 @@ borderType:"EmptyBorder,0,0,0,0",
 dataProviderID:"vFilterGruppiLavoratori",
 displayType:4,
 horizontalAlignment:0,
-location:"5,280",
+location:"10,230",
 name:"chk_gruppo_lavoratori",
 onActionMethodID:"-1",
 onDataChangeMethodID:"89682543-48C3-4D4A-A16F-A909066A64A0",
@@ -339,8 +339,7 @@ styleClass:"check",
 toolTipText:"Abilita filtro",
 transparent:true,
 typeid:4,
-uuid:"723EB3BC-6897-4EF2-BFA6-0106939EC3EC",
-visible:false
+uuid:"723EB3BC-6897-4EF2-BFA6-0106939EC3EC"
 },
 {
 customProperties:"methods:{\
@@ -419,6 +418,21 @@ typeid:4,
 uuid:"96B5994D-D392-4670-966B-7E35620FA84D"
 },
 {
+borderType:"EmptyBorder,0,0,0,0",
+dataProviderID:"vGroupRaggruppamento",
+displayType:4,
+enabled:false,
+horizontalAlignment:0,
+location:"225,160",
+name:"chk_group_raggruppamento",
+size:"20,20",
+styleClass:"check",
+toolTipText:"Raggruppamento",
+transparent:true,
+typeid:4,
+uuid:"9CB12AEB-D4D5-4F01-8C78-E95310563E05"
+},
+{
 dataProviderID:"vRaggruppamento",
 displayType:2,
 editable:false,
@@ -462,15 +476,14 @@ typeid:4,
 uuid:"ADC12815-1D0C-45D8-81E4-DD4DE1A0B279"
 },
 {
-location:"5,260",
+location:"10,210",
 margin:"0,2,0,0",
 name:"lbl_gruppo_lavoratori",
 size:"124,20",
 text:"Gruppo lavoratori",
 transparent:true,
 typeid:7,
-uuid:"C39AF3DE-63D0-43FA-9A1D-149245814A1A",
-visible:false
+uuid:"C39AF3DE-63D0-43FA-9A1D-149245814A1A"
 },
 {
 borderType:"EmptyBorder,0,0,0,0",
