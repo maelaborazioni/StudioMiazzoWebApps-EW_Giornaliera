@@ -43,6 +43,17 @@ function onActionRefresh(event) {
 }
 
 /**
+ * @properties={typeid:24,uuid:"78EEC4A3-54E7-4109-81E2-B69891EF68DE"}
+ */
+function fromOutsideRefresh()
+{
+	var event = new JSEvent();
+	event.data = {formname : forms.giorn_prog_turni_visualizza_copertura_situazione.controller.getName()};
+	
+	forms.giorn_visualizza_copertura.refreshCoperturaTurni(event);
+}
+
+/**
  * @param {JSEvent} event
  *
  * @properties={typeid:24,uuid:"9EA407FD-5F37-422D-BF74-817EDE4BEFD3"}
@@ -50,6 +61,7 @@ function onActionRefresh(event) {
 function process_refresh(event)
 {
 	try
+	
 	{
 		setLastSelection(event);	
 		forms.giorn_visualizza_copertura.refreshCoperturaTurni(event);

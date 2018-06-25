@@ -69,6 +69,12 @@ typeid:7,
 uuid:"90AD4C86-ECF2-431C-957A-FA313D994743"
 },
 {
+extendsID:"0B2397A0-64B0-465B-844F-A538DA162825",
+typeid:16,
+uuid:"A804DA04-2B04-491A-A252-DC852B08C1ED",
+visible:true
+},
+{
 customProperties:"methods:{\
 onDataChangeMethodID:{\
 arguments:null,\

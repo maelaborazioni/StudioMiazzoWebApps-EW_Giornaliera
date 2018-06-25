@@ -205,15 +205,18 @@ function onShowForm(_firstShow, _event,_soloCartolina) {
 	
 	plugins.busy.prepare();
 	
-	if(lavoratori_to_ditte.tipologia == globals.Tipologia.ESTERNA)
+	if(!_soloCartolina)
 	{
-		elements.nominativo.visible = false;
-		elements.nominativo_esterni.visible = true;
-	}
-	else
-	{
-	    elements.nominativo.visible = true;
-  	    elements.nominativo_esterni.visible = false;
+		if(lavoratori_to_ditte.tipologia == globals.Tipologia.ESTERNA)
+		{
+			elements.nominativo.visible = false;
+			elements.nominativo_esterni.visible = true;
+		}
+		else
+		{
+		    elements.nominativo.visible = true;
+	  	    elements.nominativo_esterni.visible = false;
+		}
 	}
 	
 	/** @type {RuntimeTabPanel}*/

@@ -1186,7 +1186,7 @@ function process_prepara_giornaliera()
  */
 function abilitaTabTimbrature(abilita,idDitta,daPannello)
 {
-	var causalizzate = globals.haTimbratureCausalizzate(idDitta ? idDitta : forms.giorn_header.idditta);
+	var causalizzate = scopes.giornaliera.haTimbratureCausalizzate(idDitta ? idDitta : forms.giorn_header.idditta);
 	
 	elements.lbl_riep_timbr.visible = abilita;
 	elements.lbl_riep_timbr_header.visible = abilita;

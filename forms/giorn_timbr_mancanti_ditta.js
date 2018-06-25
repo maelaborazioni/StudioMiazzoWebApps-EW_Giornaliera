@@ -291,7 +291,8 @@ function preparaAnomalieDitta(_idDitta,_anno,_mese,_limitaAlGiorno,arrDipFiltrat
     	var decForm = solutionModel.cloneForm(decFormName
                                               ,solutionModel.getForm(decFormOriName));
 
-    	var tabTimbrDipHeader = fs.codice + ' - ' + fs.lavoratori_to_persone.nominativo;
+    	var tabTimbrDipHeader = fs.codice + ' - ' + (globals.getTipologiaDitta(_idDitta) == globals.Tipologia.ESTERNA ? 
+    			                                     fs.lavoratori_to_lavoratori_personeesterne.nominativo : fs.lavoratori_to_persone.nominativo);
     	tabPanelTimbrDip.newTab('tab_timbr_mancanti_dip_' + arrDipAnomalie[i],tabTimbrDipHeader,dipForm);
     	var tabListPres = tabPanelTimbrDip.newTab('tab_pres_' + arrDipAnomalie[i],'Giornaliera',presForm);    	
     	tabListPres.toolTipText = 'Visualizza la giornaliera mensile del dipendente';

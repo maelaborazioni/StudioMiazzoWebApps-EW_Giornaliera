@@ -304,7 +304,8 @@ function onDataChangeDitta(oldValue, newValue, event)
 	
 	var _foundset = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE)
 			
-//	_foundset.addFoundSetFilterParam('ditte_to_ditte_presenze.ore_gestioneepi2', '=', 1);
+    var arrDitteEpi = globals.getDitteGestiteEpi2();
+	_foundset.addFoundSetFilterParam('idditta','IN',arrDitteEpi);
 	_foundset.addFoundSetFilterParam('ditte_to_ditte_sedi.codtiposede','=',globals.TipiSedeLavoro.SEDE_OPERATIVA)
 	_foundset.addFoundSetFilterParam('codice', '=', newValue)
 	_foundset.loadAllRecords()

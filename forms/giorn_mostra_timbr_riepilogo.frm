@@ -18,7 +18,6 @@ items:[
 {
 containsFormID:"3D7BA6D5-C6B3-4433-A62E-B44B5D2C6A14",
 location:"10,20",
-relationName:null,
 text:"giorn_mostra_timbr_riepilogo_tbl",
 typeid:15,
 uuid:"9B9248E2-14CE-480D-9A82-6C246C8D4B93"
@@ -34,9 +33,9 @@ typeid:16,
 uuid:"939BA7FE-A5E9-47CF-8620-CDA240DB0991"
 },
 {
-anchors:12,
+anchors:14,
 fontType:"Arial,1,10",
-horizontalAlignment:0,
+horizontalAlignment:2,
 location:"75,80",
 name:"lbl_mostra_timbr_riep_totale",
 size:"75,20",

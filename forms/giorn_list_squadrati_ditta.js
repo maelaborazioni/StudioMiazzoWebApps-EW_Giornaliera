@@ -295,7 +295,8 @@ function preparaSquadratureDitta(idDitta,anno,mese,limitaDalGiorno,limitaAlGiorn
         var decForm = solutionModel.cloneForm(decFormName
                                               ,solutionModel.getForm(decFormOriName));
 
-    	var tabSquadrDipHeader = fs.codice + ' - ' + fs.lavoratori_to_persone.nominativo;
+    	var tabSquadrDipHeader = fs.codice + ' - ' + (globals.getTipologiaDitta(idDitta) == globals.Tipologia.ESTERNA ? 
+    												  fs.lavoratori_to_lavoratori_personeesterne.nominativo : fs.lavoratori_to_persone.nominativo);
     	tabPanelSquadrDip.newTab('tab_squadrati_dip_' + arrDipSquadrati[i],tabSquadrDipHeader,dipForm);
     	var tabListPres = tabPanelSquadrDip.newTab('tab_pres_' + arrDipSquadrati[i],'Giornaliera',presForm);    	
     	tabListPres.toolTipText = 'Visualizza la giornaliera mensile del dipendente';
