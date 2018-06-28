@@ -5389,11 +5389,11 @@ function stampaCartolinePresenze(event) {
 	form.selectedElements = forms && forms.giorn_header && forms.giorn_header.idlavoratore ? [forms.giorn_header.idlavoratore] : [];
 	var formName = forms.stampa_cartolina_presenze.controller.getName();
 	formOpt.vPeriodo = formOpt.vPeriodoAl = new Date(globals.getAnno(),globals.getMese()-1,1);
-		
 	var fs = forms.giorn_header.lavoratori_to_ditte;
+		
 	globals.ma_utl_setStatus(globals.Status.EDIT,formName);
 	globals.ma_utl_showFormInDialog(formName, 'Opzioni di stampa', fs);
-	
+	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),true);
 }
 
 /**
@@ -5453,6 +5453,8 @@ function stampaAnomalieTimbrature(event)
 	var form = forms.stampa_anomalie_timbrature.controller.getName();
 	
 	var fs = forms.giorn_header.lavoratori_to_ditte;
+	
+	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),false);
 	globals.ma_utl_setStatus(globals.Status.EDIT,form);
 	globals.ma_utl_showFormInDialog(form, 'Opzioni di stampa', fs);
 }

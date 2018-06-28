@@ -16,6 +16,7 @@ function stampaGiornalieraPannello()
 	var formName = form.controller.getName();
 	var fs = forms.giorn_header.lavoratori_to_ditte;
 	
+	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),false);
 	globals.ma_utl_setStatus(globals.Status.EDIT, formName);
 	globals.ma_utl_showFormInDialog(formName, 'Opzioni di stampa', fs);
 }
@@ -36,9 +37,10 @@ function stampaCartolinePresenzePannello(event)
 	formOpt.vPeriodo = formOpt.vPeriodoAl = new Date(globals.getAnno(),globals.getMese()-1,1);
 		
 	var fs = forms.giorn_header.lavoratori_to_ditte;
+	
+	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),true);
 	globals.ma_utl_setStatus(globals.Status.EDIT,formName);
 	globals.ma_utl_showFormInDialog(formName, 'Opzioni di stampa', fs);
-	
 }
 
 /**
@@ -53,6 +55,8 @@ function stampaAnomalieTimbraturePannello(event)
 	var form = forms.stampa_anomalie_timbrature.controller.getName();
 	
 	var fs = forms.giorn_header.lavoratori_to_ditte;
+	
+	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),false);
 	globals.ma_utl_setStatus(globals.Status.EDIT,form);
 	globals.ma_utl_showFormInDialog(form, 'Opzioni di stampa', fs);
 }
@@ -81,19 +85,6 @@ function ottieniRapportoTracciatoMensa(event)
 								  ,3
 								  ,globals.getGruppoInstallazione()
 								  ,globals.getGruppoLavoratori());
-	
-//	var url = globals.WS_URL + "/Giornaliera/RapportoTracciatoMensa";
-//	var _responseObj = globals.getWebServiceResponse(url, params);
-//	
-//	if(_responseObj != null)
-//	{
-//		if(_responseObj['returnValue'] == true && _responseObj['dipArray'] != null)					
-//			return _responseObj['dipArray'];
-//		else
-//			return null;
-//	}
-//	else				
-//		globals.ma_utl_showErrorDialog('Il server non risponde, si prega di riprovare','Errore di comunicazione');
 	
 	return null;
 }

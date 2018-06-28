@@ -1,205 +1,194 @@
-/**
- * @properties={typeid:35,uuid:"4C6C58DA-E250-4B13-908A-EC27CDC6FA41",variableType:-4}
- */
-var vContratto = null;
-
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"79D0D226-19F6-4614-BE9F-45DEB6E77B7A"}
- */
-var vContrattoString = '';
-
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"26EBC461-657A-43AA-A347-42E5D0103FA0"}
- */
-var vContrattoStringText = '';
-
-/**
- * @properties={typeid:35,uuid:"F86919C8-4EC5-4E54-B93A-7E5B23617D00",variableType:-4}
- */
-var vGruppoLavoratori = null;
-
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"5D49EBF7-54B1-45A8-9F07-3A613BBCB8A0"}
- */
-var vGruppoLavoratoriString = '';
-
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"C3BD89E9-E48A-41A1-B7F6-CEFE9A73AA00"}
- */
-var vGruppoLavoratoriStringText = '';
+// CAMPI AUSILIARI
 
 /**
  * @type {Date}
  * 
- * @properties={typeid:35,uuid:"81141AB0-E792-431E-9908-53F90DF028FC",variableType:93}
+ * @properties={typeid:35,uuid:"0BAEF5F7-7D1F-4058-A7F1-9FDC56A4D9BC",variableType:93}
  */
 var vDateTo = null;
+
+// CAMPI DI FILTRAGGIO
+
+/**
+ * @properties={typeid:35,uuid:"F97FCE58-7002-427A-85B6-6049E129F854",variableType:-4}
+ */
+var vContratto = null;
+/**
+ * @type {String}
+ *
+ * @properties={typeid:35,uuid:"2838AE44-420A-4F21-BC5E-4B9978382B33"}
+ */
+var vContrattoString = '';
 
 /**
  * @type {Number}
  *
- * @properties={typeid:35,uuid:"6D71B9A2-9FC7-4796-9A79-24382D33EB8E",variableType:4}
+ * @properties={typeid:35,uuid:"9B8AC3B8-0161-45CC-845B-A26F22FA7C9F",variableType:4}
  */
 var vFilterContratto = 0;
 
 /**
- * @type {Number}
- *
- * @properties={typeid:35,uuid:"D62B9055-CFD0-4695-9695-0E90D6BFFB2D",variableType:4}
- */
-var vFilterPosizioneInps = 0;
-
-/**
- * @type {Number}
- *
- * @properties={typeid:35,uuid:"2938BB76-6D06-4B1D-B779-EAE98ACD18CB",variableType:4}
- */
-var vFilterQualifica = 0;
-
-/**
- * @type {Number}
- *
- * @properties={typeid:35,uuid:"46D360A8-CE46-4C10-B9A6-4188F8555313",variableType:4}
- */
-var vFilterRaggruppamento = 0;
-
-/**
- * @type {Number}
- *
- * @properties={typeid:35,uuid:"60B6A39C-7F4C-41FE-B4B0-138511A81C68",variableType:4}
- */
-var vFilterSedeLavoro = 0;
-
-/**
- * @type {Number}
- *
- * @properties={typeid:35,uuid:"F4F1CBB1-4964-4616-A90C-7F95D3A3CCFA",variableType:4}
- */
-var vFilterGruppiLavoratori = 0;
-
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"CAEA198C-2485-4F9F-A540-BFB591A78989"}
- */
-var vPosizioneInpsString = '';
-
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"0D0FE283-127C-4FC2-B937-99B84601A87E"}
- */
-var vPosizioneInpsStringText = '';
-
-/**
- * @properties={typeid:35,uuid:"CB7236F7-8ABD-4969-8ED6-F0468433C7A6",variableType:-4}
- */
-var vPosizioniInps = null;
-
-/**
- * @properties={typeid:35,uuid:"A72D1674-0C36-4160-8B8D-5765FC24BB50",variableType:-4}
+ * @properties={typeid:35,uuid:"CD5A1D78-F4C2-4E6D-B009-F5B79C3B2104",variableType:-4}
  */
 var vQualifica = null;
-
 /**
  * @type {String}
  *
- * @properties={typeid:35,uuid:"88904EA1-1D66-444E-BC2C-7578CD5A127A"}
+ * @properties={typeid:35,uuid:"DF88657A-7541-46BC-B592-1748C6FDCEEF"}
  */
 var vQualificaString = '';
 
 /**
- * @type {String}
+ * @type {Number}
  *
- * @properties={typeid:35,uuid:"05114A66-C310-43C4-861B-7AE96E1D5CB9"}
+ * @properties={typeid:35,uuid:"ECC05527-33DA-40F9-8D38-F3AA73F939A5",variableType:4}
  */
-var vQualificaStringText = '';
+var vFilterQualifica = 0;
 
 /**
- * @properties={typeid:35,uuid:"24B667EE-0256-4B9C-9485-419BEA6D395E",variableType:-4}
+ * @properties={typeid:35,uuid:"CC4D2CEC-3267-4CCD-A2FA-931C2FE76D84",variableType:-4}
  */
-var vRaggruppamentiDettaglio = null;
-
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"B63F750B-E913-474A-9B58-DE881C4A5EF0"}
- */
-var vRaggruppamentiDettaglioString = '';
-
+var vPosizioniInps = null;
 /**
  * @type {String}
  *
- * @properties={typeid:35,uuid:"C77EB8A1-5A7A-4CB2-AB11-7966B37D9981"}
+ * @properties={typeid:35,uuid:"F0FCD0E9-4FD5-4ED6-8FAA-54037D76A4B7"}
  */
-var vRaggruppamentiDettaglioStringText = '';
+var vPosizioneInpsString = '';
 
-/**
- * @type {String}
- * 
- * @properties={typeid:35,uuid:"02FF2ABD-265C-4E2B-9129-995DCFF1E9BA"}
- */
-var vRaggruppamento = null;
 /**
  * @type {Number}
  *
- * @properties={typeid:35,uuid:"27DED2F1-66E0-432A-BF01-215E5012EA5F",variableType:4}
+ * @properties={typeid:35,uuid:"D3A5360C-7C68-4B7B-9F40-39D27AD58694",variableType:4}
  */
-var vRaggruppamentoCodice = 0;
+var vFilterPosizioneInps = 0;
 
 /**
- * @properties={typeid:35,uuid:"0F527AED-D49F-438E-BDDE-03FF3A5A2F39",variableType:-4}
- */
-var vRaggruppamentoTipoCampo = null;
-
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"32B42C8B-01EC-4BB3-B4CD-D2F9CD082622"}
- */
-var vRaggruppamentoString = '';
-
-/**
- * @properties={typeid:35,uuid:"65222EA5-04B6-4998-A5EC-C840DA771AE5",variableType:-4}
+ * @properties={typeid:35,uuid:"4E317D07-E34F-4DE7-847A-E93871FFFEDB",variableType:-4}
  */
 var vSediLavoro = null;
 
 /**
  * @type {String}
  *
- * @properties={typeid:35,uuid:"6DFDB937-6D15-4BAA-866F-611D69D38615"}
+ * @properties={typeid:35,uuid:"6FD59D39-348E-4817-9986-C481FAFFE748"}
  */
 var vSediLavoroString = '';
 
 /**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"4C0057C1-272F-4CF4-9BFF-364B60282F4E",variableType:4}
+ */
+var vFilterGroupLavoratori = 0;
+
+/**
+ * @properties={typeid:35,uuid:"CA029EE3-867D-4F9B-9798-56FDACB81A49",variableType:-4}
+ */
+var vGroupLavoratori = null;
+
+/**
  * @type {String}
  *
- * @properties={typeid:35,uuid:"3978E54A-CDE8-495F-8796-4C6CBCE60C25"}
+ * @properties={typeid:35,uuid:"1260538C-0A13-41EE-A22C-FB4D3A7B4EFA"}
  */
-var vSediLavoroStringText = '';
+var vGroupLavoratoriString = '';
 
 /**
  * @type {Number}
  *
- * @properties={typeid:35,uuid:"C4F6DCFA-E42C-43D0-94A1-15982E67C91E",variableType:4}
+ * @properties={typeid:35,uuid:"FFC43244-E035-4B4E-A470-3C91FB7B686B",variableType:4}
  */
-var vIdDitta = -1;
+var vFilterSedeLavoro = 0;
+
+/**
+ * @type {String}
+ * 
+ * @properties={typeid:35,uuid:"C1CE91B7-FD46-46A8-9547-F3E94BB88BBB"}
+ */
+var vRaggruppamento = null;
 
 /**
  * @type {Number}
  *
- * @properties={typeid:35,uuid:"3B497828-790D-42D5-A15F-5587E8CB6544",variableType:4}
+ *
+ * @properties={typeid:35,uuid:"86A10DA5-D322-4871-AC34-D99231CD65DA",variableType:4}
+ */
+var vRaggruppamentoCodice = 0;
+
+/**
+ * @properties={typeid:35,uuid:"1865F06F-BF16-4FC7-A3C0-74B299593F6A",variableType:-4}
+ */
+var vRaggruppamentoTipoCampo = null;
+
+/**
+ * @type {String}
+ *
+ * @properties={typeid:35,uuid:"3A7125CC-398D-494C-A898-EDB0E74B6602"}
+ */
+var vRaggruppamentoString = '';
+
+/**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"A9E17AB3-E758-4950-BE36-F3B29477B201",variableType:4}
+ */
+var vFilterRaggruppamento = 0;
+
+/**
+ * @properties={typeid:35,uuid:"561AFAD0-25C4-4918-A4D3-ACEEB2ADD19A",variableType:-4}
+ */
+var vRaggruppamentiDettaglio = null;
+/**
+ * @type {String}
+ *
+ * @properties={typeid:35,uuid:"BAE6D062-BD9F-4D6D-BBCD-11BEE4B2016B"}
+ */
+var vRaggruppamentiDettaglioString = '';
+
+/**
+ * @type {Boolean}
+ *
+ * @properties={typeid:35,uuid:"A05CF6D6-AFF6-4592-B77C-E0EF24043421",variableType:-4}
+ */
+var vGroupContratto = false;
+/**
+ * @type {Boolean}
+ *
+ * @properties={typeid:35,uuid:"0A23EC41-BAD2-432D-BB64-71A591159BFF",variableType:-4}
+ */
+var vGroupQualifica = false;
+/**
+ * @type {Boolean}
+ *
+ * @properties={typeid:35,uuid:"ED4175E4-7C5F-4871-AA11-86C2E58C653C",variableType:-4}
+ */
+var vGroupPosizioneinps = false;
+/**
+ * @type {Boolean}
+ *
+ * @properties={typeid:35,uuid:"CA1E9753-82A9-444C-9E2F-34963179A8F5",variableType:-4}
+ */
+var vGroupSedelavoro = false;
+/**
+ * @type {Boolean}
+ *
+ * @properties={typeid:35,uuid:"E8A1141A-F444-4D3F-B037-D2EE6458178E",variableType:-4}
+ */
+var vGroupRaggruppamento = false;
+/**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"92CD7F5A-0EF4-4ADC-9AF9-FD10E59E1FD7",variableType:4}
+ */
+var vGroupTiporaggruppamento = 0;
+
+/**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"82CB3226-B463-4DDB-A795-0F2027B334D0",variableType:4}
  */
 var vIdDittaClassificazione = -1;
-
 /**
  * @param {JSEvent} event
  * @param {Number} oldValue
@@ -254,7 +243,7 @@ function onDataChangeRaggruppamento(oldValue, newValue, event)
 		var realValues = new Array();
 		var displayValues = new Array();
 		
-		var ds = globals.getRaggruppamentiDitta(idditta);
+		var ds = globals.getClassificazioniDitta(idditta);
 		if(ds && ds.getMaxRowIndex())
 		{
 			for(var r = 1; r <= ds.getMaxRowIndex(); r++)
@@ -341,7 +330,7 @@ function reset(name)
  */
 function filterContratto(fs)
 {
-	return filter(fs, 'SELECT idGruppoContrattuale FROM [dbo].[F_Ditta_Contratti_Al](?,?)', [vIdDitta, vDateTo]);
+	return filter(fs, 'SELECT idGruppoContrattuale FROM [dbo].[F_Ditta_Contratti_Al](?,?)', [idditta, vDateTo]);
 }
 
 /**
@@ -351,7 +340,7 @@ function filterContratto(fs)
  */
 function filterQualifica(fs)
 {
-	return filter(fs, 'SELECT idTabQualifiche FROM [dbo].[F_Ditta_Qualifiche_Al](?,?)', [vIdDitta, vDateTo]);
+	return filter(fs, 'SELECT idTabQualifiche FROM [dbo].[F_Ditta_Qualifiche_Al](?,?)', [idditta, vDateTo]);
 }
 
 /**
@@ -361,7 +350,7 @@ function filterQualifica(fs)
  */
 function filterPosizioneInps(fs)
 {
-	return filter(fs, 'SELECT idDittaInps FROM [dbo].[F_Ditta_PosizioneInps_Al](?,?)', [vIdDitta, vDateTo]);
+	return filter(fs, 'SELECT idDittaInps FROM [dbo].[F_Ditta_PosizioneInps_Al](?,?)', [idditta, vDateTo]);
 }
 
 /**
@@ -371,7 +360,7 @@ function filterPosizioneInps(fs)
  */
 function filterSedeLavoro(fs)
 {
-	fs = filter(fs, 'SELECT idDittaSede FROM [dbo].[F_Ditta_Sedi_Al](?,?)', [vIdDitta, vDateTo]);
+	fs = filter(fs, 'SELECT idDittaSede FROM [dbo].[F_Ditta_Sedi_Al](?,?)', [idditta, vDateTo]);
 	fs.addFoundSetFilterParam('codtiposede', globals.ComparisonOperator.EQ, globals.codSEDEOPERATIVA);
 	
 	return fs;
@@ -384,7 +373,7 @@ function filterSedeLavoro(fs)
  */
 function filterGruppiLavoratori(fs)
 {
-	fs.addFoundSetFilterParam('idditta','=',vIdDitta);
+	fs.addFoundSetFilterParam('idditta','=',idditta);
 	return fs;
 }
 
@@ -403,7 +392,7 @@ function filterRaggruppamento(fs)
 	
 	return filter(fs
 		          , 'SELECT idDettaglio FROM [dbo].[F_Ditta_Raggruppamenti_Al](?,?,?)'
-				  , [vIdDitta, vDateTo, vRaggruppamentoTipoCampo]);
+				  , [idditta, vDateTo, vRaggruppamentoTipoCampo]);
 }
 
 /**
@@ -460,7 +449,6 @@ function updateContratto(records)
 		);
 		
 		vContrattoString = temp.join('\n');
-		vContrattoStringText = temp.join(',');
 		vContratto = records.map(function(record){ return record.radicecontratto; });
 	}
 }
@@ -484,7 +472,6 @@ function updateQualifica(records)
 		);
 		
 		vQualificaString = temp.join('\n');
-		vQualificaStringText = temp.join(',');
 		vQualifica = records.map(function(record){ return record.radicequalifica; });
 	}
 }
@@ -508,7 +495,6 @@ function updatePosizioneInps(records)
 		);
 		
 		vPosizioneInpsString = temp.join('\n');
-		vPosizioneInpsStringText = temp.join(',');
 		vPosizioniInps = records.map(function(record){ return record.posizioneinps; });
 	}
 }
@@ -532,7 +518,6 @@ function updateSedeLavoro(records)
 		);
 		
 		vSediLavoroString = temp.join('\n');
-		vSediLavoroStringText = temp.join(',');
 		vSediLavoro = records.map(function(record){ return record.iddittasede; });
 	}
 }
@@ -546,8 +531,8 @@ function updateGruppoLavoratori(record)
 {
 	if(record)
 	{
-		vGruppoLavoratoriString = record.codice + ' - ' + record.descrizione;
-		vGruppoLavoratori = record.codice; 
+		vGroupLavoratoriString = record.codice + ' - ' + record.descrizione;
+		vGroupLavoratori = record.codice; 
 	}
 }
 
@@ -570,7 +555,6 @@ function updateRaggruppamentoDettaglio(records)
 		);
 		
 		vRaggruppamentiDettaglioString = temp.join('\n');
-		vRaggruppamentiDettaglioStringText = temp.join(',');
 		vRaggruppamentiDettaglio = records.map(function(record){ return record.codice; });
 	}
 }
@@ -647,6 +631,7 @@ function filterLavoratori(fs)
 function gotoBrowse()
 {
 	elements.fld_raggruppamento.enabled = false;
+	elements.btn_raggruppamento.enabled = false;
 }
 
 /**
@@ -666,8 +651,8 @@ function onDataChangeGruppoLavoratori(oldValue, newValue, event)
 {
     if(!newValue)
     {
-    	vGruppoLavoratori = '';
-    	vGruppoLavoratoriString = '';
+    	vGroupLavoratori = '';
+    	vGroupLavoratoriString = '';
     	elements.btn_gruppo_lavoratori.enabled = false;
     }
     else
