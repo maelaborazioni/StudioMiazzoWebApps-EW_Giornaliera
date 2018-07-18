@@ -374,7 +374,7 @@ function AggiornaSelezioneEvento(_rec,_event){
  */
 function aggiornaSelezioneEventoDaAlbero(returnDataProvider, tableName, mouseX, mouseY){
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2eventi>} */    
+	/** @type {JSFoundSet<db:/ma_presenze/e2eventi>} */    
     var eventiFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.EVENTI);
     
     if(eventiFs.find())
@@ -400,7 +400,7 @@ function aggiornaSelezioneEventoDaAlbero(returnDataProvider, tableName, mouseX, 
  */
 function confermaSelezioneEventoDaAlbero(idevento)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2eventi>} */    
+	/** @type {JSFoundSet<db:/ma_presenze/e2eventi>} */    
     var eventiFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.EVENTI);
     
     if(eventiFs.find())
@@ -552,7 +552,7 @@ function onDataChangeEvento(oldValue, newValue, event) {
 	else if(uriEn == escape('#'))
 		newValue = '##';
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2eventi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2eventi>} */
 	var _foundset = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.EVENTI);
 	
 	// Filtra gli eventi selezionabili
@@ -769,7 +769,7 @@ function isFilled()
 function verificaOrarioTeorico()
 {
 	// Verifica che l'evento sia Ordinario o Sostitutivo, altrimenti annulla il controllo
-	/** @type {JSFoundset<db:/ma_presenze/e2eventi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2eventi>} */
 	var eventiFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'e2eventi');
 	if(eventiFs && eventiFs.find())
 	{

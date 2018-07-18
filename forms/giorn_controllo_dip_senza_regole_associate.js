@@ -264,7 +264,7 @@ function onShowForm(_firstShow, _event)
  * @properties={typeid:24,uuid:"DF7710B1-3A6E-4A88-A061-900FD82A88CD"}
  */
 function onHide(event) {
-	
+	plugins.busy.unblock();	
 	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
 	return _super.onHide(event)
 }

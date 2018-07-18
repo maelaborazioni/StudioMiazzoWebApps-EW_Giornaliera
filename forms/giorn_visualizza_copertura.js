@@ -98,7 +98,7 @@ function refreshCoperturaAssenze(event) {
 //		}
 //		else
 //		{
-//			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+//			/** @type {JSFoundSet<db:/svy_framework/sec_user_right>}*/
 //			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
 //			
 //			if (fsUserRight.find())
@@ -107,7 +107,7 @@ function refreshCoperturaAssenze(event) {
 //				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
 //				if (fsUserRight.search()) 
 //				{
-//					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+//					/** @type {JSFoundSet<db:/ma_framework/v_sec_filtrilavoratori>} */
 //					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
 //					if (fsSecLavoratori.find()) 
 //					{
@@ -472,7 +472,7 @@ function refreshCoperturaTurni(event) {
 //		}
 //		else
 //		{
-//			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+//			/** @type {JSFoundSet<db:/svy_framework/sec_user_right>}*/
 //			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
 //			
 //			if (fsUserRight.find())
@@ -481,7 +481,7 @@ function refreshCoperturaTurni(event) {
 //				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
 //				if (fsUserRight.search()) 
 //				{
-//					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+//					/** @type {JSFoundSet<db:/ma_framework/v_sec_filtrilavoratori>} */
 //					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
 //					if (fsSecLavoratori.find()) 
 //					{
@@ -847,7 +847,7 @@ function refreshCoperturaCalendario(event) {
 //		}
 //		else
 //		{
-//			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+//			/** @type {JSFoundSet<db:/svy_framework/sec_user_right>}*/
 //			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
 //			
 //			if (fsUserRight.find())
@@ -856,7 +856,7 @@ function refreshCoperturaCalendario(event) {
 //				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
 //				if (fsUserRight.search()) 
 //				{
-//					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+//					/** @type {JSFoundSet<db:/ma_framework/v_sec_filtrilavoratori>} */
 //					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
 //					if (fsSecLavoratori.find()) 
 //					{
@@ -1063,7 +1063,7 @@ function refreshCoperturaGiornaliera(event)
 //		}
 //		else
 //		{
-//			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+//			/** @type {JSFoundSet<db:/svy_framework/sec_user_right>}*/
 //			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
 //			
 //			if (fsUserRight.find())
@@ -1072,7 +1072,7 @@ function refreshCoperturaGiornaliera(event)
 //				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
 //				if (fsUserRight.search()) 
 //				{
-//					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+//					/** @type {JSFoundSet<db:/ma_framework/v_sec_filtrilavoratori>} */
 //					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
 //					if (fsSecLavoratori.find()) 
 //					{
@@ -1191,7 +1191,7 @@ function refreshCoperturaGiornaliera(event)
 	    
     for(var i = currIndex; i < maxIndex; i++)
     {
-    	/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori>} */
+    	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>} */
     	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
     	if(fs.find())
     	{
@@ -1358,7 +1358,7 @@ function refreshCoperturaCommesse(event)
 		}
 		else
 		{
-			/** @type {JSFoundset<db:/svy_framework/sec_user_right>}*/
+			/** @type {JSFoundSet<db:/svy_framework/sec_user_right>}*/
 			var fsUserRight = databaseManager.getFoundSet(globals.Server.SVY_FRAMEWORK, 'sec_user_right');
 			
 			if (fsUserRight.find())
@@ -1367,7 +1367,7 @@ function refreshCoperturaCommesse(event)
 				fsUserRight.sec_user_right_to_sec_security_key.is_client = 1;
 				if (fsUserRight.search()) 
 				{
-					/** @type {JSFoundset<db:/ma_framework/v_sec_filtrilavoratori>} */
+					/** @type {JSFoundSet<db:/ma_framework/v_sec_filtrilavoratori>} */
 					var fsSecLavoratori = databaseManager.getFoundSet(globals.Server.MA_FRAMEWORK, 'v_sec_filtrilavoratori');
 					if (fsSecLavoratori.find()) 
 					{
@@ -1458,7 +1458,7 @@ function refreshCoperturaCommesse(event)
     }
 	
     for(var i = currIndex; i < maxIndex; i++){
-    	/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori>} */
+    	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>} */
     	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
     	if(fs.find())
     	{

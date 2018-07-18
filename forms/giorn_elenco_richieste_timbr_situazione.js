@@ -174,7 +174,7 @@ function FiltraCdc(fs)
 {
 	var idDittaClassificazione = null;
 	
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte_classificazioni>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte_classificazioni>}*/
 	var fsCl = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,'ditte_classificazioni');
 	if(fsCl.find())
 	{

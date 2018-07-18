@@ -200,7 +200,7 @@ function preparaAnomalieDitta(_idDitta,_anno,_mese,_limitaAlGiorno,arrDipFiltrat
         
     for (var i = currIndex; i < maxIndex; i++)
     {
-    	/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori>} */
+    	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>} */
     	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
     	if(fs.find())
     	{

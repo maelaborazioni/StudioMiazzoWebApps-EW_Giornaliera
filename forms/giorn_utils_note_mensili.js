@@ -66,7 +66,7 @@ function confermaNote(event)
 	{
 		if(_noteIns)
 		{
-			/** @type {JSFoundset<db:/ma_presenze/e2giornalierainfomensili>}*/
+			/** @type {JSFoundSet<db:/ma_presenze/e2giornalierainfomensili>}*/
 		    var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,'e2giornalierainfomensili');
 		    if(fs.find())
 		    {

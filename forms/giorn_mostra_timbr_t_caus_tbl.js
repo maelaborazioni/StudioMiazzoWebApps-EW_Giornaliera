@@ -53,7 +53,7 @@ function ApriPopupCaus(event)
 function eliminaTimbraturaCausalizzata(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event,_idTimbratura)
 {
 	// eliminazione timbratura orologio o timbratura inserita manualmente
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratureservizio>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratureservizio>} */
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE_SERVIZIO);
 
 	if (_fs.find())
@@ -120,7 +120,7 @@ function cambiaSensoTimbraturaCausalizzata(_itemInd, _parItem, _isSel, _parMenTx
 {
 	databaseManager.setAutoSave(false);
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratureservizio>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratureservizio>}*/
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 		                                  globals.Table.TIMBRATURE_SERVIZIO);
 	
@@ -335,7 +335,7 @@ function rendiTimbrEffettiva(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _
  */
 function recuperaTimbrOriginali(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event, _idLav, _date)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratureservizio>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratureservizio>} */
 	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE_SERVIZIO);
 	
 	if(fs.find())

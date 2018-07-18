@@ -278,7 +278,7 @@ function apriPopupMostraTimbr(_event)
     var _enableGgSucc = false;
     var _enableGgPrec = false;
     
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>} */
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE);
 
 	// nel caso di timbratura con senso di entrata va disabilitata l'opzione di spostamento al giorno prec
@@ -565,7 +565,7 @@ function modificaTimbratura(_event)
 		if (forms.giorn_header._vNrBadge != null)
 		{
 			var _frm = forms.giorn_modifica_timbr_dtl;
-			/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+			/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 			var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE);
 			var _timbrOri = null;
 			var _sensoOri = null;
@@ -735,7 +735,7 @@ function eliminazioneTimbratura(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt
  */
 function eliminaTimbratura(idTimbratura,bSilenzioso)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>} */
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE);
 
 	if (_fs.find())
@@ -960,7 +960,7 @@ function cambiaSenso(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event)
 	//recupero l'id della timbratura selezionata 
 	var _idTimbrature = forms[_event.getFormName()].foundset[_event.getElementName()];
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 		                                  globals.Table.TIMBRATURE);
 	
@@ -1055,7 +1055,7 @@ function spostaGgSucc(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event)
 	//recupero l'id della timbratura selezionata 
 	var _idTimbrature = foundset[_event.getElementName()];
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 		                                  globals.Table.TIMBRATURE);
 	
@@ -1171,7 +1171,7 @@ function spostaGgPrec(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event)
 	//recupero l'id della timbratura selezionata 
 	var _idTimbrature = foundset[_event.getElementName()];
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 		                                  globals.Table.TIMBRATURE);
 	
@@ -1440,7 +1440,7 @@ function rendiTimbrCausalizzata(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt
 	var _idTimbrature = foundset[_event.getElementName()];
 
 	if (_idTimbrature) {
-		/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+		/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 		var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 			globals.Table.TIMBRATURE);
 
@@ -1464,7 +1464,7 @@ function rendiTimbrCausalizzata(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt
 		databaseManager.startTransaction();
 		// eliminazione timbratura effettiva
 		_fs.timbeliminata = 1;
-		/** @type {JSFoundset<db:/ma_presenze/e2timbratureservizio>} */
+		/** @type {JSFoundSet<db:/ma_presenze/e2timbratureservizio>} */
 		var fsCaus = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE_SERVIZIO);
 		var recCaus = fsCaus.getRecord(fsCaus.newRecord(false));
 		if (recCaus) {

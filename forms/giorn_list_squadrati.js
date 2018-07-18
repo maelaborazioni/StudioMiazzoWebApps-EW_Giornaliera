@@ -698,7 +698,7 @@ function eliminaEventoDaMenuSquadrature(_itemInd, _parItem, _isSel, _parMenTxt, 
 	
 	selectedTabIndex = globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].selected_tab;
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2giornalieraeventi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.GIORNALIERA_EVENTI);
 	var msg = '';
 	if (_idGiornEv) 
@@ -944,7 +944,7 @@ function cambiaEventoSquadrature(event)
 /**
  * Filtra i dipendenti correntemente visualizzati
  * 
- * @param {JSFoundset<db:/ma_anagrafiche/lavoratori>} fs
+ * @param {JSFoundSet<db:/ma_anagrafiche/lavoratori>} fs
  *
  * @properties={typeid:24,uuid:"DF7D0BD1-BCFD-4D71-82C5-BC0C72291AB4"}
  * @AllowToRunInFind

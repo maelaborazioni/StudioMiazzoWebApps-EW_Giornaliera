@@ -34,7 +34,7 @@ function eliminaFasciaForzata(event) {
 	databaseManager.startTransaction();
     
 	// foundset generale della giornaliera
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
 	var giornalieraFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.GIORNALIERA);
 	// foundset di giorn_timbr sul quale effettuare il search
 	var fs = forms['giorn_timbr_temp'].foundset;

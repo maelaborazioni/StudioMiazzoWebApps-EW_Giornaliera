@@ -91,7 +91,7 @@ function completaConOrarioTeorico(_itemInd, _parItem, _isSel, _parMenTxt, _menuT
 //		databaseManager.startTransaction();
 //		
 //		// creazione record nella tabella lavoratori_giustificativitesta
-//		/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori_giustificativitesta>}*/
+//		/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori_giustificativitesta>}*/
 //		var fsTesta = forms.giorn_cart_header.lavoratori_to_lavoratori_giustificativitesta; //TODO databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE, 'lavoratori_giustificativitesta');	
 //		
 //		var newTesta = fsTesta.getRecord(fsTesta.newRecord(false));
@@ -124,7 +124,7 @@ function completaConOrarioTeorico(_itemInd, _parItem, _isSel, _parMenTxt, _menuT
 //			//verifica anomalia pre inserimento
 //			var anomaliaIniziale = globals.getAnomalieGiornata(_idLavoratore, utils.dateFormat(_giorno, globals.ISO_DATEFORMAT));
 //
-//			/** @type {JSFoundset<db:/cliente_000165/e2timbraturedipendenti>} */
+//			/** @type {JSFoundSet<db:/cliente_000165/e2timbraturedipendenti>} */
 //			var fsTimbr = databaseManager.getFoundSet('cliente_000165',
 //                                                      globals.Table.TIMBRATURE_DIPENDENTI);
 //			
@@ -455,7 +455,7 @@ function modificaTimbraturaDipendente(_event)
 		if (forms.giorn_header._vNrBadge != null)
 		{
 			var _frm = forms.giorn_modifica_timbr_dtl;
-			/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+			/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 			var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE);
 			var _timbrOri = null;
 			var _sensoOri = null;

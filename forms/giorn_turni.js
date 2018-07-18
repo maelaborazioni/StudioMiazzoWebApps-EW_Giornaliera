@@ -237,7 +237,7 @@ function onRecordSelection(event)
 		   arrRegolePeriodo.push(idRegola);
 	}
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2regolefasceammesse>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2regolefasceammesse>}*/
 	var fsAmmesse = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.REGOLE_FASCE_AMMESSE);
 	if(fsAmmesse.find())
 	{

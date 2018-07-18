@@ -144,7 +144,7 @@ function aggiornaEventiNelGiornoGiornaliera()
 	// caso standard : giornaliera normale o di budget con almeno un evento inserito
     if (foundset['idgiornaliera'] != null) 
 	{
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
 	var giornalieraFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.GIORNALIERA);
 		if (giornalieraFs && giornalieraFs.find()) {
 		giornalieraFs.idgiornaliera = foundset['idgiornaliera'];
@@ -176,7 +176,7 @@ function aggiornaEventiNelGiornoGiornaliera()
  */
 function aggiornaTimbratureNelGiornoGiornaliera()
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
 	var giornalieraFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'e2giornaliera');
 	if(giornalieraFs && giornalieraFs.find())
 	{
@@ -1241,7 +1241,7 @@ function eliminazioneEvento(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _e
 		var msg;
 
 		if (_idGiornalieraEventi) {
-			/** @type {JSFoundset<db:/ma_presenze/e2giornalieraeventi>} */
+			/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
 			var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.GIORNALIERA_EVENTI);
 			if (_fs.find()) {
 				_fs.idgiornalieraeventi = _idGiornalieraEventi;

@@ -183,7 +183,7 @@ function onHide(event) {
  */
 function onDataChangeEventoNew(oldValue, newValue, event) 
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2eventi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2eventi>} */
 	var _foundset = databaseManager.getFoundSet(globals.nav.program['LEAF_Lkp_Eventi'].server_name,
 		                                        globals.nav.program['LEAF_Lkp_Eventi'].table_name);
 	
@@ -277,7 +277,7 @@ function showLkpAlberoEventiNew(event)
  */
 function confermaSelezioneEventoDaAlbero(idevento)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2eventi>} */    
+	/** @type {JSFoundSet<db:/ma_presenze/e2eventi>} */    
     var eventiFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.EVENTI);
     
     if(eventiFs.find())

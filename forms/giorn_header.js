@@ -392,7 +392,7 @@ function apriNoteAnagrafiche(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _
  */
 function apriNoteMensili(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event) {
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>}*/
 	var fsGiornaliera = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
 	var _periodo = globals.getPeriodo();
 	var _assunzione = forms.giorn_header.assunzione;

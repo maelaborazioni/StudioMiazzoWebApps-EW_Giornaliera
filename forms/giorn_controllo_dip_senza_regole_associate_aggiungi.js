@@ -157,7 +157,7 @@ function confermaNuovaRegola(event) {
  */
 function onDataChangeRegola(oldValue, newValue, event) {
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2regole>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2regole>} */
 	var _foundset = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.REGOLE);
 
 	if(_foundset.find())
@@ -202,7 +202,7 @@ function validaRegola()
 {
 	if(vIdRegola && _codRegola && _valoreAgg)
 	{
-		/** @type {JSFoundset<db:/ma_presenze/e2regole>} */
+		/** @type {JSFoundSet<db:/ma_presenze/e2regole>} */
 		var _foundset = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.REGOLE);
 
 		if(_foundset.find())

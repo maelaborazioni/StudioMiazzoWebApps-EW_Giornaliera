@@ -1345,7 +1345,7 @@ function aggiornaRiepiloghiGiorno(idGiornaliera,daPannello)
 	if(!idGiornaliera)
 		return;
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
 	var fs_giornaliera = foundset;
 	fs_giornaliera.loadRecords(idGiornaliera);
 	

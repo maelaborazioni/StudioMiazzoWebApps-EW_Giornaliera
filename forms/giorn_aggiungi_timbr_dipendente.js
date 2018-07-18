@@ -47,7 +47,7 @@ function onShowForm(_firstShow, _event)
 	elements.btn_conferma_inserimento.enabled =	false;
 	
 	// 
-	/** @type{JSFoundset<db:/ma_presenze/e2timbratureserviziogestione>} */
+	/** @type{JSFoundSet<db:/ma_presenze/e2timbratureserviziogestione>} */
 	var fsCaus = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE_SERVIZIOGESTIONE);
 	if(fsCaus.find())
 	{
@@ -141,7 +141,7 @@ function process_timbratura_dipendente(event)
 				// crea un nuovo record per la timbratura
 				if(vCausale != null)
 				{
-					/** @type{JSFoundset<db:/ma_presenze/e2timbratureservizio>}*/
+					/** @type{JSFoundSet<db:/ma_presenze/e2timbratureservizio>}*/
 					var fsCaus = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE_SERVIZIO);
 					var recCaus = fsCaus.getRecord(fsCaus.newRecord());
 					if(recCaus)
@@ -160,7 +160,7 @@ function process_timbratura_dipendente(event)
 				}
 				else
 				{
-					/** @type{JSFoundset<db:/ma_presenze/e2timbratura>}*/
+					/** @type{JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 					var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE);
 					var rec = fs.getRecord(fs.newRecord());
 					if(rec)

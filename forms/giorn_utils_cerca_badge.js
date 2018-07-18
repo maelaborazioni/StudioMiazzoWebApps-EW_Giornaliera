@@ -64,7 +64,7 @@ function cercaBadge(event)
 	
 	var objBadge = globals.isBadgeAssegnato(_numerobadge,_dataricerca,globals.getGruppoInstallazioneLavoratore(forms.giorn_header.idlavoratore));
 	 
-	globals.ma_utl_showInfoDialog(objBadge.message,'Ricerca badge');
+	globals.ma_utl_showInfoDialog(objBadge['message'],'Ricerca badge');
 	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
 	globals.svy_mod_closeForm(event);	
 }

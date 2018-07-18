@@ -43,7 +43,7 @@ function onRenderTimbrMancanti(event)
 		// disabilitiamo il pulsante di visualizzazione causalizzate se non ve ne sono
 		if(elementName == 'btn_causalizzate')
 		{
-			/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+			/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
 			var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
 			if(fs.find())
 			{
@@ -202,7 +202,7 @@ function onDataChangeTimbratura(oldValue, newValue, event)
 function inserisciTimbratura(idLav, _giorno, sensoTimbr, HHmm, nrBadge, idGruppoInst)
 {
 	// salvataggio timbratura inserita
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var fsTimbr = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE);
 	databaseManager.setAutoSave(false);
 	databaseManager.startTransaction();
@@ -266,7 +266,7 @@ function apriPopupMostraTimbr(_event)
 		_giorni.push(globals.getGiornoDaIdGiornaliera(forms[_event.getFormName()].foundset.getRecord(g)['idgiornaliera']));
 	}
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>} */
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE);
 
 	// nel caso di timbratura con senso di entrata va disabilitata l'opzione di spostamento al giorno prec
@@ -441,7 +441,7 @@ function modificaTimbraturaAnomalia(_event,_idLav,_giorno)
 	{
 		var _frm = forms.giorn_modifica_timbr_anomalie_dtl;
 //		var _fs = _frm.foundset;
-		/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+		/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 		var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 			                                      globals.Table.TIMBRATURE);
 		var _timbrOri = null;
@@ -582,7 +582,7 @@ function cambiaSensoDaMenuAnomalie(_itemInd, _parItem, _isSel, _parMenTxt, _menu
 	//recupero l'id della timbratura selezionata 
 	var _idTimbrature = foundset[_event.getElementName()];
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 		                                  globals.Table.TIMBRATURE);
 	
@@ -680,7 +680,7 @@ function spostaGgSuccDaMenuAnomalie(_itemInd, _parItem, _isSel, _parMenTxt, _men
 	//recupero l'id della timbratura selezionata 
 	var _idTimbrature = foundset[_event.getElementName()];
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 	                                      globals.Table.TIMBRATURE);
 	
@@ -792,7 +792,7 @@ function spostaGgPrecDaMenuAnomalie(_itemInd, _parItem, _isSel, _parMenTxt, _men
 	//recupero l'id della timbratura selezionata 
 	var _idTimbrature = foundset[_event.getElementName()];
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,
 		                                  globals.Table.TIMBRATURE);
 	
@@ -1262,7 +1262,7 @@ function completaConOrarioTeorico(_itemInd,_parItem,_isSel,_parMenTxt,_menuTxt,_
 	var anomaliaIniziale = globals.getAnomalieGiornata(_idLavoratore,utils.dateFormat(_giorno,globals.ISO_DATEFORMAT));
 	
 	// salvataggio timbratura inserita
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var fsTimbr = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE);
 	databaseManager.setAutoSave(false);
 	databaseManager.startTransaction();
@@ -1476,7 +1476,7 @@ function formattaTimbraturePerInserimentoTeoriche(rec)
  */
 function getTimbraturaFormattataPerTeorico(idTimbratura)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>} */
 	var fsTimbr = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE);
 	if(fsTimbr.find())
 	{
@@ -1501,7 +1501,7 @@ function onActionVisualizzaCausalizzate(event)
 {
 	var frm = forms.giorn_mostra_timbr_t_caus;
     
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
 	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
 	if(fs.find())
 	{

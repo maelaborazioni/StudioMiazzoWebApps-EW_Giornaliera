@@ -551,7 +551,7 @@ function FiltraCdc(fs)
 {
 	var idDittaClassificazione = null;
 	
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte_classificazioni>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte_classificazioni>}*/
 	var fsCl = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,'ditte_classificazioni');
 	if(fsCl.find())
 	{
@@ -763,7 +763,7 @@ function AggiornaCdcMulti(recs)
 {
 	vArrCodCentroDiCosto = [];
 	
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte_classificazionidettaglio>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte_classificazionidettaglio>}*/
 	var fsCdc = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE_CLASSIFICAZIONI_DETTAGLIO);
 	if(fsCdc.find())
 	{

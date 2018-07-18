@@ -134,9 +134,9 @@ function process_timbratura_multipla(event)
 	// foundset della form di inserimento
 	var fs = forms['giorn_aggiungi_timbr_tbl_temp'].foundset;
 	// foundset generale della tabella delle timbrature
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/ 
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/ 
 	var fsTimbr = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE);
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratureservizio>}*/ 
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratureservizio>}*/ 
 	var fsTimbrServ = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE_SERVIZIO);
 	
 	// flag per indicare la validità di tutte le timbrature

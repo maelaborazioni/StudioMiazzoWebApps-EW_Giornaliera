@@ -284,7 +284,7 @@ function preparaEventiDitta(idDitta,anno,mese,limitaDalGiorno,limitaAlGiorno,arr
     
     for (var i = currIndex; i < maxIndex; i++)
     {
-    	/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori>} */
+    	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>} */
     	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
     	if(fs.find())
     	{

@@ -365,11 +365,11 @@ function onDataChangeDitta(oldValue, newValue, event)
 {
 	_ragionesociale = ''
 	
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte>} */
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte>} */
 	var _foundset = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE)
-	/** @type {JSFoundset<db:/ma_presenze/e2sediinstallazione>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2sediinstallazione>} */
 	var _foundsetGrInst = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.SEDI_INSTALLAZIONE);
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte_presenzegruppigestione>} */
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte_presenzegruppigestione>} */
 	var _foundsetGruppi = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE_PRESENZE_GRUPPI);				
 	
 	var arrDitteEpi = globals.getDitteGestiteEpi2();
