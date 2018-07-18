@@ -167,7 +167,7 @@ function selezione_cartolina_dipendente()
 	    return;
 	}
 	
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE);
 	if(fs.find())
 	{
@@ -204,7 +204,7 @@ function selezione_timbr_mancanti_dipendente()
 		globals.ma_utl_showWarningDialog('All\'utente non è stato associato alcun identificativo','Cartolina dipendente');
 	}
 	
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE);
 	if(fs.find())
 	{
@@ -316,7 +316,7 @@ function ApriER_Timbr(_rec)
 	_filter.filter_operator = 'IN';
 	
 	var ditta = _rec ? _rec['idditta'] : currDitta;
-	/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
 	if(fs.find())
 	{
@@ -1021,6 +1021,13 @@ function chiusuraMese(params)
  */
 function chiusuraEdInvio(params)
 {
+	//TODO Ditta 502
+	if(globals.getCodDitta(params.idditta) == 502 && globals.svy_sec_username != 'ASSISTENZA')
+	{
+		globals.ma_utl_showInfoDialog('L\'operazione è bloccata per il mese in corso. Contattare lo Studio per ulteriori informazioni','Predisposizione ed invio giornaliera');
+		return;
+	}
+	
 	var arrIdDipDaChiudere = params.iddipendentidachiudere;
 	var arrIdDipDaInviare = params.iddipendentidainviare;
 	var arrIdDipIngresso = params.iddipendentiingresso;
@@ -1294,10 +1301,9 @@ function chiusuraMeseCliente(params,fromPannelloVariazioni) {
 		if (_response == true) {
 			// acquisizioni precedenti ok, proseguire con i controlli chiusura
 			if (_retvalue == 1)
-			{
-				var _frmCtrChiusura = forms.giorn_controllo_chiusura_cliente;
-					
-				var _objCatBloccanti = ottieniCategorieBloccanti(params['idditta'],params['periodo'],_frmCtrChiusura);
+			{					
+				var _objCatBloccanti = scopes.giornaliera.ottieniCategorieBloccanti(params['idditta'],params['periodo']); 
+					//ottieniCategorieBloccanti(params['idditta'],params['periodo'],_frmCtrChiusura);
 								
 				if(_objCatBloccanti.bloccante)
 				{	
@@ -1305,15 +1311,18 @@ function chiusuraMeseCliente(params,fromPannelloVariazioni) {
 					
 					if(fromPannelloVariazioni)
 					{
-						//TODO arrivando dal pannello variazioni, deve essere aperta la giornaliera (od eventualmente ci si deve posizionare sulla giornaliera aperta) 
-						//con i dipendenti derivanti dal filtro sugli eventi bloccanti
+						// arrivando dal pannello variazioni, deve essere aperta la giornaliera (od eventualmente ci si deve posizionare sulla giornaliera aperta) 
+						// con i dipendenti derivanti dal filtro sugli eventi bloccanti
 						globals.ma_utl_showWarningDialog('Sistemare le eventuali giornate squadrate, gli eventi da definire e gli eventi bloccanti \
 						                                  dalla <b>Giornaliera elettronica</b> o dal <b>Pannello giornaliera</b> prima di proseguire!','Predisposizione invio');
                         return;
 					}
 					else
-					    //altrimenti nel caso di giornaliera standard viene mostrata la form di riepilogo
+					{   //altrimenti nel caso di giornaliera standard viene mostrata la form di riepilogo
+						var _frmCtrChiusura = forms.giorn_controllo_chiusura_cliente;
+					    ottieniCategorieBloccanti(params['idditta'],params['periodo'],_frmCtrChiusura);
 						globals.ma_utl_showFormInDialog(_frmCtrChiusura.controller.getName(),'Riepilogo controllo chiusura');
+					}
 				}
 				else
 				{
@@ -3588,8 +3597,7 @@ function controlliPreliminari(employeesIds, singoloDipendente, idDitta, anno, me
     	
     // nel caso cliente va verificato che il flusso sia completo quindi che abbia
     // scaricato la giornaliera del mese precedente
-	
-    var _response;
+	var _response;
 	var _retvalue;
 	var _noconnection;
 	   
@@ -3682,7 +3690,7 @@ function showCambiaEvento(idDitta, periodo, dallaData, allaData, idEvento, propE
 	
 	if(idEvento)
 	{
-		/** @type {JSFoundset<db:/ma_presenze/e2eventi>}*/
+		/** @type {JSFoundSet<db:/ma_presenze/e2eventi>}*/
 		var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.EVENTI);
 		if(fs.find())
 		{
@@ -3998,7 +4006,7 @@ function copiaRigaInGiornaliera(params)
  */
 function getTotOreGiornata(idgiornaliera){
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2giornalieraeventi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
 	var _fsGiornEv = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,'e2giornalieraeventi');
 	_fsGiornEv.removeFoundSetFilterParam('ftr_giornEvDaIdGiorn');
 	_fsGiornEv.addFoundSetFilterParam('idgiornaliera','=',idgiornaliera,'ftr_giornEvDaIdGiorn');
@@ -4043,7 +4051,7 @@ function getTotOreGiornata(idgiornaliera){
  */
 function getTotOreOrdinarieGiorno(idgiornaliera,idevento)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornalieraeventi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
 	var _fsGiornEv = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,'e2giornalieraeventi');
 	if(_fsGiornEv.find())
 	{
@@ -4091,7 +4099,7 @@ function getTotOreOrdinarieGiorno(idgiornaliera,idevento)
  */
 function getTotOreSostitutiveGiorno(idgiornaliera,idevento)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornalieraeventi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
 	var _fsGiornEv = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,'e2giornalieraeventi');
 	if(_fsGiornEv.find())
 	{
@@ -5226,7 +5234,7 @@ function apriCambiaEventoMultiplo(idGiornalieraEvento)
 	
 	if(idGiornalieraEvento)
 	{
-		/** @type {JSFoundset<db:/ma_presenze/e2giornalieraeventi>}*/
+		/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>}*/
 		var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_EVENTI);
 		if(fs.find())
 		{
@@ -5762,7 +5770,7 @@ function esistonoGiorniUtilizzabiliInBudget(idLav,mese,anno)
  */
 function generaNomiDittaDemo()
 {
-	/** @type {JSFoundset<db:/ma_anagrafiche/persone>} */
+	/** @type {JSFoundSet<db:/ma_anagrafiche/persone>} */
 	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,'persone');
 	fs.loadAllRecords();
 	databaseManager.startTransaction();
@@ -6222,7 +6230,7 @@ function ottieniDataSetSquadrature(idDip,dal,al,optTipoSquadrature,arrEventi)
  */
 function ottieniArrayDipConAnomalie(idDitta,dal,al,arrDipFiltrati)
 {
-	/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>}*/
 	var fsLav = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
 	if(fsLav.find())
 	{
@@ -6572,7 +6580,7 @@ function aggiornaEventiGiornalieraDipendente(idLav,yy,MM,dsSquadrature)
  */
 function getGiornoDaIdGiornaliera(idGiorn)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
     var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
     if(_fs.find())
     {
@@ -6593,7 +6601,7 @@ function getGiornoDaIdGiornaliera(idGiorn)
  */
 function getIdLavoratoreDaIdGiornaliera(idGiorn)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
     var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
     if(_fs.find())
     {
@@ -6718,7 +6726,7 @@ function refreshElencoTimbrature(event,daEvadere)
  */
 function getIndirizzoTimbratura(idTimbratura)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE);
 	
 	if(fs.find())
@@ -6763,7 +6771,7 @@ function verificaProgrammazioneTurniOrePeriodo(fs,block)
     var numRiposiSecondari = 0;
 	    
     // calcolo del numero di ore totali teoriche e dei numeri di giorni di riposo (per tipo) definiti dalla regola  
-    /** @type {JSFoundset<db:/ma_presenze/e2regolefasce>} */
+    /** @type {JSFoundSet<db:/ma_presenze/e2regolefasce>} */
     var fsRegoleFasce = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.REGOLE_FASCE);
     if(fsRegoleFasce.find())
     {
@@ -6812,7 +6820,7 @@ function verificaProgrammazioneTurniOrePeriodo(fs,block)
     		totOrePeriodoNew += fs.getRecord(i)['totaleorefascia'] != null ? parseInt(fs.getRecord(i)['totaleorefascia'],10) : 0;
     	
     		// controllo appartenenza fascia - regola
-    		/** @type {JSFoundset<db:/ma_presenze/e2regolefasceammesse>}*/
+    		/** @type {JSFoundSet<db:/ma_presenze/e2regolefasceammesse>}*/
     		var fsRegFasce = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.REGOLE_FASCE_AMMESSE);
     		if(fsRegFasce.find())
     		{
@@ -6990,7 +6998,7 @@ function process_salva_prog_fasce()
 		/** @type {RuntimeForm<giorn_turni>}*/
 		var frm = forms['giorn_turni_temp']; 
 		var fs = frm.foundset.duplicateFoundSet();
-		/** @type {JSFoundset<db:/ma_presenze/e2giornalieraprogfasce>} */
+		/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraprogfasce>} */
 		var fsFasceProg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_PROGFASCE);
 		
 		var idLavoratore = forms.giorn_prog_turni_fasce.vIdLavoratore || globals.getIdLavoratoreProgTurni();
@@ -7099,7 +7107,7 @@ function getTotaleOreFascia(idFascia)
  */
 function getTooltipTimbratura(idTimbratura)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE);
 	
 	if(fs.find())
@@ -7123,7 +7131,7 @@ function getTooltipTimbratura(idTimbratura)
  */
 function getTooltipGiorno(giorno)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2timbratura>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE);
 	
 	if(fs.find())
@@ -7215,7 +7223,7 @@ function ottieniTimbratureMancantiGiorno(event,idLavoratore,giorno)
  */
 function getDataUltimoScarico(idditte)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2wk_attivitaeseguiteditta>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2wk_attivitaeseguiteditta>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.ATTIVITA_DITTA);
 	
 	if(fs.find())
@@ -7297,7 +7305,7 @@ function aggiornaGiornoTimbrature(idGiornaliera)
  */
 function aggiornaEventiETimbratureNelGiorno(idGiornaliera)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
 	var giornalieraFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.GIORNALIERA);
 	if(giornalieraFs && giornalieraFs.find())
 	{
@@ -7352,7 +7360,7 @@ function aggiornaEventiETimbratureNelGiorno(idGiornaliera)
  */
 function aggiornaEventiGiornaliera(idLav,dal,al)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>} */
 	var giornalieraFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.GIORNALIERA);
 	if(giornalieraFs && giornalieraFs.find())
 	{
@@ -7811,7 +7819,7 @@ function disegnaProgrammazioneTurni(_dataSource)
  */
 function haCommesse(idDitta)
 {
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte_commesse>} */
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte_commesse>} */
 	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE_COMMESSE);
 	if(fs.find())
 	{
@@ -8027,7 +8035,7 @@ function apriGestioneFileTimbrature()
 	var grInst;
 	var frmTimbr = forms.giorn_manutenzione_timbr;
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2sediinstallazione>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2sediinstallazione>}*/
 	var fsSediInstallazione = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.SEDI_INSTALLAZIONE);
 	fsSediInstallazione.loadAllRecords();
 	var numSediInstallazione = fsSediInstallazione.getSize();
@@ -8559,7 +8567,7 @@ function getRecGiornaliera(idLav,giorno,tipoRecord)
  * @param {Date} al
  * @param {String} [tipoRecord]
  * 
- * @return {JSFoundset<db:/ma_presenze/e2giornaliera>}
+ * @return {JSFoundSet<db:/ma_presenze/e2giornaliera>}
  * 
  * @properties={typeid:24,uuid:"22242F4D-2DF1-470A-BF93-E887D7F804FC"}
  * @AllowToRunInFind
@@ -8594,7 +8602,7 @@ function getRecsGiornaliera(idLav,dal,al,tipoRecord)
  */
 function getRecGiornalieraEventi(idGiornalieraEvento)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornalieraeventi>} */
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
 	var fsGe = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_EVENTI);
 	if(fsGe.find())
 	{
@@ -8724,7 +8732,7 @@ function ottieniDataSetGiornaliera(idDip,dal,al,tipoGiorn)
  */
 function getEventiLavoratoreDalAl(idLavoratore,dal,al)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
 	if(fs.find())
 	{
@@ -8747,7 +8755,7 @@ function getEventiLavoratoreDalAl(idLavoratore,dal,al)
  */
 function getEventiClasseLavoratoreDalAl(idLavoratore,dal,al)
 {
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>}*/
 	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
 	if(fs.find())
 	{
@@ -8878,7 +8886,7 @@ function generaTracciatoMensa(idDitta,periodo,idDittaMensa,idGruppoInst,gruppoLa
  */
 function getDitteMense(idDitta)
 {
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte_mense>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte_mense>}*/
 	var fsDittaMensa = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE_MENSE); 
 	if(fsDittaMensa.find())
 	{
@@ -8901,7 +8909,7 @@ function getDitteMense(idDitta)
  */
 function usaMensa(idDitta)
 {
-	/** @type {JSFoundset<db:/ma_anagrafiche/ditte_mense>}*/
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte_mense>}*/
 	var fsDittaMensa = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE_MENSE); 
 	if(fsDittaMensa.find())
 	{
@@ -8929,7 +8937,7 @@ function getTimbratureGiornoStr(idLavoratore,giorno)
 {
 	var strTimbr = 'Nessuna timbratura nella giornata';
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>}*/
 	var fsGiorn = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
 	if(fsGiorn.find())
 	{
@@ -8970,7 +8978,7 @@ function getTimbratureServizioGiornoStr(idLavoratore,giorno)
 {
 	var strTimbr = 'Nessuna timbratura causalizzata nella giornata';
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2giornaliera>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornaliera>}*/
 	var fsGiorn = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA);
 	if(fsGiorn.find())
 	{
@@ -9016,7 +9024,7 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 	// 3 - se non sono riposi 
 	// le pre-impostiamo a zero ore
 	for(var l = 0; l < arrLav.length; l++)
-	{
+	{		
 		/** @type {Number} */
 		var g;
 		for(g = 0; g < arrGiorni.length; g++)
@@ -9054,7 +9062,7 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 				if(currGiorno < assunzione || cessazione != null && currGiorno > cessazione)
 			    	continue;
 								
-				/** @type {JSFoundset<db:/ma_presenze/e2giornalieraprogfasce>} */
+				/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraprogfasce>} */
 				var fsFasceProg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_PROGFASCE);
 				databaseManager.startTransaction();
 				
@@ -9524,7 +9532,7 @@ function disegnaVisualizzazioneCoperturaAssenze(dSCop, idDitta, numGiorni, numDi
 			                         case globals.TipoAssenza.PARZIALE:\
 			                         case globals.TipoAssenza.BUDGET:\
 			                         case globals.TipoAssenza.STORICO:\
-			                            /** @type {JSFoundset<db:/ma_presenze/e2giornalieraeventi>}*/\
+			                            /** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>}*/\
 				                        var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_EVENTI);\
 				                        if(fs.find())\
 				                        {\
@@ -9534,7 +9542,7 @@ function disegnaVisualizzazioneCoperturaAssenze(dSCop, idDitta, numGiorni, numDi
 				                        }\
 				                        break;\
 			                         case globals.TipoAssenza.RICHIESTA:\
-			                            /** @type {JSFoundset<db:/ma_anagrafiche/lavoratori_giustificativirighe>}*/\
+			                            /** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori_giustificativirighe>}*/\
 			                            var fsRighe = lavoratori_to_lavoratori_giustificativirighe;\
 			                            if(fsRighe.find())\
 			                            {\
@@ -9779,7 +9787,7 @@ function getFasceOrarieDaRaggruppamento(idRaggrFasce)
 	/** @type Array<Number> */
 	var arrFasce = [];
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2fo_fasceraggruppamenti>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2fo_fasceraggruppamenti>}*/
 	var fsFasce = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.FASCE_ORARIE_RAGGRUPPAMENTI);
 	if(fsFasce.find())
 	{
@@ -9811,7 +9819,7 @@ function getCodiciTurno(arrFasce)
 	/** @type Array<String> */
 	var arrCodiciTurnoDistinti = [];
 	
-	/** @type {JSFoundset<db:/ma_presenze/e2fo_fasceorarie>}*/
+	/** @type {JSFoundSet<db:/ma_presenze/e2fo_fasceorarie>}*/
 	var fsFasce = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.FASCE_ORARIE);
 	if(fsFasce.find())
 	{
@@ -9857,7 +9865,7 @@ function getTotaleOreSostitutiveRichieste(idLav,dal,al)
 	var dsSostRic = databaseManager.getDataSetByQuery(globals.Server.MA_ANAGRAFICHE,sqlSostRic,arrSostRic,-1);
 	var totOreSostRichieste = 0;
 	
-	/** @type {JSFoundset<db:/ma_anagrafiche/lavoratori_giustificativirighe>} */
+	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori_giustificativirighe>} */
 	var fsRighe = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.RP_RIGHE);
 	if(fsRighe.find())
 	{
