@@ -324,7 +324,7 @@ function reset(name)
 }
 
 /**
- * @param {JSFoundset<db:/ma_anagrafiche/ditte_contratti>} fs
+ * @param {JSFoundSet<db:/ma_anagrafiche/ditte_contratti>} fs
  *
  * @properties={typeid:24,uuid:"39BBE860-B734-4DE3-8AEB-189E9EB78E57"}
  */
@@ -334,7 +334,7 @@ function filterContratto(fs)
 }
 
 /**
- * @param {JSFoundset<db:/ma_presenze/e2tabqualifiche>} fs
+ * @param {JSFoundSet<db:/ma_presenze/e2tabqualifiche>} fs
  *
  * @properties={typeid:24,uuid:"2852D726-94EA-4BF1-96E5-2B1C7CB9CAF8"}
  */
@@ -344,7 +344,7 @@ function filterQualifica(fs)
 }
 
 /**
- * @param {JSFoundset<db:/ma_anagrafiche/ditte_inps>} fs
+ * @param {JSFoundSet<db:/ma_anagrafiche/ditte_inps>} fs
  *
  * @properties={typeid:24,uuid:"C84F1E9A-AE7A-44E4-B7E0-EB587F2D898C"}
  */
@@ -354,7 +354,7 @@ function filterPosizioneInps(fs)
 }
 
 /**
- * @param {JSFoundset<db:/ma_anagrafiche/ditte_sedi>} fs
+ * @param {JSFoundSet<db:/ma_anagrafiche/ditte_sedi>} fs
  *
  * @properties={typeid:24,uuid:"4B13D2BC-FCE3-499A-821F-B4275CD89B53"}
  */
@@ -367,7 +367,7 @@ function filterSedeLavoro(fs)
 }
 
 /**
- * @param {JSFoundset<db:/ma_anagrafiche/ditte_presenzegruppigestione>} fs
+ * @param {JSFoundSet<db:/ma_anagrafiche/ditte_presenzegruppigestione>} fs
  *
  * @properties={typeid:24,uuid:"B4D7AE72-BF72-4341-9D44-2C82633C88B9"}
  */
@@ -378,7 +378,7 @@ function filterGruppiLavoratori(fs)
 }
 
 /**
- * @param {JSFoundset<db:/ma_anagrafiche/v_ditte_raggruppamenti_dettaglio>} fs
+ * @param {JSFoundSet<db:/ma_anagrafiche/v_ditte_raggruppamenti_dettaglio>} fs
  *
  * @properties={typeid:24,uuid:"CCBA71B9-8322-4C14-98EE-4BE397532AD6"}
  */

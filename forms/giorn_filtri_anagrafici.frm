@@ -1,7 +1,7 @@
 dataSource:"db:/ma_anagrafiche/ditte",
 items:[
 {
-dataProviderID:"vGruppoLavoratoriString",
+dataProviderID:"vGroupLavoratoriString",
 displayType:1,
 editable:false,
 enabled:false,
@@ -316,7 +316,7 @@ visible:false
 },
 {
 borderType:"EmptyBorder,0,0,0,0",
-dataProviderID:"vFilterGruppiLavoratori",
+dataProviderID:"vFilterGroupLavoratori",
 displayType:4,
 horizontalAlignment:0,
 location:"10,230",

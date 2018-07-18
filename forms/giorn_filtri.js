@@ -125,9 +125,9 @@ function onShowForm(_firstShow, _event) {
 	if(grLav != '')
 	{
 		var frmFtrAnag = forms.giorn_filtri_anagrafici;
-		frmFtrAnag.vFilterGruppiLavoratori = 1;
-		frmFtrAnag.vGruppoLavoratori = grLav;
-		frmFtrAnag.vGruppoLavoratoriString = grLav + ' - ' + globals.getDescGruppoLavoratori(forms.giorn_header.idditta,grLav);
+		frmFtrAnag.vFilterGroupLavoratori = 1;
+		frmFtrAnag.vGroupLavoratori = grLav;
+		frmFtrAnag.vGroupLavoratoriString = grLav + ' - ' + globals.getDescGruppoLavoratori(forms.giorn_header.idditta,grLav);
 		frmFtrAnag.elements.btn_gruppo_lavoratori.enabled = false;
 		frmFtrAnag.elements.chk_gruppo_lavoratori.enabled = false;
 		frmFtrAnag.elements.fld_gruppo_lavoratori.enabled = false;
