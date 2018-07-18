@@ -132,7 +132,7 @@ function inviaGiornalieraPannello(event)
 				// se esistono categorie bloccanti (N.B. nel caso di invio non consideriamo eventuali messaggi di ritorno
 				// ad esempio segnalazioni di timbrature errate etc
 				if(_objCatBloccanti.bloccante)
-				    globals.ma_utl_showWarningDialog(globals.getHtmlString('Effettuare la predisposizione per l\'invio prima di proseguire'),'Controllo categorie bloccanti per invio giornaliera');
+				    globals.ma_utl_showWarningDialog(globals.getHtmlString('Controllare e sistemare gli eventi bloccanti per l\'invio prima di proseguire'),'Controllo categorie bloccanti per invio giornaliera');
 				else
 				{
 					// se non ci sono eventi bloccanti controlliamo comunque non vi siano dipendenti da chiudere
@@ -297,6 +297,13 @@ function inviaGiornalieraPannello(event)
  */
 function process_invia_giornaliera_pannello(_params)
 {
+	//TODO Ditta 502
+	if(globals.getCodDitta(_params.idditta) == 502 && globals.svy_sec_username != 'ASSISTENZA')
+	{
+		globals.ma_utl_showInfoDialog('L\'operazione è bloccata per il mese in corso. Contattare lo Studio per ulteriori informazioni','Predisposizione ed invio giornaliera');
+		return;
+	}
+	
 	try
 	{
 		if(scopes.giornaliera.esisteGiornalieraInviata(_params.idditta,_params.periodo,_params.gruppoinst,_params.gruppolav))
