@@ -521,7 +521,8 @@ function refreshCoperturaTurni(event) {
     
     // dataset copertura turni
 	var size = foundset.search();
-	foundset.sort('lavoratori_to_persone.nominativo asc');
+	//foundset.sort('nominativo');
+	foundset.sort('lavoratori_to_persone.nominativo asc, lavoratori_to_lavoratori_personeesterne.nominativo asc,assunzione asc, cessazione asc');
 	var types = [JSColumn.NUMBER,JSColumn.NUMBER,JSColumn.TEXT];
 	var columns = ['IdLavoratore','Codice','Nominativo'];
 	var dsCop = databaseManager.createEmptyDataSet(size,columns);
@@ -577,85 +578,70 @@ function refreshCoperturaTurni(event) {
 	    // ciclo su tutti i giorni
 	    for (var g = 1; g <= numGiorni; g++) 
 	    {
-			var _giorno = new Date(frm.vDal.getFullYear(),frm.vDal.getMonth(),frm.vDal.getDate() + g - 1);
+	    	var _giorno = new Date(frm.vDal.getFullYear(),frm.vDal.getMonth(),frm.vDal.getDate() + g - 1);
 			if(_giorno >= rec.assunzione && (rec.cessazione == null || _giorno <= rec.cessazione))
 			{
-				var _isConteggiato = globals.isGiornoConteggiato(rec.idlavoratore,_giorno); 
-				// verifica della tipologia evento da considerare : se il giorno è conteggiato e senza anomalie considero gli eventi della 
-				// giornaliera normale altrimenti verifica quelli della budget 
-				_isConteggiato ? _tipoGiornaliera = globals.TipoGiornaliera.NORMALE : _tipoGiornaliera = globals.TipoGiornaliera.BUDGET;
+				var recGiornNorm = null;
+				var recGiornBudget = null;
+				// controllare se presenti eventi in giornaliera normale valutando le anomalie, altrimenti budget
+				recGiornNorm = globals.getRecGiornaliera(rec.idlavoratore,_giorno,globals.TipoGiornaliera.NORMALE);
+				recGiornBudget = globals.getRecGiornaliera(rec.idlavoratore,_giorno,globals.TipoGiornaliera.BUDGET);
+				if(recGiornNorm && globals.getRecsGiornalieraEventi(recGiornNorm.idgiornaliera)) // se è presente un record della giornaliera ed anche degli eventi associati
+					_tipoGiornaliera = globals.TipoGiornaliera.NORMALE;
+				else
+					_tipoGiornaliera = globals.TipoGiornaliera.BUDGET;
 				
 				// informazioni sulla fascia associata al giorno
 				var objFascia = globals.ottieniInformazioniFasciaGiorno(rec.idlavoratore,_giorno);
-								
-				if(recGiorn.find())
+				
+				// se sono presenti degli eventi sostitutivi in giornaliera normale vanno considerati, anche se il giorno risulta non conteggiato
+				var recGiornCurr = _tipoGiornaliera == globals.TipoGiornaliera.NORMALE ? recGiornNorm : recGiornBudget;
+				if(recGiornCurr)
 				{
-					recGiorn.iddip = rec.idlavoratore;
-					recGiorn.giorno = globals.dateFormat(_giorno,globals.ISO_DATEFORMAT) + '|yyyyMMdd'; 
-					recGiorn.tipodirecord = _tipoGiornaliera;
-					
-					// considera prima gli eventi in giornaliera normale, altrimenti quelli in budget
-					if(recGiorn.search() > 0)
+					var recsGiornEv = globals.getRecsGiornalieraEventi(recGiornCurr.idgiornaliera);
+					var resSize = recsGiornEv ? recsGiornEv.getSize() : 0;
+					var totOreEvSost = 0;
+					var evGestitoConStorico = false;
+					var oreTeoricheGiorno = objFascia.totaleorefascia;
+					var currRecGiornEv = null;
+					for(var r = 1; r <= resSize; r++)
 					{
-						// recupero del record per gli eventi di giornaliera
-						var currRecGiorn = recGiorn.e2giornaliera_to_e2giornalieraeventi;
-						var resSize = currRecGiorn.getSize();
-						var totOreEvSost = 0;
-						var _oreTeoricheGiorno = recGiorn.e2giornaliera_to_e2fo_fasceorarie ? 
-								                 recGiorn.e2giornaliera_to_e2fo_fasceorarie.totaleorefascia : null; // per tener conto di eventuali assunzioni/cessazioni nel periodo
-						var currRecGiornEv = null;
-						for(var r = 1; r <= resSize; r++)
-						{
-							currRecGiornEv = currRecGiorn.getRecord(r);
-							
-							// condizioni da soddisfare per visualizzare o meno gli eventi in copertura 
-							if(currRecGiornEv 
-									&& currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.tipo == 'S'
-									&& currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.gestitoconperiodi == 0)
-							{
-								if(currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.gestitoconstorico)
-									_tipoAssenza = globals.TipoAssenza.STORICO;
-								// eventuali eventi da definire per giorni già conteggiati nel futuro non vengono considerati
-							    if(currRecGiornEv.e2giornalieraeventi_to_e2eventi.evento == '?' 
-							       && _giorno > globals.TODAY)
-							    	break;
-							    
-							    totOreEvSost += currRecGiornEv.ore;
-							}													
-						}
+						currRecGiornEv = recsGiornEv.getRecord(r);
 						
-						// compilazione valori tabella
-						if(totOreEvSost > 0)
-						{	
-	                       // impostazione tipo assenza in base al tipo di giornaliera ed al numero di ore dell'evento
-	                       if(_tipoGiornaliera != globals.TipoGiornaliera.BUDGET)
-	                       {
-	                          if(totOreEvSost == _oreTeoricheGiorno)
-							     _tipoAssenza = globals.TipoAssenza.TOTALE;
-						      else
-							     _tipoAssenza = globals.TipoAssenza.PARZIALE;
-	                       }   
-	                       else
-	                    	   _tipoAssenza = globals.TipoAssenza.BUDGET;
-	                    	   
-	                       dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : null);
-												    
-						}
-						else
-							// verifica della presenza o meno nel/i turno/i richiesto/i
-							if(frm.vChkGruppoFasce)
+						// condizioni da soddisfare per visualizzare o meno gli eventi in copertura 
+						if(currRecGiornEv 
+								&& currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.tipo == 'S'
+								&& currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.gestitoconperiodi == 0)
+						{
+							if(currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.gestitoconstorico)
 							{
-								if(arrFasceRaggruppamento.indexOf(objFascia['idfascia']) == -1)
-								{
-									_tipoAssenza = globals.TipoAssenza.NON_IN_TURNO
-									dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : null);
-								}
-								else
-									dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
+								evGestitoConStorico = true;
+								_tipoAssenza = globals.TipoAssenza.TOTALE;
 							}
-							else
-								dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
-									
+							// eventuali eventi da definire per giorni già conteggiati nel futuro non vengono considerati
+						    if(currRecGiornEv.e2giornalieraeventi_to_e2eventi.evento == '?' 
+						       && _giorno > globals.TODAY)
+						    	break;
+						    
+						    totOreEvSost += currRecGiornEv.ore;
+						}													
+					}
+					
+					// compilazione valori tabella
+					if(totOreEvSost > 0 || evGestitoConStorico)
+					{	
+                       // impostazione tipo assenza in base al tipo di giornaliera ed al numero di ore dell'evento
+                       if(_tipoGiornaliera != globals.TipoGiornaliera.BUDGET)
+                       {
+                          if(totOreEvSost == oreTeoricheGiorno)
+						     _tipoAssenza = globals.TipoAssenza.TOTALE;
+					      else
+						     _tipoAssenza = globals.TipoAssenza.PARZIALE;
+                       }   
+                       else
+                    	   _tipoAssenza = globals.TipoAssenza.BUDGET;
+                    	   
+                       dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : '_' + g + '_' + _tipoAssenza);
 					}
 					else
 						// verifica della presenza o meno nel/i turno/i richiesto/i
@@ -671,11 +657,26 @@ function refreshCoperturaTurni(event) {
 						}
 						else
 							dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
-									
+				
 				}
+				else
+					// verifica della presenza o meno nel/i turno/i richiesto/i
+					if(frm.vChkGruppoFasce)
+					{
+						if(arrFasceRaggruppamento.indexOf(objFascia['idfascia']) == -1)
+						{
+							_tipoAssenza = globals.TipoAssenza.NON_IN_TURNO
+							dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : null);
+						}
+						else
+							dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
+					}
+					else
+						dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
 				
 				// altrimenti, se il giorno non è ancora stato conteggiato, verifica possibili coperture date da richieste non ancora confermate
-				if(!_isConteggiato && dsCop.getValue(l,g + 3) == null)
+				if(//!_isConteggiato &&
+				   dsCop.getValue(l,g + 3) == null)
 				{
 					_tipoAssenza = globals.TipoAssenza.RICHIESTA;
 					// recupera giorni ed eventi di richieste non ancora confermate
@@ -684,13 +685,115 @@ function refreshCoperturaTurni(event) {
 						   dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : null);
 				}
 			}
-			else
-				dsCop.setValue(l,3 + g,null);
-		}
-				
+	    }
 	}
+								
+				// OLD CODE
+//				if(recGiorn.find())
+//				{
+//					recGiorn.iddip = rec.idlavoratore;
+//					recGiorn.giorno = globals.dateFormat(_giorno,globals.ISO_DATEFORMAT) + '|yyyyMMdd'; 
+//					recGiorn.tipodirecord = _tipoGiornaliera;
+//					
+//					// considera prima gli eventi in giornaliera normale, altrimenti quelli in budget
+//					if(recGiorn.search() > 0)
+//					{
+//						// recupero del record per gli eventi di giornaliera
+//						var currRecGiorn = recGiorn.e2giornaliera_to_e2giornalieraeventi;
+//						currRecGiorn.loadAllRecords();
+//						var resSize = currRecGiorn.getSize();
+//						var totOreEvSost = 0;
+//						var _oreTeoricheGiorno = recGiorn.e2giornaliera_to_e2fo_fasceorarie ? 
+//								                 recGiorn.e2giornaliera_to_e2fo_fasceorarie.totaleorefascia : null; // per tener conto di eventuali assunzioni/cessazioni nel periodo
+//						var currRecGiornEv = null;
+//						for(var r = 1; r <= resSize; r++)
+//						{
+//							currRecGiornEv = currRecGiorn.getRecord(r);
+//							
+//							// condizioni da soddisfare per visualizzare o meno gli eventi in copertura 
+//							if(currRecGiornEv 
+//									&& currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.tipo == 'S'
+//									&& currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.gestitoconperiodi == 0)
+//							{
+//								if(currRecGiornEv.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.gestitoconstorico)
+//									_tipoAssenza = globals.TipoAssenza.STORICO;
+//								// eventuali eventi da definire per giorni già conteggiati nel futuro non vengono considerati
+//							    if(currRecGiornEv.e2giornalieraeventi_to_e2eventi.evento == '?' 
+//							       && _giorno > globals.TODAY)
+//							    	break;
+//							    
+//							    totOreEvSost += currRecGiornEv.ore;
+//							}													
+//						}
+//						
+//						// compilazione valori tabella
+//						if(totOreEvSost > 0)
+//						{	
+//	                       // impostazione tipo assenza in base al tipo di giornaliera ed al numero di ore dell'evento
+//	                       if(_tipoGiornaliera != globals.TipoGiornaliera.BUDGET)
+//	                       {
+//	                          if(totOreEvSost == _oreTeoricheGiorno)
+//							     _tipoAssenza = globals.TipoAssenza.TOTALE;
+//						      else
+//							     _tipoAssenza = globals.TipoAssenza.PARZIALE;
+//	                       }   
+//	                       else
+//	                    	   _tipoAssenza = globals.TipoAssenza.BUDGET;
+//	                    	   
+//	                       dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : null);
+//												    
+//						}
+//						else
+//							// verifica della presenza o meno nel/i turno/i richiesto/i
+//							if(frm.vChkGruppoFasce)
+//							{
+//								if(arrFasceRaggruppamento.indexOf(objFascia['idfascia']) == -1)
+//								{
+//									_tipoAssenza = globals.TipoAssenza.NON_IN_TURNO
+//									dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : null);
+//								}
+//								else
+//									dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
+//							}
+//							else
+//								dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
+//									
+//					}
+//					else
+//						// verifica della presenza o meno nel/i turno/i richiesto/i
+//						if(frm.vChkGruppoFasce)
+//						{
+//							if(arrFasceRaggruppamento.indexOf(objFascia['idfascia']) == -1)
+//							{
+//								_tipoAssenza = globals.TipoAssenza.NON_IN_TURNO
+//								dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : null);
+//							}
+//							else
+//								dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
+//						}
+//						else
+//							dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
+//									
+//				}
+//				
+//				// altrimenti, se il giorno non è ancora stato conteggiato, verifica possibili coperture date da richieste non ancora confermate
+//				if(!_isConteggiato && dsCop.getValue(l,g + 3) == null)
+//				{
+//					_tipoAssenza = globals.TipoAssenza.RICHIESTA;
+//					// recupera giorni ed eventi di richieste non ancora confermate
+//					var recRigaGiorno = globals.ottieniRichiesteSospeseGiorno(rec.idlavoratore,_giorno);	
+//					if(recRigaGiorno)
+//						   dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' + _tipoAssenza : null);
+//				}
+//			}
+//			else
+//				dsCop.setValue(l,3 + g,null);
+//		}
+//				
+//	}
 	
 	// riga riepilogo numero dipendenti copertura
+		
 	for (g = 1; g <= numGiorni; g++) 
 	{
 		_giorno = new Date(_dal.getFullYear(),_dal.getMonth(),_dal.getDate() + (g - 1));
@@ -704,18 +807,29 @@ function refreshCoperturaTurni(event) {
 				continue;
 			if(dsCop.getValue(l,g + 3) == null)
 				continue;
-			if(globals.isGiornoConteggiato(dsCop.getValue(l,1),_giorno) ?
-						globals.getTotaleOreSostitutive(dsCop.getValue(l,1),_giorno,_giorno) == 0 : 
-						globals.getTotaleOreSostitutiveInBudget(dsCop.getValue(l,1),_giorno,_giorno) + globals.getTotaleOreSostitutiveRichieste(dsCop.getValue(l,1),_giorno,_giorno) == 0)
-			{
-				numDipPresenti++;
+			
+//			var recGiornaliera = globals.getRecGiornaliera(dsCop.getValue(1,1),_giorno,globals.TipoGiornaliera.NORMALE);
+//			
+//			if(recGiornaliera && (!recGiornaliera.e2giornaliera_to_e2giornalieraeventi.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.gestitoconstorico 
+//					              && globals.getTotaleOreSostitutive(dsCop.getValue(l,1),_giorno,_giorno) == 0)  
+//			   ||  globals.getTotaleOreSostitutiveInBudget(dsCop.getValue(l,1),_giorno,_giorno) + globals.getTotaleOreSostitutiveRichieste(dsCop.getValue(l,1),_giorno,_giorno) == 0)
+//			{
+//				numDipPresenti++;
 				var str = dsCop.getValue(l,g + 3);
 				var firstIndex = utils.stringPosition(str,'_',0,1);
+				var secondIndex = utils.stringPosition(str,'_',firstIndex + 1,1);
 				var prefix = utils.stringLeft(str,firstIndex - 1);
-				for(var t = 2; t <= dsRiep.getMaxRowIndex(); t++)
-					if(prefix == dsRiep.getValue(t,1))
-						dsRiep.setValue(t, g + 1, dsRiep.getValue(t, g + 1) + 1);
-			}
+				var suffix = secondIndex != str.length ? utils.stringRight(str,1) : '';
+				
+				if(suffix == '')
+				{
+	 				for(var t = 2; t <= dsRiep.getMaxRowIndex(); t++)
+						if(prefix == dsRiep.getValue(t,1))
+							dsRiep.setValue(t, g + 1, dsRiep.getValue(t, g + 1) + 1);
+				
+	 				numDipPresenti++;
+				}
+//			}
 		}
 		
 		dsRiep.setValue(1,g + 1,numDipPresenti);
