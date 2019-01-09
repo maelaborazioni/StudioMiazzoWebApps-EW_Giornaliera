@@ -1020,14 +1020,7 @@ function chiusuraMese(params)
  * @properties={typeid:24,uuid:"25BEE5E8-3146-4B8C-BD56-9300A1861F4B"}
  */
 function chiusuraEdInvio(params)
-{
-	//TODO Ditta 502
-	if(globals.getCodDitta(params.idditta) == 502 && globals.svy_sec_username != 'ASSISTENZA')
-	{
-		globals.ma_utl_showInfoDialog('L\'operazione è bloccata per il mese in corso. Contattare lo Studio per ulteriori informazioni','Predisposizione ed invio giornaliera');
-		return;
-	}
-	
+{	
 	var arrIdDipDaChiudere = params.iddipendentidachiudere;
 	var arrIdDipDaInviare = params.iddipendentidainviare;
 	var arrIdDipIngresso = params.iddipendentiingresso;
@@ -1302,8 +1295,7 @@ function chiusuraMeseCliente(params,fromPannelloVariazioni) {
 			// acquisizioni precedenti ok, proseguire con i controlli chiusura
 			if (_retvalue == 1)
 			{					
-				var _objCatBloccanti = scopes.giornaliera.ottieniCategorieBloccanti(params['idditta'],params['periodo']); 
-					//ottieniCategorieBloccanti(params['idditta'],params['periodo'],_frmCtrChiusura);
+				var _objCatBloccanti = scopes.giornaliera.ottieniCategorieBloccanti(params['idditta'],params['periodo'],params['codgruppogestione'] ? globals.getLavoratoriGruppo(params,params['idditta']) : null); 
 								
 				if(_objCatBloccanti.bloccante)
 				{	
@@ -5000,7 +4992,7 @@ function costruisciRiepilogoRegole(arrDip,idDitta)
 function apriModificaMultiplaDecorrenze(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event, _idDitta)
 {
 	/** @type {Array<Number>}*/
-	var arrDip = globals.getLavoratoriDittaDalAl(_idDitta);
+	var arrDip = globals.getLavoratoriDittaDalAl([_idDitta]);
 	var frm = forms.giorn_dip_modifica_decorrenze;
 	globals.costruisciRiepilogoRegole(arrDip,_idDitta);
 	globals.ma_utl_showFormInDialog(frm.controller.getName(),'Decorrenze lavoratori');
@@ -7062,7 +7054,8 @@ function process_salva_prog_fasce()
 				globals.preparaProgrammazioneTurni(idLavoratore,
 												   forms.giorn_prog_turni_fasce.vAnno || globals.getAnno(),
 												   forms.giorn_prog_turni_fasce.vMese || globals.getMese(),
-												   globals.TipoGiornaliera.NORMALE);
+												   globals.TipoGiornaliera.NORMALE,
+												   true);
 			}    
 		}
 	}
@@ -7557,12 +7550,13 @@ function verificaProgrammazioneTurniDip(idDip,dal,al)
  * @param {Number} _anno
  * @param {Number} _mese
  * @param {String} _tipoGiorn
+ * @param {Boolean} [_forceRedraw]
  * 
  * @properties={typeid:24,uuid:"8871EE76-0573-4A48-9224-E4C630844FD6"}
  *
  * @AllowToRunInFind
  */
-function preparaProgrammazioneTurni(_idDip, _anno, _mese, _tipoGiorn)
+function preparaProgrammazioneTurni(_idDip, _anno, _mese, _tipoGiorn, _forceRedraw)
 {
 	// verifichiamo se il dipendente ha regole che permettano la distribuzione dell'orario
 	if(!globals.verificaProgrammazioneTurniDip(_idDip,
@@ -7729,7 +7723,7 @@ function preparaProgrammazioneTurni(_idDip, _anno, _mese, _tipoGiorn)
 		var _tDataSourceProgTurni = _tDataSetProgTurniList.createDataSource('_tDataSourceProgTurni', types);
 		
 		// Disegna la programmazione dei turni
-		disegnaProgrammazioneTurni(_tDataSourceProgTurni);
+		disegnaProgrammazioneTurni(_tDataSourceProgTurni,_forceRedraw);
     
 	}	
 	
@@ -7741,16 +7735,17 @@ function preparaProgrammazioneTurni(_idDip, _anno, _mese, _tipoGiorn)
 * Disegna la tabella per la programmazione dei turni
 * 
 * @param {String} _dataSource
+* @param {Boolean} [_forceRedraw]
 * 
 * @properties={typeid:24,uuid:"93A42B5C-D0E1-4DFA-BE7C-1FFE28F0C141"}
 * @SuppressWarnings(unused)
  */
-function disegnaProgrammazioneTurni(_dataSource) 
+function disegnaProgrammazioneTurni(_dataSource,_forceRedraw) 
 {
 	var _oriFormName = 'giorn_turni';
 	var _tempFormName = _oriFormName + '_temp';
 		
-	if (!forms[_tempFormName])
+	if (!forms[_tempFormName] || _forceRedraw)
 	{
 		// Eliminiamo il tab panel esistente e rimuoviamo eventuali form omonime già esistenti
 		forms.giorn_prog_turni_fasce.elements.tab_prog_turni_turni.removeAllTabs();
@@ -8196,14 +8191,21 @@ function verificaSuperamentoLimiteFileTimbratureScartate(params)
 
 /**
  * @param {Boolean} [daCartolina]
+ * @param {Date} [giorno]
+ * @param {Number} [senso]
  * 
  * @properties={typeid:24,uuid:"71C08F41-48A1-464D-890F-9E0A39BE08F3"}
  */
-function aggiungi_timbratura_dipendente(daCartolina)
+function aggiungi_timbratura_dipendente(daCartolina, giorno, senso)
 {
 	var frm = forms.giorn_aggiungi_timbr_dipendente;
 	if(daCartolina != null)
 		frm.vDaCartolina = daCartolina;
+	if(giorno != null)
+		frm.vGiornoDaCartolina = giorno;
+	if(senso != null)
+		frm.vSenso = senso;
+	
 	globals.ma_utl_showFormInDialog(frm.controller.getName(),'Inserisci timbratura');
 }
 
@@ -8421,6 +8423,7 @@ function getFasciaProgrammataGiorno(idLav,giorno)
  * @param {Date} al
  *
  * @properties={typeid:24,uuid:"B102B468-CD8F-42AE-9F0F-889FFA4D0727"}
+ * @AllowToRunInFind
  */
 function eliminaFasceProgrammate(arrLavoratori,dal,al)
 {
@@ -8449,6 +8452,17 @@ function eliminaFasceProgrammate(arrLavoratori,dal,al)
 	plugins.rawSQL.flushAllClientsCache(globals.Server.MA_PRESENZE,
 		                                globals.Table.GIORNALIERA_PROGFASCE);
  
+	/** @type{JSFoundSet<db:/ma_presenze/e2giornalieraprogfasce>}*/
+	var fsFasceProg = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_PROGFASCE);
+	if(fsFasceProg.find())
+	{
+		fsFasceProg.iddip = arrLavoratori;
+		fsFasceProg.giorno = utils.dateFormat(dal,globals.ISO_DATEFORMAT) + '...' + utils.dateFormat(al,globals.ISO_DATEFORMAT) + '|yyyyMMdd';
+		
+		if(fsFasceProg.search())
+  		   databaseManager.refreshRecordFromDatabase(fsFasceProg,-1);
+	}
+	
 	return true;
 }
 
@@ -8596,7 +8610,7 @@ function getRecsGiornaliera(idLav,dal,al,tipoRecord)
  * 
  * @param {Number} idGiornalieraEvento
  * 
- * @return JSRecord<db:/ma_presenze/e2giornalieraeventi>
+ * @return {JSRecord<db:/ma_presenze/e2giornalieraeventi>}
  * 
  * @properties={typeid:24,uuid:"BB8467B2-511F-4E0A-9D22-11B9AFA22D42"}
  */
@@ -8609,6 +8623,31 @@ function getRecGiornalieraEventi(idGiornalieraEvento)
 		fsGe.idgiornalieraeventi = idGiornalieraEvento;
 		if(fsGe.search())
 			return fsGe.getSelectedRecord();
+	}
+	
+	return null;
+}
+
+/**
+ * @AllowToRunInFind
+ * 
+ * Ottiene i records della tabella e2giornalieraeventi
+ * 
+ * @param {Number} idGiornaliera
+ * 
+ * @return {JSFoundset<db:/ma_presenze/e2giornalieraeventi>}
+ * 
+ * @properties={typeid:24,uuid:"23150A6B-5374-409A-861F-D4B0B40A2D31"}
+ */
+function getRecsGiornalieraEventi(idGiornaliera)
+{
+	/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
+	var fsGe = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_EVENTI);
+	if(fsGe.find())
+	{
+		fsGe.idgiornaliera = idGiornaliera;
+		if(fsGe.search())
+		   return fsGe;
 	}
 	
 	return null;
@@ -9176,12 +9215,12 @@ function apriProgrammazioneTurniDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _
 	globals.preparaProgrammazioneTurni(_iddip,_anno,_mese,globals.TipoGiornaliera.NORMALE);
 	
 	// aggiornamento dati foundset temporaneo
-	var formName = 'giorn_turni_temp';
-    var fs = forms[formName].foundset;
-    var maxBlocchi = fs.getRecord(fs.getSize())['blocco'];
-    for(var b = 1; b <= maxBlocchi; b++)
-        // update visualizzazione
-	    globals.verificaProgrammazioneTurniOrePeriodo(fs.duplicateFoundSet(),b);
+//	var formName = 'giorn_turni_temp';
+//    var fs = forms[formName].foundset;
+//    var maxBlocchi = fs.getRecord(fs.getSize())['blocco'];
+//    for(var b = 1; b <= maxBlocchi; b++)
+//        // update visualizzazione
+//	    globals.verificaProgrammazioneTurniOrePeriodo(fs.duplicateFoundSet(),b);
    
 }
 
@@ -9936,10 +9975,11 @@ function showOperazioneMultipla(operazione, form, arrayGiorni, arrayDipendenti, 
 	var lastDay = new Date(firstDay.getFullYear(), firstDay.getMonth() + 1, 0);
 	var days = lastDay.getDate();
 	
-	var daysDs = databaseManager.createEmptyDataSet(0, ['checked', 'day']);
+	var daysDs = databaseManager.createEmptyDataSet(0, ['checked', 'day', 'day_letter']);
 	for(var d = 0; d < days; d++)
 	{		
-		daysDs.addRow([0, new Date(firstDay.getFullYear(), firstDay.getMonth(), d + 1)]);
+		var day = new Date(firstDay.getFullYear(), firstDay.getMonth(), d + 1);
+		daysDs.addRow([0, day, getNomeGiorno(day)]);
 	}
 	
 	// Forse si potrebbe evitare ricostruendo semplicemente il datasource...
@@ -9951,8 +9991,9 @@ function showOperazioneMultipla(operazione, form, arrayGiorni, arrayDipendenti, 
 	}
 	
 	giorniForm = solutionModel.cloneForm(giorniCloneName, solutionModel.getForm(giorniFormName));		
-	giorniForm.dataSource = daysDs.createDataSource('giorniFormDs_' + application.getUUID(), [JSColumn.INTEGER, JSColumn.DATETIME]);
+	giorniForm.dataSource = daysDs.createDataSource('giorniFormDs_' + application.getUUID(), [JSColumn.INTEGER, JSColumn.DATETIME, JSColumn.TEXT]);
 	giorniForm.getField('fld_giorno').dataProviderID = 'day';
+	giorniForm.getField('fld_nome_giorno').dataProviderID = 'day_letter';
 	
 	var giorniFormMs = globals.ma_utl_addMultipleSelection(giorniForm.name);
 	if(arrayGiorni)
