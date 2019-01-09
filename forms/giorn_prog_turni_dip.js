@@ -21,6 +21,7 @@ function onRecordSelection(_event, _form)
 	{
 		globals.setIdLavoratoreProgTurni(idlavoratore);
 		
+		forms.giorn_prog_turni_fasce.vIdLavoratore = idlavoratore;
 		forms.giorn_prog_turni_fasce.elements.btn_salva.enabled = false;
 		
 		// update visualizzazione

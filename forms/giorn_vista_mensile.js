@@ -150,53 +150,6 @@ function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUp
     var colAgg = 0;		// A (aggiuntivi)
     var colSta = 0;		// T (statistici)
     var tipoColOrd = 0;
-
-// OLD algoritmo di calcolo preventivo del numero di colonne necessario per il disegno della giornaliera - non copriva tutti i casi...    
-//    TipoColonne serve nel caso di più eventi di tipo ordinario, per conoscere a priori le proprietà
-//    var tipoColOrd = 3;
-//    var datasetColonneGiorn = globals.ottieniDataSetColonne(idlavoratore,
-//								                            utils.dateFormat(primoGiornoVista,globals.ISO_DATEFORMAT),
-//								        					utils.dateFormat(ultimoGiornoMese,globals.ISO_DATEFORMAT),
-//															tipoGiornaliera);
-//    var ds = globals.ottieniDataSetColonne_old(idlavoratore,utils.dateFormat(primoGiornoVista,globals.ISO_DATEFORMAT),
-//								        					utils.dateFormat(ultimoGiornoMese,globals.ISO_DATEFORMAT),
-//															tipoGiornaliera);
-//    datasetColonneGiorn = ds;
-//    
-//    // Calcola il numero di colonne per ogni tipo di evento (caso peggiore)
-//    for(var r = 1; r <= datasetColonneGiorn.getMaxRowIndex(); r++)
-//    {
-//        switch(datasetColonneGiorn.getValue(r,1))
-//		{
-//			case 'O' :
-//				colOrd = datasetColonneGiorn.getValue(r,2);
-//				tipoColOrd = globals.ottieniProprietaColonneEventiOrdinari(idlavoratore,
-//																		   utils.dateFormat(primoGiornoVista,globals.ISO_DATEFORMAT),
-//																		   utils.dateFormat(ultimoGiornoMese,globals.ISO_DATEFORMAT),
-//																		   tipoGiornaliera);
-//				// nel caso di un solo tipo di evento controlliamo il tipo di proprietà
-//				// ad esempio 9t(d) e 9t(n)
-////				if(colOrd == 1 && tipoColOrd == 3 )
-//					colOrd = 2;
-//				break;
-//				
-//			case 'S':
-//				colSos = datasetColonneGiorn.getValue(r,2);
-//				break;
-//				
-//			case 'A':
-//				colAgg = datasetColonneGiorn.getValue(r,2);
-//				break;
-//				
-//			case 'T':
-//				colSta = datasetColonneGiorn.getValue(r,2);
-//				break;
-//				
-//			case 'F':
-//				colFes = datasetColonneGiorn.getValue(r,2);
-//				break;
-//		}
-//   }
    
    // Recupera i dati della giornaliera 
    var datasetGiornaliera = globals.ottieniDataSetGiornaliera(idlavoratore,primoGiornoVista,ultimoGiornoLavoratoNelMese,tipoGiornaliera);

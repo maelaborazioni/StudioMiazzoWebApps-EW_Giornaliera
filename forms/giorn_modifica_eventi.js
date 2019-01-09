@@ -415,8 +415,9 @@ function confermaSelezioneEventoDaAlbero(idevento)
 		    return;
 		}
     	
-    	if(eventiFs.e2eventi_to_e2eventiclassi.tipo == globals.TipoEvento.STATISTICO
-    		|| eventiFs.e2eventi_to_e2eventiclassi.tipo == globals.TipoEvento.AGGIUNTIVO)
+    	if(eventiFs.e2eventi_to_e2eventiclassi &&
+    			(eventiFs.e2eventi_to_e2eventiclassi.tipo == globals.TipoEvento.STATISTICO
+    		     || eventiFs.e2eventi_to_e2eventiclassi.tipo == globals.TipoEvento.AGGIUNTIVO))
 		{
 			elements.chk_copertura.enabled = false;
 			vCoperturaOrarioTeorico = 0;
@@ -819,7 +820,7 @@ function controllaInformativiStatistici(idLav,periodo,giorni)
 // TODO caso evento multiplo	
 //	var giorniSelezionati = giorni ? giorni : globals.getGiorniSelezionatiEv();
 //	var url = giorniSelezionati.length == 1 ? globals.WS_URL + '/Eventi/ControllaInformativi' : globals.WS_URL + '/Eventi/ControllaInformativiMultiplo';
-	var giorniSelezionati = giorni ? [giorni] : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg];
+	var giorniSelezionati = giorni ? giorni : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg];
     var url = globals.WS_URL + '/Eventi/ControllaInformativi';
 	var params = {
 		periodo : periodo ? periodo : globals.getPeriodo(),
@@ -842,7 +843,8 @@ function controllaInformativiStatistici(idLav,periodo,giorni)
 }
 
 /**
- * TODO generated, please specify type and doc for the params
+ * Gestione della risposta alla chiamata sugli informativi dell'evento
+ * 
  * @param {Object} response
  *
  * @properties={typeid:24,uuid:"FFFB8853-8C0A-4DDE-9603-96F17B707E9C"}

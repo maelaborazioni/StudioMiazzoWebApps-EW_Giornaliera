@@ -65,7 +65,7 @@ function preparaGiornaliera(useCache, indexToUpdate, soloCartolina, forzaRidiseg
 				firstIdLavoratore = forms.giorn_cart_header.idlavoratore;
 			else
 			{
-				var arrIdLavoratori = globals.getLavoratoriDittaDalAl(_params['idditta'],new Date(anno,mese - 1,1),new Date(anno,mese,1));
+				var arrIdLavoratori = globals.getLavoratoriDittaDalAl([_params['idditta']],new Date(anno,mese - 1,1),new Date(anno,mese,1));
 				if(arrIdLavoratori.length > 0)
 				   firstIdLavoratore = arrIdLavoratori[0];
 			}
@@ -109,13 +109,17 @@ function preparaGiornaliera(useCache, indexToUpdate, soloCartolina, forzaRidiseg
 				break;
 
 			case 3:
-//				if (globals.haOrologio()) // perchè controllare se ha orologio quando nel caso di mostra timbrature?
-//				{
-					forms.giorn_mostra_timbr.is_dirty = forms.giorn_mostra_timbr.is_dirty || !useCache;
-					forms.giorn_mostra_timbr.preparaTimbratura(anno, mese, idlavoratore || firstIdLavoratore, soloCartolina, indexToUpdate || null);
-					forms.giorn_mostra_timbr.clearSelection();
-					globals.aggiornaIntestazioni();
-//				}
+				forms.giorn_mostra_timbr.is_dirty = forms.giorn_mostra_timbr.is_dirty || !useCache;
+				forms.giorn_mostra_timbr.preparaTimbratura
+				(
+					anno
+					,mese
+					, idlavoratore || firstIdLavoratore
+					, soloCartolina
+					, indexToUpdate || null
+					, forzaRidisegno);
+				forms.giorn_mostra_timbr.clearSelection();
+				globals.aggiornaIntestazioni();
 
 				break;
 		}

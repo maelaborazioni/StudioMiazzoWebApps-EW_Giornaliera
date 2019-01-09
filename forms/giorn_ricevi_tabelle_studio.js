@@ -302,14 +302,19 @@ function onDataChangeDitta(oldValue, newValue, event)
 {	
 	_ragionesociale = ''
 	
+	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte>}*/
 	var _foundset = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.DITTE)
-			
     var arrDitteEpi = globals.getDitteGestiteEpi2();
-	_foundset.addFoundSetFilterParam('idditta','IN',arrDitteEpi);
-	_foundset.addFoundSetFilterParam('ditte_to_ditte_sedi.codtiposede','=',globals.TipiSedeLavoro.SEDE_OPERATIVA)
-	_foundset.addFoundSetFilterParam('codice', '=', newValue)
-	_foundset.loadAllRecords()
+
+	if(_foundset.find())
+	{
+		_foundset.idditta = arrDitteEpi;
+		_foundset.ditte_to_ditte_sedi.codtiposede = globals.TipiSedeLavoro.SEDE_OPERATIVA;
+		_foundset.codice = newValue;
 	
+		_foundset.search();
+	}
+		
 	if (_foundset.getSize() == 1) {
 		
 		//aggiorniamo la parte di selezione ditta

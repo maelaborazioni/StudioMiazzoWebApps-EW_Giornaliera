@@ -322,7 +322,7 @@ uuid:"A75425E1-8DC8-48AE-B871-2A79355DBE3F"
 {
 anchors:3,
 formIndex:3,
-location:"589,538",
+location:"590,540",
 mediaOptions:10,
 name:"btn_conferma",
 onActionMethodID:"F9B75AEE-9B17-491D-B582-1B65CF0431CC",
@@ -415,7 +415,7 @@ uuid:"D878FDAD-8927-4804-986A-5B4874BA59C6"
 {
 anchors:3,
 formIndex:1,
-location:"622,538",
+location:"622,540",
 mediaOptions:10,
 name:"btn_annulla",
 onActionMethodID:"69138CBE-9A74-4E38-A64C-63BBA091404C",

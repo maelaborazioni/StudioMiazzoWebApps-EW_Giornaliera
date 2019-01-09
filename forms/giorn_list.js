@@ -749,7 +749,7 @@ function apriPopupVistaMensile(_event)
 	var _rec = forms[_event.getFormName()].foundset.getSelectedRecord();
 	var _giornoMese = _rec['giornomese'];
 	var _isBudget = forms.giorn_vista_mensile._tipoGiornaliera == globals.TipoGiornaliera.BUDGET ? true : false;
-	var _isGgConteggiato = globals.isGiornoConteggiato(_rec['idlavoratore'],_rec['giorno']);
+	var _isGgConteggiato = globals.isGiornoConteggiato(_rec['idlavoratore'],_rec['giorno'],_isBudget);
 	var _disabled = _isBudget && _isGgConteggiato;
 	
 	var _source = _event.getSource();
@@ -859,6 +859,8 @@ function apriPopupVistaMensile(_event)
     	        _item10_3.methodArguments = [_event,forms.giorn_header.idditta];
     	   
 		}
+		var _item10_4 = _popUpMenuStampe.addMenuItem('Stampa riepilogo timbrature web ',stampaReportRiepilogoWeb);
+ 	    _item10_4.methodArguments = [_event,forms.giorn_header.idditta];
     }
     
     _popUpMenu.addSeparator();
@@ -1466,6 +1468,25 @@ function stampaReportRiepilogoCausalizzate(_itemInd, _parItem, _isSel, _parMenTx
 }
 
 /**
+ * @param {Number} _itemInd
+ * @param {Number} _parItem
+ * @param {Boolean} _isSel
+ * @param {String} _parMenTxt
+ * @param {String} _menuTxt
+ * @param {JSEvent} _event
+ * @param {Number} vIdDitta
+ *
+ * @properties={typeid:24,uuid:"ED2658D0-0A86-4A2C-A5A7-8C2AA4C6933E"}
+ */
+function stampaReportRiepilogoWeb(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event,vIdDitta)
+{
+	var frm = forms.stampa_timbr_web;
+	frm.vIdDitta = vIdDitta;
+	globals.ma_utl_setStatus(globals.Status.EDIT,frm.controller.getName());
+	globals.ma_utl_showFormInDialog(frm.controller.getName(),'Stampa report riepilogo web');	
+}
+
+/**
  * TODO generated, please specify type and doc for the params
  * @param {Number} _itemInd
  * @param {Number} _parItem
@@ -1606,10 +1627,10 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
 	if (answer)
 	{
 		var response = globals.rendiGiorniRiconteggiabili(arrLav 
-						                                   ,giorniSelezionati
-														   ,forms.giorn_header.idditta
-														   ,globals.getPeriodo()
-														   ,globals._tipoConnessione);
+						                                  ,giorniSelezionati
+														  ,forms.giorn_header.idditta
+														  ,globals.getPeriodo()
+														  ,globals._tipoConnessione);
 		if (response && response['returnValue'] === true)
 			forms.giorn_header.preparaGiornaliera();
 		else

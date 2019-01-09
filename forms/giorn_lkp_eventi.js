@@ -34,7 +34,6 @@ function refreshTree(richiestaPermessi)
 {
 	arrIdEventi = [];
 	
-//	arrIdEventi = globals._arrIdEvSelezionabili;
 	if(richiestaPermessi)
 		for(var e = 0; e < globals._arrIdEvSelezionabiliRP.length; e++)
 		{

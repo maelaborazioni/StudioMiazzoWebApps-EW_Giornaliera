@@ -1,5 +1,13 @@
 dataSource:"db:/ma_presenze/e2eventi",
 extendsID:"-1",
+items:[
+{
+height:100,
+partType:5,
+typeid:19,
+uuid:"0972A881-F95F-46A8-9060-FA784A2B1681"
+}
+],
 name:"giorn_eventi",
 showInMenu:true,
 size:"640,480",

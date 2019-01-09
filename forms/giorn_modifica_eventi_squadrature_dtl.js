@@ -343,7 +343,7 @@ function AggiornaSelezioneEventoSquadrature(rec,event,idLavoratore)
 		}
 		else
 		{
-			AggiornaProprietaEvento(rec);
+			AggiornaProprietaEventoSquadrature(rec);
 			controller.focusField(elements.fld_mod_ore.getName(),false);
 		}
 	}

@@ -296,14 +296,7 @@ function inviaGiornalieraPannello(event)
  * @properties={typeid:24,uuid:"25A5EE5D-DF3E-43F3-BD8C-64550CFBB2E4"}
  */
 function process_invia_giornaliera_pannello(_params)
-{
-	//TODO Ditta 502
-	if(globals.getCodDitta(_params.idditta) == 502 && globals.svy_sec_username != 'ASSISTENZA')
-	{
-		globals.ma_utl_showInfoDialog('L\'operazione è bloccata per il mese in corso. Contattare lo Studio per ulteriori informazioni','Predisposizione ed invio giornaliera');
-		return;
-	}
-	
+{	
 	try
 	{
 		if(scopes.giornaliera.esisteGiornalieraInviata(_params.idditta,_params.periodo,_params.gruppoinst,_params.gruppolav))

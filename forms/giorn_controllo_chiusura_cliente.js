@@ -130,27 +130,36 @@ function vaiAllaGiornalieraFiltrata(event) {
 	
 	if(_catArr.length == 0)
 		tornaAllaGiornaliera(event);
-		
-	/** @type Array<Number>*/
-	var arrLav = globals.foundsetToArray(_fs,'idlavoratore');
-	/** @type {JSDataSet} */
-	var _dipCatDs = globals.ottieniDipendentiBloccanti(_catArr,_fs.idditta,arrLav,globals.getPeriodo());
 	
-	if (_dipCatDs.getMaxRowIndex() > 0)
-	{ 
-		var params = {
-	        processFunction: process_filtro_dipendenti_bloccanti,
-	        message: '', 
-	        opacity: 0.5,
-	        paneColor: '#434343',
-	        textColor: '#EC1C24',
-	        showCancelButton: false,
-	        cancelButtonText: '',
-	        dialogName : 'This is the dialog',
-	        fontType: 'Arial,4,25',
-	        processArgs: [event,_dipCatDs,_fs,_catArr]
-	    };
-		plugins.busy.block(params);
+	try
+	{
+		/** @type Array<Number>*/
+		var arrLav = globals.foundsetToArray(_fs,'idlavoratore');
+		/** @type {JSDataSet} */
+		var _dipCatDs = globals.ottieniDipendentiBloccanti(_catArr,_fs.idditta,arrLav,globals.getPeriodo());
+		
+		if (_dipCatDs.getMaxRowIndex() > 0)
+		{ 
+			var params = {
+		        processFunction: process_filtro_dipendenti_bloccanti,
+		        message: '', 
+		        opacity: 0.5,
+		        paneColor: '#434343',
+		        textColor: '#EC1C24',
+		        showCancelButton: false,
+		        cancelButtonText: '',
+		        dialogName : 'This is the dialog',
+		        fontType: 'Arial,4,25',
+		        processArgs: [event,_dipCatDs,_fs,_catArr]
+		    };
+			plugins.busy.block(params);
+		}
+	}
+	catch(ex)
+	{
+		var msg = 'Metodo vaiAllaGiornalieraFiltrata : ' + ex.message;
+		globals.ma_utl_showErrorDialog(msg)
+		globals.ma_utl_logError(msg,LOGGINGLEVEL.ERROR);
 	}
 }
 

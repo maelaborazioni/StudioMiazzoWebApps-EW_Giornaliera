@@ -68,6 +68,17 @@ typeid:19,
 uuid:"63DD2A43-7118-428D-8AB8-2CE2FB87F62D"
 },
 {
+borderType:"SpecialMatteBorder,0.0,0.0,0.0,1.0,#000000,#000000,#000000,#000000,0.0,",
+formIndex:55,
+horizontalAlignment:4,
+location:"135,20",
+size:"1,513",
+text:"",
+transparent:true,
+typeid:7,
+uuid:"7389371B-71FC-4493-A969-29F70C5B93FE"
+},
+{
 formIndex:52,
 location:"0,0",
 name:"lbl_header",

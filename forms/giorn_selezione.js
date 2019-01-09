@@ -363,6 +363,9 @@ function onShowForm(_firstShow, _event)
  */
 function onDataChangeDitta(oldValue, newValue, event)
 {
+	if(!newValue)
+	   return false;
+	
 	_ragionesociale = ''
 	
 	/** @type {JSFoundSet<db:/ma_anagrafiche/ditte>} */
@@ -757,10 +760,16 @@ function salvaSelezione(codDitta,anno,mese,gruppo_inst,gruppo_lav)
 	   
 	   if(!databaseManager.commitTransaction())
 	   {
-		   databaseManager.revertEditedRecords(_fsLeafGiorn)
-		   globals.svy_mod_dialogs_global_showErrorDialog('Errore durante l\'operazione', 'Si è verificato un errore...', 'Chiudi');
+		   databaseManager.rollbackTransaction();
+		   application.output('Metodo salvaSelezione : errore durante il savataggio del record', LOGGINGLEVEL.ERROR);
+		   
+		   return false;
 	   }
+	   
+	   return true;
 	}
+	
+	return false;
 }
 
 /**

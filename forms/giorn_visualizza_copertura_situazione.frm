@@ -14,7 +14,8 @@ styleClass:"check",
 toolTipText:"Funzionalità in fase di implementazione",
 transparent:true,
 typeid:4,
-uuid:"181B54C8-8EB2-43BF-B545-41FAA73C10B9"
+uuid:"181B54C8-8EB2-43BF-B545-41FAA73C10B9",
+visible:false
 },
 {
 dataProviderID:"vAl",
@@ -87,7 +88,8 @@ styleClass:"btn_lookup",
 toolTipText:"Annulla ricerca",
 transparent:true,
 typeid:7,
-uuid:"2FEF9978-511D-4B33-8ACF-2A1E7E9324A1"
+uuid:"2FEF9978-511D-4B33-8ACF-2A1E7E9324A1",
+visible:false
 },
 {
 dataProviderID:"vChkSedeDiLavoro",
@@ -114,7 +116,8 @@ location:"431,34",
 name:"fld_centro_di_costo",
 size:"160,20",
 typeid:4,
-uuid:"3AA267CD-339F-4E22-AD56-06FDF68F0B0D"
+uuid:"3AA267CD-339F-4E22-AD56-06FDF68F0B0D",
+visible:false
 },
 {
 dataProviderID:"vTipoRichieste",
@@ -463,7 +466,8 @@ size:"80,20",
 text:"Centro di costo",
 transparent:true,
 typeid:7,
-uuid:"AC545634-07AB-4830-8AD1-0EC55366C0E0"
+uuid:"AC545634-07AB-4830-8AD1-0EC55366C0E0",
+visible:false
 },
 {
 extendsID:"AAAC08F8-0270-4E48-995F-E7066E036521",

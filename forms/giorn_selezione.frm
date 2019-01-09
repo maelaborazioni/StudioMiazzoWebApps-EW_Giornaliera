@@ -21,6 +21,7 @@ parameters:null\
 }\
 }",
 extendsID:"F6E35B2A-C6AB-419A-BBD2-97D0539CA2E0",
+format:"|#",
 onActionMethodID:"3BF47C5B-9E77-43D4-BDF1-80F7597AC1DA",
 typeid:4,
 uuid:"1E1AC058-FBA4-4F81-931C-7A05825E52BD"

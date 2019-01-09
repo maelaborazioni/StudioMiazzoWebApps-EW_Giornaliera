@@ -22,6 +22,7 @@ uuid:"05490E7D-9AF8-462E-8E35-EB6A124A0E17"
 {
 formIndex:55,
 horizontalAlignment:0,
+imageMediaID:"245038D3-4480-4058-815B-CE9D74A09200",
 labelFor:"fld_checked",
 location:"0,0",
 mediaOptions:10,
@@ -31,7 +32,7 @@ rolloverCursor:12,
 showClick:false,
 showFocus:false,
 size:"20,20",
-styleClass:"btn_select_all",
+styleClass:"table_header_first",
 typeid:7,
 uuid:"458A5A5C-DC0B-4F80-9C9F-14CF6D932F0C",
 verticalAlignment:0
