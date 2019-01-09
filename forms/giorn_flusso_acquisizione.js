@@ -8,12 +8,12 @@
  */
 function scaricaTimbraturePannello(event) 
 {
-	var frm = forms.giorn_header;
+	var frm = event.getFormName() == 'pann_flusso_acquisizione' ? forms.pann_header_dtl : forms.giorn_header;
 	var _anno = globals.getAnno();
 	var _mese = globals.getMese();
 	var _idditta = globals.getTipologiaDitta(frm.idditta) == globals.Tipologia.ESTERNA ?
 	               frm.foundset.lavoratori_to_ditte.ditte_to_ditte_legami.iddittariferimento : frm.idditta;
-    var _periodo = _anno * 100 + _mese; 
+    var _periodo = globals.TODAY.getFullYear() * 100 + globals.TODAY.getMonth() + 1; 
     var _gruppoinst = globals.getGruppoInstallazioneDitta(_idditta);
     var _gruppolav = ''; // globals.getGruppoLavoratori();
 
@@ -59,6 +59,30 @@ function process_scarica_timbrature_pannello(event,_params)
 {
 	try
 	{
+		//controlliamo la presenza di dipendenti senza regole associate
+		_params['arrDitte'] = globals.getDitteGestiteEpi2();
+		var _arrDipSenzaRegole = globals.getElencoDipendentiSenzaRegoleAssociateGruppoDitte(_params);
+		if (_arrDipSenzaRegole != null && _arrDipSenzaRegole.length > 0) 
+		{
+			var infoStr = "Sono presenti uno o più dipendenti senza regola associata.<br/>";
+			infoStr += "Si consiglia di sistemare tale associazione prima di proseguire. In caso contrario l'operazione di acquisizione delle timbrature potrebbe non terminare correttamente. <br/>";
+			infoStr += "I dipendenti interessanti sono i seguenti : <br/>";
+			
+			for(var d = 0; d < _arrDipSenzaRegole.length; d++)
+			{
+				var dipObj = _arrDipSenzaRegole[d];
+				infoStr += dipObj['cod_lavoratore'] + " - " + dipObj['cognome'] + " " + dipObj['nome'] +
+				           " assunto il " + dipObj['assunzione'] + " nella ditta " + dipObj['codice_ditta'] + " - " + dipObj['ragione_sociale'] + "<br/>";
+			}
+						
+			infoStr += "<br/> Si desidera comunque proseguire con l'acquisizione?"
+			
+			var answer = globals.ma_utl_showYesNoQuestion(globals.formatForHtml(infoStr),'Acquisizione timbrature : dipendenti senza regola associata');
+			
+			if(!answer)
+				return;
+		}
+		
 		globals.scaricaTimbratureDaFtp(_params);
 	}
 	catch(ex)
