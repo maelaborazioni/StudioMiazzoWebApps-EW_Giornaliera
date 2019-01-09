@@ -2,31 +2,91 @@
  * @param {JSEvent} _event
  *
  * @properties={typeid:24,uuid:"BE010BE4-219A-4AAA-A497-B55D54430358"}
+ * @AllowToRunInFind
  */
 function apriPopupCartolinaDipendente(_event)
 {
-//	var _squadrato = forms[_event.getFormName()].foundset.getSelectedRecord()['squadrato'];
 	var _idTimbratura = forms[_event.getFormName()].foundset.getSelectedRecord()[_event.getElementName()];
 	
+//	var _enableGgSucc = false;
+//  var _enableGgPrec = false;
+//        
+//	/** @type {JSFoundSet<db:/ma_presenze/e2timbratura>} */
+//	var _fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.TIMBRATURE);
+//
+//	// nel caso di timbratura con senso di entrata va disabilitata l'opzione di spostamento al giorno prec
+//	// nel caso di timbratura con senso di uscita va disabilitata l'opzione di spostamento al giorno succ
+//	if (_fs.find()) {
+//		_fs.idtimbrature = forms[_event.getFormName()].foundset[_event.getElementName()];
+//		if (_fs.search() > 0) {
+//			
+//			var _timbHhmm = utils.stringRight(_fs.timbratura.toString(),4);
+//			var _timbHh = utils.stringLeft(_timbHhmm,2);
+//			var _timbMm = utils.stringRight(_timbHhmm,2);
+//			
+//			var timbHhmm = parseInt(_timbHh,10) * 100 + parseInt(_timbMm,10);
+//			
+//			// caso entrata
+//			if(_fs.senso == 0 && _fs.sensocambiato == 0 ||
+//					_fs.senso == 1 && _fs.sensocambiato == 1)
+//			    _enableGgPrec = false;
+//			// caso uscita
+//			else
+//			{
+//				if(timbHhmm >= 2400)
+//				{
+//					_enableGgSucc = true;
+//					_enableGgPrec= false;
+//				}
+//				else
+//				{
+//					_enableGgSucc = false;
+//					_enableGgPrec= true;
+//				}
+//		
+//			}
+//		}
+//	}
+	
+	var _giorno = forms[_event.getFormName()].foundset.getSelectedRecord()['giorno'];
+	var _senso = utils.stringLeft(_event.getElementName(),1) == 'u' ? 1 : 0;
 	var _source = _event.getSource();
 	var _popUpMenu = plugins.window.createPopupMenu();
 	
 	var _popUpMenuTimbr = _popUpMenu.addMenu('Gestione timbrature ');
 	
+	var indirizzoTimbratura = _idTimbratura ? scopes.giornaliera.getOrologioTimbratura(_idTimbratura) : null;
+	var modifiable = globals.isGiornoConTimbratureMancanti(forms[_event.getFormName()].foundset.getSelectedRecord()['idlavoratore'],_giorno); 
+	var conteggiato = globals.isGiornoConteggiato(forms[_event.getFormName()].foundset.getSelectedRecord()['idlavoratore'],_giorno);
+	
 	var _addTimbrMulti = _popUpMenuTimbr.addMenuItem('Aggiungi timbrature ',aggiungiTimbratureMultiDaMenu);
-		_addTimbrMulti.methodArguments = [_event,true];
+		_addTimbrMulti.methodArguments = [_event, true, _giorno, _senso];
+        _addTimbrMulti.enabled = modifiable;
+    
+    modifiable = modifiable && indirizzoTimbratura != null;
+    
+    if(globals.ma_utl_hasKey(globals.Key.TIMBR_DIPENDENTE_CAMBIO_SENSO))
+	{
+		var _sensoTimbr = _popUpMenuTimbr.addMenuItem('Cambia il senso della timbratura',cambiaSenso);
+		    _sensoTimbr.methodArguments = [_event, true];
+		    _sensoTimbr.enabled = modifiable;
+	}    
+    
+	var deletable = !conteggiato && indirizzoTimbratura != null && indirizzoTimbratura == globals.TipiTimbratura.WEB;
 	
 	if(globals.ma_utl_hasKey(globals.Key.TIMBR_DIPENDENTE_ELIMINA))
 	{
 		var _delTimbr = _popUpMenuTimbr.addMenuItem('Elimina la timbratura ',eliminazioneTimbratura);
 		    _delTimbr.methodArguments = [_event,true];
-		    var indirizzoTimbratura = _idTimbratura ? scopes.giornaliera.getOrologioTimbratura(_idTimbratura) : null;
-		    _delTimbr.enabled = indirizzoTimbratura != null 
-			                       && !globals.isGiornoConteggiato(forms[_event.getFormName()].foundset.getSelectedRecord()['idlavoratore'],forms[_event.getFormName()].foundset.getSelectedRecord()['giorno'])
-			                       && (indirizzoTimbratura == globals.TipiTimbratura.WEB 
-			                       	   || indirizzoTimbratura == globals.TipiTimbratura.MANUALE
-								       || indirizzoTimbratura == globals.TipiTimbratura.CAUSALIZZATA)
-	}
+		    _delTimbr.enabled = deletable;
+	}   
+    	
+//	var _ggSuccTimbr = _popUpMenuTimbr.addMenuItem('Sposta al giorno successivo',spostaGgSucc);
+//	    _ggSuccTimbr.enabled = _enableGgSucc;
+//	    _ggSuccTimbr.methodArguments = [_event];
+//	var _ggPrecTimbr = _popUpMenuTimbr.addMenuItem('Sposta al giorno precedente',spostaGgPrec);
+//	    _ggPrecTimbr.enabled = _enableGgPrec;
+//	    _ggPrecTimbr.methodArguments = [_event];
 	
 	_popUpMenuTimbr.addSeparator();
 	
@@ -62,123 +122,6 @@ function apriPopupCartolinaDipendente(_event)
 		_popUpMenu.show(_source);
 }
 
-/**
- * @param {Number} _itemInd
- * @param {Number} _parItem
- * @param {Boolean} _isSel
- * @param {String} _parMenTxt
- * @param {String} _menuTxt
- * @param {JSEvent} _event
- * @param {Boolean} _soloCartolina
- * @param {Number} _idLavoratore
- * @param {Date} _giorno
- *
- * @properties={typeid:24,uuid:"E6FA021D-EC26-4409-892B-1829D24059AD"}
- */
-function completaConOrarioTeorico(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event,_soloCartolina,_idLavoratore,_giorno)
-{
-	//TODO completaConOrarioTeorico : da rifare
-//	var hhmm = null;
-//	var inizioOrario = forms[_event.getFormName()].foundset.getSelectedRecord()["inizioorario"];
-//	var inizioPausa = forms[_event.getFormName()].foundset.getSelectedRecord()["iniziopausa"];
-//	var finePausa = forms[_event.getFormName()].foundset.getSelectedRecord()["finepausa"];
-//	var fineOrario = forms[_event.getFormName()].foundset.getSelectedRecord()["fineorario"];
-//	var arrTimbrTeoriche = inizioOrario ? (inizioPausa ? [inizioOrario,inizioPausa,finePausa,fineOrario] : [inizioOrario,fineOrario]) : [];
-//	var numTimbrTeoriche = arrTimbrTeoriche.length;
-//	try 
-//	{
-//		databaseManager.setAutoSave(false);
-//		databaseManager.startTransaction();
-//		
-//		// creazione record nella tabella lavoratori_giustificativitesta
-//		/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori_giustificativitesta>}*/
-//		var fsTesta = forms.giorn_cart_header.lavoratori_to_lavoratori_giustificativitesta; //TODO databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE, 'lavoratori_giustificativitesta');	
-//		
-//		var newTesta = fsTesta.getRecord(fsTesta.newRecord(false));
-//		if (!newTesta)
-//		  throw new Error('Errore durante la creazione della richiesta timbrature');
-//		
-//		newTesta.idlavoratore = forms.giorn_cart_header.idlavoratore;
-//		newTesta.datarichiesta = utils.dateFormat(globals.TODAY, globals.EU_DATEFORMAT);
-//		newTesta.approvatoda = null;
-//		newTesta.approvatoil = null;
-//		newTesta.stato = null;
-//		newTesta.note = null;
-//		newTesta.noteapp = null;
-//		
-//		if(!databaseManager.commitTransaction())
-//			   throw new Error("Errore durante inserimento record giustificativi testa");
-//		
-//		databaseManager.startTransaction();
-//		
-//		for (var i = 1; i <= numTimbrTeoriche; i++) 
-//		{
-//			hhmm = arrTimbrTeoriche[i - 1];
-//			var hh = Math.floor(hhmm / 100);
-//			var mm = Math.round(hhmm % 100);
-//			var timbr = _giorno.getFullYear() * 100000000 + (_giorno.getMonth() + 1) * 1000000 + _giorno.getDate() * 10000 + hh * 100 + mm;
-//			var idGruppoInst = globals.getGruppoInstallazioneLavoratore(_idLavoratore);
-//			var tSenso = (i - 1) % 2 == 0 ? 0 : 1;
-//			var tNrBadge = globals.getNrBadge(_idLavoratore, _giorno);
-//			
-//			//verifica anomalia pre inserimento
-//			var anomaliaIniziale = globals.getAnomalieGiornata(_idLavoratore, utils.dateFormat(_giorno, globals.ISO_DATEFORMAT));
-//
-//			/** @type {JSFoundSet<db:/cliente_000165/e2timbraturedipendenti>} */
-//			var fsTimbr = databaseManager.getFoundSet('cliente_000165',
-//                                                      globals.Table.TIMBRATURE_DIPENDENTI);
-//			
-//			// salvataggio timbratura inserita
-//			fsTimbr.newRecord(false);
-//			fsTimbr['idtimbraturarichiesta'] = newTesta.idlavoratoregiustificativotesta;
-//			fsTimbr['iddip'] = forms.giorn_cart_header.idlavoratore;
-//			fsTimbr['ggsucc'] = false;
-//			fsTimbr['nr_badge'] = tNrBadge;
-//			fsTimbr['idgruppoinst'] = idGruppoInst;
-//			//differenziamo il caso di inserimento da parte del dipendente
-//			fsTimbr['indirizzo'] = 'wb';
-//			fsTimbr['timbeliminata'] = 0;
-//			fsTimbr['sensocambiato'] = false;
-//			fsTimbr['senso'] = tSenso;
-//			fsTimbr['timbratura'] = mm + hh * 100 + _giorno.getDate() * 10000 + (_giorno.getMonth() + 1) * 1000000 + _giorno.getFullYear() * 100000000;
-//			
-//		}
-//		var success = databaseManager.commitTransaction(); 
-//		if (!success) 
-//		{
-//			var failedrecords = databaseManager.getFailedRecords();
-//			if (failedrecords && failedrecords.length > 0)
-//				throw new Error('<html>Inserimento timbrature multiple non riuscito, verificare e riprovare. </br> Ripristinare le timbrature per verificare la presenza di eventuali doppioni.</html>');
-//		}
-//		
-//		// situazione anomalia partenza
-//		var anomaliaPre = globals.getAnomalieGiornata(forms.giorn_cart_header.idlavoratore, utils.dateFormat(_giorno, globals.ISO_DATEFORMAT));
-//
-//		// analizza pre conteggio
-//		forms.giorn_timbr.analizzaPreConteggio(_giorno.getDate());
-//
-//		// situazione anomalia partenza
-//		var anomaliaPost = globals.getAnomalieGiornata(forms.giorn_cart_header.idlavoratore, utils.dateFormat(_giorno, globals.ISO_DATEFORMAT));
-//	
-//	}
-//	catch (ex) 
-//	{
-//		application.output(ex.message, LOGGINGLEVEL.ERROR);
-//		databaseManager.rollbackTransaction();
-//		globals.ma_utl_showErrorDialog(ex.message);
-//		return false;
-//	} finally {
-//		databaseManager.setAutoSave(false);
-//	}
-//		
-//	forms.giorn_mostra_timbr_cartolina.preparaTimbratura(_giorno.getFullYear(),
-//		                                                 _giorno.getMonth() + 1,
-//														 _idLavoratore,
-//														 true);
-//	
-//	return true;
-	}
-	
 /**
  * @param {Number} _itemInd
  * @param {Number} _parItem
@@ -410,7 +353,7 @@ function onFieldSelection(event)
 	if(_recordIndex == _lastSelectedRecordIndex)
 	{
 		if(_timeStamp - _lastClickTimeStamp < globals.intervalForDblClk)
-			modificaTimbratura(event);
+			modificaTimbraturaDipendente(event);
 		
 		forms.giorn_mostra_timbr.last_click_timestamp = _timeStamp;
 	}
@@ -449,7 +392,7 @@ function modificaTimbraturaDipendenteDaMenu(_itemInd, _parItem, _isSel, _parMenT
  */
 function modificaTimbraturaDipendente(_event)
 {
-	var autosave = databaseManager.getAutoSave();
+	var autosave = false;//databaseManager.getAutoSave();
 	try
 	{
 		if (forms.giorn_header._vNrBadge != null)
@@ -511,7 +454,10 @@ function modificaTimbraturaDipendente(_event)
 			// se non si riesce a recuperare l'id significa che si sta cercando di inserire una nuova timbratura 
 			else 
 			{
-				aggiungiTimbratura(_event);
+				//aggiungiTimbratura(_event,null,true);
+				globals.aggiungi_timbratura_dipendente(true,
+					                                   foundset.getSelectedRecord()['giorno'],
+													   utils.stringLeft(_event.getElementName(),1) == 'u' ? 1 : 0);
 				return;
 			}
 	
@@ -526,10 +472,10 @@ function modificaTimbraturaDipendente(_event)
 			_frm.elements.fld_senso.enabled = false;
 			_frm.elements.fld_ggsucc.enabled = false;
 			_frm._competenzaGGPrec = _competenzaGGPrec;
-			_frmFs.iddip = forms.giorn_header.idlavoratore;
+			_frmFs.iddip = forms.giorn_cart_header.idlavoratore;
 			_frmFs.nr_badge = forms.giorn_header._vNrBadge;
-			_frmFs.idgruppoinst = globals.getGruppoInstallazioneLavoratore(forms.giorn_header.idlavoratore);
-			
+			_frmFs.idgruppoinst = globals.getGruppoInstallazioneLavoratore(forms.giorn_cart_header.idlavoratore);
+			_frm._solocartolina = true;
 			globals.ma_utl_setStatus(globals.Status.EDIT, _frm.controller.getName());
 			globals.ma_utl_showFormInDialog(_frm.controller.getName(), 'Modifica la timbratura selezionata', null, true);
 		} 

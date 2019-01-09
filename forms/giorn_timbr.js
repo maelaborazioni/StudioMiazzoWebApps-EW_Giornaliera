@@ -296,14 +296,7 @@ function apriPopupMostraTimbr(_event)
 			// caso entrata
 			if(_fs.senso == 0 && _fs.sensocambiato == 0 ||
 					_fs.senso == 1 && _fs.sensocambiato == 1)
-			{
 			    _enableGgPrec = false;
-				//if(timbHhmm < 2400)
-				//{
-				//   _enableGgPrec = true;
-				//   _enableGgSucc = true;
-				//}
-			}
 			// caso uscita
 			else
 			{
@@ -385,7 +378,9 @@ function apriPopupMostraTimbr(_event)
 		var _item4_3 = _popUpMenuStampe.addMenuItem('Stampa confronto effettive/causalizzate ',stampaReportCausalizzate);
 	        _item4_3.methodArguments = [_event,forms.giorn_header.idditta];
 	}
-	
+	var _item4_4 = _popUpMenuStampe.addMenuItem('Stampa riepilogo timbrature web ',stampaReportRiepilogoWeb);
+	    _item4_4.methodArguments = [_event,forms.giorn_header.idditta];
+	    
 	_popUpMenu.addSeparator();
 	
 	/** @type {String} */
@@ -453,12 +448,14 @@ function aggiungiTimbraturaDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _menuT
 * @param {String} _menuTxt
 * @param {JSEvent} _event
 * @param {Boolean} [_soloCartolina]
+* @param {Date} [_giornoCartolina]
+* @param {Number} [_sensoCartolina]
 * 
 * @AllowToRunInFind
 *
  * @properties={typeid:24,uuid:"F43A7D55-065E-4BA0-A1A7-13B54393EB88"}
  */
-function aggiungiTimbratureMultiDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event,_soloCartolina)
+function aggiungiTimbratureMultiDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event,_soloCartolina, _giornoCartolina, _sensoCartolina)
 {
 	if(_soloCartolina)
 	{
@@ -467,7 +464,7 @@ function aggiungiTimbratureMultiDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _
 		   globals.aggiungi_timbratura_dipendente_immediata(true);
 		// caso standard
 		else if(globals.ma_utl_hasKey(globals.Key.TIMBR_DIPENDENTE))
-		   globals.aggiungi_timbratura_dipendente(true);
+		   globals.aggiungi_timbratura_dipendente(true,_giornoCartolina,_sensoCartolina);
 		else
 			globals.ma_utl_showWarningDialog('L\'utente non dispone dell\'autorizzazione ad inserire le timbrature','Timbrature dipendente');
 	}
@@ -524,8 +521,9 @@ function aggiungiTimbratura(_event,_causalizzata,_soloCartolina)
 
 		if (_soloCartolina)
 			_frm._senso = utils.stringLeft(_event.getElementName(), 1) == 'e' ? 0 : 1;
-			globals.ma_utl_setStatus(globals.Status.EDIT, _frm.controller.getName());
-			globals.ma_utl_showFormInDialog(_frm.controller.getName(), 'Aggiungi una timbratura alla giornata');
+		
+		globals.ma_utl_setStatus(globals.Status.EDIT, _frm.controller.getName());
+		globals.ma_utl_showFormInDialog(_frm.controller.getName(), 'Aggiungi una timbratura alla giornata');
 		
 	}
 	else 		
@@ -554,10 +552,11 @@ function modificaTimbraturaDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _menuT
  * @AllowToRunInFind
  * 
  * @param {JSEvent} _event
- *
+ * @param {Boolean} [_cartolina]
+ * 
  * @properties={typeid:24,uuid:"D7C0C746-2D66-4DD9-8DFA-37B3F608B7F5"}
  */
-function modificaTimbratura(_event)
+function modificaTimbratura(_event,_cartolina)
 {
 	var autosave = databaseManager.getAutoSave();
 	try
@@ -688,19 +687,23 @@ function eliminazioneTimbratura(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt
 		if(eliminaTimbratura(_idTimbrature,_soloCartolina))
 		{
 			var anno = globals.getAnno();
-			var mese = globals.getAnno();
+			var mese = globals.getMese();
 			var frm = _soloCartolina != null && _soloCartolina ? forms['giorn_timbr_cartolina_temp'] : forms['giorn_timbr_temp']; 
 			var _giorno = frm.foundset.getSelectedIndex() - globals.offsetGg;
+			var _idLavoratore = _soloCartolina ? forms.giorn_cart_header.idlavoratore : forms.giorn_header.idlavoratore;
 			var data = new Date(anno,mese-1,_giorno);
 			
 			// situazione anomalia partenza
-			var anomaliaPre =  globals.getAnomalieGiornata(forms.giorn_header.idlavoratore, utils.dateFormat(data, globals.ISO_DATEFORMAT));
+			var anomaliaPre =  globals.getAnomalieGiornata(_idLavoratore, utils.dateFormat(data, globals.ISO_DATEFORMAT));
 			
 			// analizza pre conteggio
-			forms.giorn_timbr.analizzaPreConteggio(_giorno);
+			if(_soloCartolina)
+				forms.giorn_timbr.analizzaPreConteggio(_giorno, _idLavoratore, anno * 100 + mese);
+			else
+				forms.giorn_timbr.analizzaPreConteggio(_giorno);
 
 			// situazione anomalia finale
-			var anomaliaPost =  globals.getAnomalieGiornata(forms.giorn_header.idlavoratore, utils.dateFormat(data, globals.ISO_DATEFORMAT));
+			var anomaliaPost =  globals.getAnomalieGiornata(_idLavoratore, utils.dateFormat(data, globals.ISO_DATEFORMAT));
 
 			var indexToUpdate = foundset.getSelectedIndex();
 			//se il giorno della timbratura modificata risulta già conteggiato
@@ -948,13 +951,16 @@ function ripristinaTimbratureGiorno(_itemInd, _parItem, _isSel, _parMenTxt, _men
 * @param {String} _parMenTxt
 * @param {String} _menuTxt
 * @param {JSEvent} _event
+* @param {Boolean} [_soloCartolina]
 *
 * @AllowToRunInFind
 *
  * @properties={typeid:24,uuid:"BA4BA62F-9554-434C-9496-A8038A1CCC8D"}
  */
-function cambiaSenso(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event)
+function cambiaSenso(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event, _soloCartolina)
 {
+	var _idLavoratore = _soloCartolina ? forms.giorn_cart_header.idlavoratore : forms.giorn_header.idlavoratore;
+	
 	databaseManager.setAutoSave(false);
 	
 	//recupero l'id della timbratura selezionata 
@@ -978,11 +984,15 @@ function cambiaSenso(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event)
        	globals.ma_utl_showWarningDialog('Cannot go to find mode','Cambia senso timbratura');
         return;
     }
+    
 	var _sensoCambiato = 0;
 	_fs.sensocambiato == 0 ? _sensoCambiato = 1 : _sensoCambiato = 0;
 	if(_idTimbrature != null)
 	{
-			var response = globals.ma_utl_showYesNoQuestion('Cambiare il senso della timbratura?','Cambio senso della timbratura');
+			var response = true;
+			
+			if(!_soloCartolina)
+			   response = globals.ma_utl_showYesNoQuestion('Cambiare il senso della timbratura?','Cambio senso della timbratura');
 
             if(response)
             {	
@@ -995,39 +1005,42 @@ function cambiaSenso(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event)
          	   }
          	   else
          	   {
-         		   var _yy = globals.getAnnoDaTimbr(_fs.timbratura.toString());
-         		   var _MM = globals.getMeseDaTimbr(_fs.timbratura.toString());
-         		   var _gg = globals.getGiornoDaTimbr(_fs.timbratura.toString());
-         		   
+         		    var _yy = globals.getAnnoDaTimbr(_fs.timbratura.toString());
+         		    var _MM = globals.getMeseDaTimbr(_fs.timbratura.toString());
+         		    var _gg = globals.getGiornoDaTimbr(_fs.timbratura.toString());
          		    var data = new Date(_yy,_MM-1,_gg);
+         		    var _periodo = data.getFullYear() * 100 + data.getMonth() + 1;
          		    
          		    // situazione anomalia partenza
-         			var anomaliaPre =  globals.getAnomalieGiornata(forms.giorn_header.idlavoratore, utils.dateFormat(data, globals.ISO_DATEFORMAT));
+         			var anomaliaPre =  globals.getAnomalieGiornata(_idLavoratore, utils.dateFormat(data, globals.ISO_DATEFORMAT));
          			
          			// analizza pre conteggio
-         			forms.giorn_timbr.analizzaPreConteggio(_gg);
-
+         			if(_soloCartolina)
+         				forms.giorn_timbr.analizzaPreConteggio(_gg, _idLavoratore, _periodo);
+         			else
+         				forms.giorn_timbr.analizzaPreConteggio(_gg);
+         			
          			// situazione anomalia partenza
-         			var anomaliaPost =  globals.getAnomalieGiornata(forms.giorn_header.idlavoratore, utils.dateFormat(data, globals.ISO_DATEFORMAT));
+         			var anomaliaPost =  globals.getAnomalieGiornata(_idLavoratore, utils.dateFormat(data, globals.ISO_DATEFORMAT));
          		    
          		    //se il giorno della timbratura modificata risulta già conteggiato
          		    if(anomaliaPre == 0 && anomaliaPre != anomaliaPost)
          		    {
-         		    	var _respRiconteggia = globals.ma_utl_showYesNoQuestion('Riconteggiare la giornata modificata?','Modifica timbrature');
-         				if(_respRiconteggia)
-         				   globals.conteggiaTimbrature([forms.giorn_header.idlavoratore],[_gg]);
+         		    	if(!_soloCartolina
+         		    			&& globals.ma_utl_showYesNoQuestion('Riconteggiare la giornata modificata?','Modifica timbrature'))
+         				   globals.conteggiaTimbrature([_idLavoratore],[_gg]);
          				else
-         				   forms.giorn_header.preparaGiornaliera();
+         				   forms.giorn_header.preparaGiornaliera(false, null,_soloCartolina);
          		    }
          		    else	    
-         			     forms.giorn_header.preparaGiornaliera();  
-         		    
-         		   globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);
+         			     forms.giorn_header.preparaGiornaliera(false, null, _soloCartolina);  
+         		   
+         		    if(!_soloCartolina)
+         		    	globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);
          		  
          	   }
             }
     }
-
 	//se non è presente si è cliccato su una cella vuota, gestiamo l'aggiunta di una nuova timbratura
 	else
 		//gestione nuova timbratura
@@ -1641,4 +1654,23 @@ function stampaReportRiepilogoCausalizzate(_itemInd, _parItem, _isSel, _parMenTx
 	frm.vIdDitta = vIdDitta;
 	globals.ma_utl_setStatus(globals.Status.EDIT,frm.controller.getName());
 	globals.ma_utl_showFormInDialog(frm.controller.getName(),'Stampa report riepilogo causalizzate');	
+}
+
+/**
+ * @param {Number} _itemInd
+ * @param {Number} _parItem
+ * @param {Boolean} _isSel
+ * @param {String} _parMenTxt
+ * @param {String} _menuTxt
+ * @param {JSEvent} _event
+ * @param {Number} vIdDitta
+ *
+ * @properties={typeid:24,uuid:"5A5C186E-AD67-4991-B7DD-53DFB6C8A1F7"}
+ */
+function stampaReportRiepilogoWeb(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event,vIdDitta)
+{
+	var frm = forms.stampa_timbr_web;
+	frm.vIdDitta = vIdDitta;
+	globals.ma_utl_setStatus(globals.Status.EDIT,frm.controller.getName());
+	globals.ma_utl_showFormInDialog(frm.controller.getName(),'Stampa report riepilogo web');	
 }

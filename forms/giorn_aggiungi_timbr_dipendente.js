@@ -28,7 +28,14 @@ var vCausale = null;
  * 
  * @properties={typeid:35,uuid:"3D448B8E-4A61-48F3-8DDD-682A854A154A",variableType:-4}
  */
-var vDaCartolina = null;
+var vDaCartolina = false;
+
+/**
+ * @type {Date}
+ *
+ * @properties={typeid:35,uuid:"570700A9-4874-4DEE-942F-FA6D00B97D0B",variableType:93}
+ */
+var vGiornoDaCartolina = null;
 
 /** 
  * @param _firstShow
@@ -42,11 +49,11 @@ function onShowForm(_firstShow, _event)
 	plugins.busy.prepare();
 	
 	var idLavoratore = _to_sec_user$user_id.sec_user_to_sec_user_to_lavoratori.idlavoratore;
-	vTimbratura = globals.TODAY;
+	vTimbratura = vGiornoDaCartolina|| globals.TODAY;
 	
-	elements.btn_conferma_inserimento.enabled =	false;
+	elements.fld_data.enabled = 
+		elements.btn_conferma_inserimento.enabled =	false;
 	
-	// 
 	/** @type{JSFoundSet<db:/ma_presenze/e2timbratureserviziogestione>} */
 	var fsCaus = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE_SERVIZIOGESTIONE);
 	if(fsCaus.find())
@@ -55,6 +62,8 @@ function onShowForm(_firstShow, _event)
 		elements.fld_causalizzata.enabled =
 			elements.fld_causale.enabled = fsCaus.search();
 	}
+	
+	elements.btn_data.enabled = !vDaCartolina;
 	
 	globals.ma_utl_setStatus(globals.Status.EDIT,controller.getName());	
 }
@@ -191,8 +200,11 @@ function process_timbratura_dipendente(event)
 				forms.giorn_mostra_timbr_cartolina.is_dirty = true;
 				// se la timbratura è stata inserita per una giornata non ancora compilata viene eseguita 
 				// la compilazione di base che ve a creare il record nella tabella e2giornaliera
-				if(globals.getIdGiornalieraDaIdLavGiorno(idLavoratore,vTimbratura) == null)
-				   globals.compilaDalAlSingoloSync(idLavoratore,[vTimbratura.getDate()],vTimbratura.getFullYear() * 100 + vTimbratura.getMonth() + 1);
+				if(!vDaCartolina)
+					if(globals.getIdGiornalieraDaIdLavGiorno(idLavoratore,vTimbratura) == null)
+					   globals.compilaDalAlSingoloSync(idLavoratore,[vTimbratura.getDate()],vTimbratura.getFullYear() * 100 + vTimbratura.getMonth() + 1);
+				
+				forms.giorn_timbr.analizzaPreConteggio(vTimbratura.getDate(),idLavoratore,vTimbratura.getFullYear() * 100 + vTimbratura.getMonth() + 1);
 				
 				if(vDaCartolina)
 					forms.giorn_header.preparaGiornaliera(false,null,true);
@@ -207,6 +219,11 @@ function process_timbratura_dipendente(event)
 				break;
 			} finally {
 				databaseManager.setAutoSave(false);
+				if(vDaCartolina)
+				{
+					globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
+					globals.svy_mod_closeForm(event);
+				}
 			    break;
 			}
 		case 1:

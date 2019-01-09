@@ -55,6 +55,8 @@ var _timbratura = null;
 var _competenzaGGPrec = false;
 
 /**
+ * @type {Boolean}
+ * 
  * @properties={typeid:35,uuid:"F3C71DCA-E2A6-4726-920F-1944895AB19C",variableType:-4}
  */
 var _solocartolina = null;
@@ -129,6 +131,7 @@ function process_timbratura(event)
 			{
 				var _hh;
 				var _mm;
+				databaseManager.startTransaction();
 				
 				recTimbr = foundset.getSelectedRecord();
 				recTimbr['iddip'] = idLav;
@@ -149,7 +152,6 @@ function process_timbratura(event)
 					throw new Error('Controllare che i valori della timbratura siano corretti.', 'Inserimento timbrature');
 				
 				// effettua la transazione (dovrebbe iniziare nella fase di modifica..)
-				databaseManager.startTransaction();
 				if(!databaseManager.commitTransaction()) 
 				{
 					canClose = true;
@@ -187,7 +189,7 @@ function process_timbratura(event)
 				
 				// la modifica o l'aggiunta di una timbratura non implica il ridisegno della giornaliera
 				// modificata ma solamente delle timbrature
-				forms.giorn_header.preparaGiornaliera();
+				forms.giorn_header.preparaGiornaliera(null,null,_solocartolina);
 			} 
 			catch (ex) 
 			{
@@ -214,56 +216,62 @@ function process_timbratura(event)
 			break;
 			
 		case 4:
-			var answer = globals.ma_utl_showYesNoQuestion('Esiste già una timbratura eliminata con questi valori! Si desidera ripristinarla?', 'Inserimento timbrature');
-			if (answer && timbraturaInConflitto && timbraturaInConflitto.id)
+			try
 			{
-				// rollback della transazione in corso e creazione di una nuova transazione
-				databaseManager.rollbackTransaction();
-				databaseManager.startTransaction();
-				
-				if(scopes.giornaliera.RipristinaTimbraturaEliminata(timbraturaInConflitto.id) && databaseManager.commitTransaction())
+				var answer = globals.ma_utl_showYesNoQuestion('Esiste già una timbratura eliminata con questi valori! Si desidera ripristinarla?', 'Inserimento timbrature');
+				if (answer && timbraturaInConflitto && timbraturaInConflitto.id)
 				{
-					canClose = true;
-					globals.ma_utl_setStatus(globals.Status.BROWSE, controller.getName());
-					globals.svy_mod_closeForm(event);
-					
-					if (_solocartolina)
-						forms.giorn_mostra_timbr.preparaTimbratura(_yy, _MM, idLav, _solocartolina);
-					else 
-					{
-						// situazione anomalia partenza
-						anomaliaPre = globals.getAnomalieGiornata(idLav, utils.dateFormat(_timbrGg, globals.ISO_DATEFORMAT));
-		
-						// analizza pre conteggio
-						forms.giorn_timbr.analizzaPreConteggio(_gg);
-		
-						// situazione anomalia partenza
-						anomaliaPost = globals.getAnomalieGiornata(idLav, utils.dateFormat(_timbrGg, globals.ISO_DATEFORMAT));
-						
-						//se il giorno della timbratura modificata risulta già conteggiato
-						if (anomaliaPre == 0 && anomaliaPre != anomaliaPost) 
-						{
-							_respRiconteggia = globals.ma_utl_showYesNoQuestion('Riconteggiare la giornata modificata?', 'Modifica timbrature');
-							if (_respRiconteggia)
-								globals.conteggiaTimbratureSingoloDiretto([idLav], [_gg]);
-							
-							// ridisegniamo le timbrature della cartolina o della gestione giornaliera
-							forms.giorn_header.preparaGiornaliera();
-						} 
-						else
-							// la modifica o l'aggiunta di una timbratura non implica il ridisegno della giornaliera
-							// modificata ma solamente delle timbrature
-							forms.giorn_header.preparaGiornaliera();
-						
-						globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);
-					}
-				}
-				else
-				{
+					// rollback della transazione in corso e creazione di una nuova transazione
 					databaseManager.rollbackTransaction();
-					globals.ma_utl_showWarningDialog('Errore durante il ripristino della timbratura', 'Inserimento timbrature');
+					databaseManager.startTransaction();
+					
+					if(scopes.giornaliera.RipristinaTimbraturaEliminata(timbraturaInConflitto.id) && databaseManager.commitTransaction())
+					{
+						canClose = true;
+						globals.ma_utl_setStatus(globals.Status.BROWSE, controller.getName());
+						globals.svy_mod_closeForm(event);
+						
+						if (_solocartolina)
+							forms.giorn_mostra_timbr.preparaTimbratura(_yy, _MM, idLav, _solocartolina);
+						else 
+						{
+							// situazione anomalia partenza
+							anomaliaPre = globals.getAnomalieGiornata(idLav, utils.dateFormat(_timbrGg, globals.ISO_DATEFORMAT));
+			
+							// analizza pre conteggio
+							forms.giorn_timbr.analizzaPreConteggio(_gg);
+			
+							// situazione anomalia partenza
+							anomaliaPost = globals.getAnomalieGiornata(idLav, utils.dateFormat(_timbrGg, globals.ISO_DATEFORMAT));
+							
+							//se il giorno della timbratura modificata risulta già conteggiato
+							if (anomaliaPre == 0 && anomaliaPre != anomaliaPost) 
+							{
+								_respRiconteggia = globals.ma_utl_showYesNoQuestion('Riconteggiare la giornata modificata?', 'Modifica timbrature');
+								if (_respRiconteggia)
+									globals.conteggiaTimbratureSingoloDiretto([idLav], [_gg]);
+								
+								// ridisegniamo le timbrature della cartolina o della gestione giornaliera
+								forms.giorn_header.preparaGiornaliera();
+							} 
+							else
+								// la modifica o l'aggiunta di una timbratura non implica il ridisegno della giornaliera
+								// modificata ma solamente delle timbrature
+								forms.giorn_header.preparaGiornaliera();
+							
+							globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);
+						}
+					}
+					else
+						throw new Error("Inserimento timbratura non riuscito, riprovare.<br/>Ripristinare le timbrature per verificare la presenza di eventuali doppioni")
 				}
 			}
+			catch (ex)
+			{
+				databaseManager.rollbackTransaction();
+				globals.ma_utl_showWarningDialog('Errore durante il ripristino della timbratura', 'Inserimento timbrature');
+			}
+						
 			break;
 	}
 	
