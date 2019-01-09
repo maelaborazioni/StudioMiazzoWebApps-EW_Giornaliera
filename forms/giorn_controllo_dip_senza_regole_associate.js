@@ -44,6 +44,11 @@ var _idditta = -1;
 var _arrCodLavoratori = [];
 
 /**
+ * @properties={typeid:35,uuid:"C1C732AE-306E-48F1-AF59-EBF0608F0F55",variableType:-4}
+ */
+var _isFromScaricoTimbrature = false;
+
+/**
  * Perform the element default action.
  *
  * @param {JSEvent} event the event that triggered the action
@@ -227,7 +232,11 @@ function confermaElenco(event)
 		// chiusura finestra ed entrata in giornaliera
 		globals.ma_utl_setStatus(globals.Status.BROWSE, controller.getName());
 		globals.svy_mod_closeForm(event);
-		globals.controlloFestivita(vParams, vOpenProg, vProgParams, vPrimoIngresso);
+		
+		if(_isFromScaricoTimbrature)
+		   globals.ma_utl_showInfoDialog("Ora è possibile riprovare ad effettuare l'acquisizione delle timbrature.","Regole dipendenti aggiornate");
+		else
+		   globals.controlloFestivita(vParams, vOpenProg, vProgParams, vPrimoIngresso);
 		
 	} catch (ex) {
 		
