@@ -643,8 +643,6 @@ function apriCartolina(_event, _idDitta, _anno, _mese, _annoAttivo, _meseAttivo,
 	var dipendenti = [_idLav];
 
 	if (dipendenti) {
-		globals.svy_mod_closeForm(_event);
-
 		var progObj = globals.nav.program['LEAF_CartolinaDipendente'];
 
 		// evita che sia caricato l'ultimo foundset del program
@@ -3490,7 +3488,8 @@ function conteggiaTimbrature(employeesIds, arrayGiorni, soloNonConteggiati,idDit
 }
 
 /**
- * TODO generated, please specify type and doc for the params
+ * Applica le condizioni di default per i giorni dei dipendenti selezionati
+ * 
  * @param employeesIds
  * @param giorniSelezionati
  * @param idDitta
@@ -3501,7 +3500,36 @@ function conteggiaTimbrature(employeesIds, arrayGiorni, soloNonConteggiati,idDit
  */
 function rendiGiorniRiconteggiabili(employeesIds, giorniSelezionati, idDitta,periodo,tipoConn)
 {
-	var url = globals.WS_URL + '/Timbrature/Riconteggia'
+	var url = globals.WS_URL + '/Timbrature/Riconteggia';
+	var params =
+	{
+		idditta				:	idDitta,
+		periodo				:	periodo,
+		giorniselezionati	:	giorniSelezionati,
+		iddipendenti		:	employeesIds,
+		tipoconnessione     :   globals.TipoConnessione.CLIENTE
+	};
+	
+    var response = globals.getWebServiceResponse(url, params);
+			
+	return response;
+	
+}
+
+/**
+ * Applica le condizioni di default per i giorni dei dipendenti selezionati
+ * 
+ * @param employeesIds
+ * @param giorniSelezionati
+ * @param idDitta
+ * @param periodo
+ * @param tipoConn
+ *
+ * @properties={typeid:24,uuid:"78D3A108-294E-4061-850B-18AC4CF8BDBE"}
+ */
+function rendiGiorniRiconteggiabiliWS(employeesIds, giorniSelezionati, idDitta,periodo,tipoConn)
+{
+	var url = 'http://srv-epiweb/Leaf_Single/Timbrature/Riconteggia';
 	var params =
 	{
 		idditta				:	idDitta,
@@ -9131,15 +9159,17 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
  */
 function inizializzaParametriFileTimbrature(idditta, periodo, idgruppoinstallazione, gruppolavoratori, timbraturenonscartate)
 {
-	var codDittaGrInst = scopes.giornaliera.getCodDittaSedeInstallazione(idgruppoinstallazione);	
-	var strCodDittaGrInst = codDittaGrInst.toString();
-	var nomeCartella = 'Cliente';
+//	var codDittaGrInst = scopes.giornaliera.getCodDittaSedeInstallazione(idgruppoinstallazione);	
+//	var strCodDittaGrInst = codDittaGrInst.toString();
+//	var nomeCartella = 'Cliente';
+//		
+//	for(var i = 6; i > codDittaGrInst.toString().length; --i)
+//		nomeCartella += '0';
+//	
+//	nomeCartella += strCodDittaGrInst;
 	
-	for(var i = 6; i > codDittaGrInst.toString().length; --i)
-		nomeCartella += '0';
+	var nomeCartella = 'Cliente' + _to_sec_owner$owner_id.database_name;
 	
-	nomeCartella += strCodDittaGrInst;
-		
 	return {
 				user_id                 : security.getUserName(), 
 				client_id               : security.getClientID(),
