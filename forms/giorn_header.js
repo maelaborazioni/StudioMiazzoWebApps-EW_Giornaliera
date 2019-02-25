@@ -92,20 +92,34 @@ function preparaGiornaliera(useCache, indexToUpdate, soloCartolina, forzaRidiseg
 				
 				break;
 			case 2:
-				forms.giorn_vista_mensile.is_dirty = forms.giorn_vista_mensile.is_dirty || !useCache;
-				forms.giorn_vista_mensile.preparaGiornaliera
-				(
-					  idlavoratore || firstIdLavoratore
-					, anno
-					, mese
-					, forms.giorn_vista_mensile._tipoGiornaliera
-					, indexToUpdate || null
-					, null
-					, forzaRidisegno
-				);
-				forms.giorn_vista_mensile.clearSelection();
-				globals.aggiornaIntestazioni();
-				
+				if(soloCartolina == true)
+				{
+					forms.giorn_vista_mensile_dipendente.preparaGiornaliera(
+						idlavoratore  || firstIdLavoratore
+						,anno
+						,mese
+						,globals.TipoGiornaliera.NORMALE
+						,indexToUpdate
+						,false
+						,forzaRidisegno
+						,true);
+				}
+				else
+				{
+					forms.giorn_vista_mensile.is_dirty = forms.giorn_vista_mensile.is_dirty || !useCache;
+					forms.giorn_vista_mensile.preparaGiornaliera
+					(
+						  idlavoratore || firstIdLavoratore
+						, anno
+						, mese
+						, forms.giorn_vista_mensile._tipoGiornaliera
+						, indexToUpdate || null
+						, null
+						, forzaRidisegno
+					);
+					forms.giorn_vista_mensile.clearSelection();
+					globals.aggiornaIntestazioni();
+				}
 				break;
 
 			case 3:
