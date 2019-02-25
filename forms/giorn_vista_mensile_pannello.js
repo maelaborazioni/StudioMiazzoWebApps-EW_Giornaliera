@@ -51,9 +51,10 @@ function onLoad(event) {
 function onHide(event) 
 {
 	var idLavoratore = forms[event.getFormName()].vIdLavoratore;
+	var periodo = forms[event.getFormName()].vPeriodo;
 	_super.onHide(event);
 	
-	visualizzaSituazioneAggiornata(idLavoratore);
+	visualizzaSituazioneAggiornata(idLavoratore,periodo);
 }
 
 /**
@@ -61,10 +62,11 @@ function onHide(event)
  * che potrebbe essere stata modificata
  * 
  * @param {Number} idLav
- *
+ * @param {Number} [periodo]
+ * 
  * @properties={typeid:24,uuid:"FECF554A-AA95-445D-B51A-13F8529D5FBB"}
  */
-function visualizzaSituazioneAggiornata(idLav)
+function visualizzaSituazioneAggiornata(idLav,periodo)
 {
 	switch(vCurrCaseOfUse)
 	{
@@ -74,15 +76,19 @@ function visualizzaSituazioneAggiornata(idLav)
 			break;
 		case globals.TipoUtilizzoGiornalieraPannello.ANOMALIE_TIMBRATURE_PANNELLO:
 			var ultimoGgScarico = globals.getDataUltimoScarico([globals.getDitta(idLav)]);
-			var ultimoGgNelMese = globals.getLastDatePeriodo(globals.getPeriodo());
+			var ultimoGgNelMese = globals.getLastDatePeriodo(periodo || globals.getPeriodo());
 			var ultimoGgDisponibile = (ultimoGgScarico > ultimoGgNelMese) ? ultimoGgNelMese : ultimoGgScarico;
 		    globals.aggiornaAnomalieTimbratureDipendente(idLav,globals.getAnno(),globals.getMese(),ultimoGgDisponibile.getDate());	
 		break;
 		case globals.TipoUtilizzoGiornalieraPannello.ANOMALIE_EVENTI_PANNELLO:
-			globals.aggiornaSquadratureGiornalieraDipendente(idLav,globals.getAnno(),globals.getMese());
+			globals.aggiornaSquadratureGiornalieraDipendente(idLav
+				                                             ,periodo ? globals.getLastDatePeriodo(periodo).getFullYear() : globals.getAnno()
+				                                             ,periodo ? globals.getLastDatePeriodo(periodo).getMonth() + 1 : globals.getMese());
 			break;
 		case globals.TipoUtilizzoGiornalieraPannello.EVENTI_GIORNALIERA_PANNELLO:
-			globals.aggiornaEventiGiornalieraDipendente(idLav,globals.getAnno(),globals.getMese());
+			globals.aggiornaEventiGiornalieraDipendente(idLav
+				                                        ,periodo ? globals.getLastDatePeriodo(periodo).getFullYear() : globals.getAnno()
+			                                            ,periodo ? globals.getLastDatePeriodo(periodo).getMonth() + 1 : globals.getMese());
 			break;
 		default:
 			break;
