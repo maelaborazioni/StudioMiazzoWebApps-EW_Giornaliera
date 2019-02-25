@@ -20,6 +20,13 @@ var show_causalized = 0;
 var show_clockings = 0;
 
 /**
+ * @type {Boolean}
+ * 
+ * @properties={typeid:35,uuid:"C45B1BD9-D0D0-4505-9516-35FD82BFA2B1",variableType:-4}
+ */
+var vSoloCartolina = null;
+
+/**
  * @param {Number} anno
  * @param {Number} mese
  * @param {Number} [idlavoratore]
@@ -553,7 +560,9 @@ function disegnaTimbrature(_numCol, _dataSource, _soloCartolina, _forzaRidisegno
 		attivo = true;
 
 	if (forms[_tempFormName])
-		_currFieldNo = _soloCartolina ? Math.floor((solutionModel.getForm(_tempFormName).extendsForm.getFields().length - globals.stdColTimbr + 1) / 2) : Math.floor((solutionModel.getForm(_tempFormName).getFields().length - globals.stdColTimbr + 1) / 2);
+		_currFieldNo = _soloCartolina ? 
+				Math.floor((solutionModel.getForm(_tempFormName).extendsForm.getFields().length - globals.stdColTimbr + 1) / 2) 
+				: Math.floor((solutionModel.getForm(_tempFormName).getFields().length - globals.stdColTimbr + 1) / 2);
 
 	if (!forms[_tempFormName] || _currFieldNo != _numCol || _forzaRidisegno) 
 	{
@@ -771,8 +780,6 @@ function numeroMaxColonneTimbrature(idlavoratore, dal, al)
  * @param {Boolean} firstShow form is shown first time after load
  * @param {JSEvent} event the event that triggered the action
  *
- * @private
- *
  * @properties={typeid:24,uuid:"CB70CE64-F804-4EF1-AE57-270F9D9E1576"}
  */
 function onShow(firstShow, event) 
@@ -803,14 +810,19 @@ function process_prepara_timbrature()
 {
 	try
 	{
-		//il cliente non visualizza la gestione delle fasce orarie mentre la sede sì
-		if(globals.getTipoConnessione() == globals.Connessione.CLIENTE)
-		   forms.giorn_mostra_timbr.elements.btn_fasce_orarie.visible = false;
-	
-		var frm = forms.svy_nav_fr_openTabs;
-		globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].selected_tab = 3;
+		if(vSoloCartolina)
+			forms.giorn_header.preparaGiornaliera(null,null,vSoloCartolina,true);
+		else
+		{
+			//il cliente non visualizza la gestione delle fasce orarie mentre la sede sì
+			if(globals.getTipoConnessione() == globals.Connessione.CLIENTE)
+			   forms.giorn_mostra_timbr.elements.btn_fasce_orarie.visible = false;
 		
-		forms.giorn_header.preparaGiornaliera(null,null,null,true);
+			var frm = forms.svy_nav_fr_openTabs;
+			globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].selected_tab = 3;
+			
+			forms.giorn_header.preparaGiornaliera(null,null,vSoloCartolina,true);
+		}
 	}
 	catch(ex)
 	{
