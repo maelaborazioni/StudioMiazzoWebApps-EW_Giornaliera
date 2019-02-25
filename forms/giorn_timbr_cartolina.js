@@ -49,7 +49,7 @@ function apriPopupCartolinaDipendente(_event)
 //	}
 	
 	var _giorno = forms[_event.getFormName()].foundset.getSelectedRecord()['giorno'];
-	var _senso = utils.stringLeft(_event.getElementName(),1) == 'u' ? 1 : 0;
+	//var _senso = utils.stringLeft(_event.getElementName(),1) == 'u' ? 1 : 0;
 	var _source = _event.getSource();
 	var _popUpMenu = plugins.window.createPopupMenu();
 	
@@ -58,9 +58,10 @@ function apriPopupCartolinaDipendente(_event)
 	var indirizzoTimbratura = _idTimbratura ? scopes.giornaliera.getOrologioTimbratura(_idTimbratura) : null;
 	var modifiable = globals.isGiornoConTimbratureMancanti(forms[_event.getFormName()].foundset.getSelectedRecord()['idlavoratore'],_giorno); 
 	var conteggiato = globals.isGiornoConteggiato(forms[_event.getFormName()].foundset.getSelectedRecord()['idlavoratore'],_giorno);
+	var sensoModifiable = (modifiable == 4 || modifiable == 5 || modifiable == 6) ? 0 : 1;
 	
 	var _addTimbrMulti = _popUpMenuTimbr.addMenuItem('Aggiungi timbrature ',aggiungiTimbratureMultiDaMenu);
-		_addTimbrMulti.methodArguments = [_event, true, _giorno, _senso];
+		_addTimbrMulti.methodArguments = [_event, true, _giorno, sensoModifiable];
         _addTimbrMulti.enabled = modifiable;
     
     modifiable = modifiable && indirizzoTimbratura != null;
