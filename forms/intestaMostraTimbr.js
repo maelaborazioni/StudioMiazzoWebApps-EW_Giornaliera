@@ -197,9 +197,9 @@ function aggiornaIntestazioni(_soloCartolina)
 	elements.btn_giornnormale.visible = 
 	elements.btn_meseprec.enabled = 
 	elements.btn_mesesucc.enabled = 
-	elements.btn_selperiodo.enabled = !_soloCartolina;
-		
+	elements.btn_selperiodo.enabled = !_soloCartolina;		
 }
+
 /**
  * Perform the element default action.
  *

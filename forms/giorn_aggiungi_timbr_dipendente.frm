@@ -76,6 +76,7 @@ uuid:"488314F9-8F05-4E99-8313-5440DC90E148"
 dataProviderID:"vSenso",
 displayType:2,
 editable:false,
+enabled:false,
 formIndex:7,
 location:"100,25",
 name:"fld_senso",

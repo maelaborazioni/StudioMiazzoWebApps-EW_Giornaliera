@@ -9,8 +9,6 @@
 function scaricaTimbraturePannello(event) 
 {
 	var frm = event.getFormName() == 'pann_flusso_acquisizione' ? forms.pann_header_dtl : forms.giorn_header;
-	var _anno = globals.getAnno();
-	var _mese = globals.getMese();
 	var _idditta = globals.getTipologiaDitta(frm.idditta) == globals.Tipologia.ESTERNA ?
 	               frm.foundset.lavoratori_to_ditte.ditte_to_ditte_legami.iddittariferimento : frm.idditta;
     var _periodo = globals.TODAY.getFullYear() * 100 + globals.TODAY.getMonth() + 1; 

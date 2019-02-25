@@ -101,7 +101,7 @@ function process_conferma_eliminazione(event)
 																vGrInstDitta,
 																'',
 																strNewTimbr)
-		var url = globals.WS_URL + "/Timbrature/SetFileTimbrature";
+		var url = globals.WS_TIMBR_URL + "/Timbrature/SetFileTimbrature";
 		var response = globals.getWebServiceResponse(url,params);
 		
 		globals.svy_mod_closeForm(event);

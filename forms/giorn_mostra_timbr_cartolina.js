@@ -12,7 +12,12 @@
 function onShow(firstShow, event)
 {
 	globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].selected_tab = 1;
+	
 	show_causalized = show_clockings = 1;
 	show_events = 0;
+	
+	vSoloCartolina = true;
+	
+	_super.onShow(firstShow,event);
 }
 

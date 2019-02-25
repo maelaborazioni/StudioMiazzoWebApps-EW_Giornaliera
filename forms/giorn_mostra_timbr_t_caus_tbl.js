@@ -290,6 +290,8 @@ function rendiTimbrEffettiva(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _
 	       }
 	       else
 	       {
+	    	   // analizza pre conteggio
+			   forms.giorn_timbr.analizzaPreConteggio(_rec.dataeora.getDate()),_rec.dataeora.getFullYear() * 100 + _rec.dataeora.getMonth() + 1;
 	    	   forms.giorn_header.preparaGiornaliera();
 	    	   globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);
 	       }
@@ -330,9 +332,8 @@ function rendiTimbrEffettiva(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _
 *  
 * @AllowToRunInFind
 *
-*
- * @properties={typeid:24,uuid:"14FECEFF-B756-4AA1-9989-FD74B2164C98"}
- */
+* @properties={typeid:24,uuid:"14FECEFF-B756-4AA1-9989-FD74B2164C98"}
+*/
 function recuperaTimbrOriginali(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _event, _idLav, _date)
 {
 	/** @type {JSFoundSet<db:/ma_presenze/e2timbratureservizio>} */
@@ -361,8 +362,11 @@ function recuperaTimbrOriginali(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt
 			    return;
 			}
 			else
+			{
+				// analizza pre conteggio
+				forms.giorn_timbr.analizzaPreConteggio(_date.getDate()),_date.getFullYear() * 100 + _date.getMonth() + 1;
 				forms.giorn_header.preparaGiornaliera();
-			
+			}
 		}
 			
 	}
