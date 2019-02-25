@@ -27,7 +27,7 @@ function onShow(firstShow, event)
 	frm.abilitaTabCommesse(globals.ma_utl_hasKey(globals.Key.COMMESSE_GESTORE) && globals.haCommesse(forms.giorn_header.idditta));
 	
 	// disegno della giornaliera e visualizzazione finestra di dialogo
-	frm.preparaGiornaliera(idLavoratore,frmOpt.annoRif,frmOpt.meseRif,globals.TipoGiornaliera.NORMALE,null,true);
+	frm.preparaGiornaliera(idLavoratore,frmOpt.annoRif,frmOpt.meseRif,globals.TipoGiornaliera.NORMALE,null,true,true);
 	
 	// "ritorno" al primo tab per poter visualizzare i dati delle squadrature
 	forms['giorn_timbr_mancanti_ditta_tab_temp'].elements['tab_timbr_mancanti_ditta_tabpanel_' + idLavoratore].tabIndex = 1;
