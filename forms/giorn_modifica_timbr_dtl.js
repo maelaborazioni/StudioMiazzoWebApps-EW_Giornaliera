@@ -190,6 +190,8 @@ function process_timbratura(event)
 				// la modifica o l'aggiunta di una timbratura non implica il ridisegno della giornaliera
 				// modificata ma solamente delle timbrature
 				forms.giorn_header.preparaGiornaliera(null,null,_solocartolina);
+				
+				globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);
 			} 
 			catch (ex) 
 			{
