@@ -55,6 +55,13 @@ var idGiornalieraPrimoGiorno;
 var _totPeriodo = "";
 
 /**
+ * @type {Boolean} 
+ * 
+ * @properties={typeid:35,uuid:"A92A8E14-178E-4A6C-81E2-7B5F21E7D4DE",variableType:-4}
+ */
+var vSoloDipendente = null;
+
+/**
  * Disegna la griglia con la giornaliera del dipendente selezionato
  * per il periodo indicato
  * 
@@ -65,18 +72,22 @@ var _totPeriodo = "";
  * @param {Number} indexToUpdate
  * @param {Boolean} [daPannello]
  * @param {Boolean} [forzaRidisegno]
+ * @param {Boolean} [accessoDipendente] 
  * 
  * @properties={typeid:24,uuid:"3F533E94-D2DD-41DE-9B7D-823B117CEF91"}
  *
  * @AllowToRunInFind
  * @SuppressWarnings(unused)
  */
-function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUpdate, daPannello, forzaRidisegno)
+function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUpdate, daPannello, forzaRidisegno, accessoDipendente)
 {
 	vIdLavoratore = idlavoratore;
 	var periodo = vPeriodo = globals.toPeriodo(anno, mese);
 	var selectionForm = getSelectionForm();
 	var mainForm = getMainForm();
+	
+	// variabile per la gestione della cartolina dipendente
+	var soloDipendente = accessoDipendente ? accessoDipendente : false;
 	
 	/**
 	 * 1. Calcola i parametri necessari per il calcolo
@@ -92,8 +103,8 @@ function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUp
 	var numGiorniMese     = globals.getTotGiorniMese(mese, anno);
 	var numGiorniMesePrec = globals.getTotGiorniMese(mese - 1,anno);
 	
-	var dataAssunzione = globals.getDataAssunzione(idlavoratore); //forms.giorn_header.foundset.assunzione; 
-	var dataCessazione = globals.getDataCessazione(idlavoratore); //forms.giorn_header.foundset.cessazione;
+	var dataAssunzione = soloDipendente ? forms.giorn_cart_header.foundset.assunzione : forms.giorn_header.foundset.assunzione; 
+	var dataCessazione = soloDipendente ? forms.giorn_cart_header.foundset.cessazione : forms.giorn_header.foundset.cessazione;//globals.getDataCessazione(idlavoratore);
 	var primoGiornoLavoratoNelMese;
 	var ultimoGiornoLavoratoNelMese;
 	
@@ -847,7 +858,7 @@ function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUp
     disegnaRiepilogoMensile(ottieniDataSetRiepilogoMensile(idlavoratore, anno, mese),daPannello);
 	
 	// Disegna la giornaliera, aggiungendo le colonne per gli eventi se necessario
-	disegnaGiornaliera(colTot, datasourceGiornList || 'mem:' + datasourceNameGiorn,daPannello,forzaRidisegno);
+	disegnaGiornaliera(colTot, datasourceGiornList || 'mem:' + datasourceNameGiorn,daPannello,forzaRidisegno,soloDipendente);
 	   
 	// Aggiorna indicazione periodo in intestazione e filtri attivi
 	globals.aggiornaPeriodoIntestazione(anno,mese,daPannello != null ? !daPannello : false);
@@ -948,12 +959,14 @@ function disegnaRiepilogoMensile(_dataSet,_daPannello) {
  * @param {String} _dataSource
  * @param {Boolean} _daPannello
  * @param {Boolean} [_forzaRidisegno]
+ * @param {Boolean} [_soloDipendente]
  * 
  * @properties={typeid:24,uuid:"C0919619-5CBF-4B4B-B5D4-1AF6D27283AE"}
  */
-function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno) 
+function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno, _soloDipendente) 
 {
-	var _oriFormName = _daPannello ? 'giorn_list_pannello' : 'giorn_list';
+	var _oriFormName = _daPannello ? 'giorn_list_pannello' : (_soloDipendente ? 'giorn_list_dipendente' : 'giorn_list');
+	
 	var _tempFormName = _oriFormName + '_temp';
 	var _currFieldNo = globals.stdColGg;
 	var _numColNecessarie = _numEv > globals.stdColGg ? _numEv : globals.stdColGg;
@@ -981,6 +994,9 @@ function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno)
 		var fieldNo = tempForm.getFields().length - globals.fieldsGg;
 		if (fieldNo < _numEv) 
 		{
+			var onRightClickMethod = _soloDipendente ? tempForm.getMethod('apriPopupGiornalieraDipendente') : tempForm.getMethod('apriPopupMostraTimbr');
+			//var onRenderMethod = _soloDipendente ? tempForm.getMethod('onRenderTimbrCartolina') : tempForm.getMethod('onRenderTimbr');
+			
 			for (var i = fieldNo + 1; i <= _numEv; i++) 
 			{
 				var newEv = tempForm.newField(null, JSField.TEXT_FIELD, tempForm.width, 0, 90, 13);
@@ -992,7 +1008,7 @@ function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno)
 				newEv.enabled = true;
 				newEv.editable = false;
 				newEv.onRender = tempForm.getMethod('onRenderGiorn');
-				newEv.onRightClick = tempForm.getMethod('apriPopupVistaMensile');
+				newEv.onRightClick = onRightClickMethod;
 			}
 		}
 
@@ -1045,7 +1061,10 @@ function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno)
 		else
 			elements.tab_main.addTab(_tempFormName, 'tab_giorn_budget', 'Budget');
 	}
-		
+	
+	// Aggiorna la visualizzazione della intestazione
+	forms.intestaVistaMensile.aggiornaIntestazioni(_soloDipendente);
+	
 	forms[_tempFormName]['numeroEventi'] = _numEv;
 
 	if(_daPannello)
@@ -1059,8 +1078,6 @@ function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno)
  *
  * @param {Boolean} firstShow form is shown first time after load
  * @param {JSEvent} event the event that triggered the action
- *
- * @private
  *
  * @properties={typeid:24,uuid:"65BA3DCC-0B40-42ED-8EAF-813222FA2AE4"}
  */
@@ -1093,28 +1110,33 @@ function process_prepara_giornaliera()
 {
 	try
 	{
-		// abilita o meno la visualizzazione del tab delle timbrature
-		if(!globals.haOrologio(forms.giorn_header.idditta))
-		   abilitaTabTimbrature(false);
-		else
-		   abilitaTabTimbrature(true);
-			
 		// abilita o meno la visualizzazione del tab delle commesse
-		abilitaTabCommesse(globals.ma_utl_hasKey(globals.Key.RILEVAZIONE_PRESENZE_COMMESSE));// && globals.haCommesse(forms.giorn_header.idditta));
+		abilitaTabCommesse(globals.ma_utl_hasKey(globals.Key.RILEVAZIONE_PRESENZE_COMMESSE));
 		
-		// aggiorna le intestazioni per la giornaliera standard
-		aggiornaIntestazioni(true);
-		
-		//il cliente non visualizza la gestione delle fasce orarie mentre la sede sì
-		if(globals.isCliente())
-			forms.giorn_vista_mensile.elements.btn_fasce_orarie.visible = false;
+		if(vSoloDipendente)
+			forms.giorn_header.preparaGiornaliera(null,null,vSoloDipendente,true);
+		else
+		{
+			// abilita o meno la visualizzazione del tab delle timbrature
+			if(!globals.haOrologio(forms.giorn_header.idditta))
+			   abilitaTabTimbrature(false);
+			else
+			   abilitaTabTimbrature(true);
 			
-		var frm = forms.svy_nav_fr_openTabs;
-		globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].selected_tab = 2;
-	
-		forms.giorn_vista_mensile.is_dirty = true;
+			// aggiorna le intestazioni per la giornaliera standard
+			aggiornaIntestazioni(false);
+			
+			//il cliente non visualizza la gestione delle fasce orarie mentre la sede sì
+			if(globals.isCliente())
+				forms.giorn_vista_mensile.elements.btn_fasce_orarie.visible = false;
+				
+			var frm = forms.svy_nav_fr_openTabs;
+			globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].selected_tab = 2;
 		
-		forms.giorn_header.preparaGiornaliera(null,null,null,true);
+			forms.giorn_vista_mensile.is_dirty = true;
+			
+			forms.giorn_header.preparaGiornaliera(null,null,null,true);
+		}
 	}
 	catch(ex)
 	{
