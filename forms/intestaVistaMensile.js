@@ -409,3 +409,26 @@ function process_disattiva_filtri(event)
 		plugins.busy.unblock();
 	}
 }
+
+/**
+ * Gestisce la visualizzazione delle label e dei pulsanti a seconda del caso
+ * in cui vi sia solo la visualizzazione della situazione dipendente o la visualizzazione intera
+ * da parte del gestore
+ * 
+ * @param {Boolean} _soloDipendente
+ *
+ * @properties={typeid:24,uuid:"AEF6B1ED-744B-4EF2-B33C-94183D24D9A0"}
+ */
+function aggiornaIntestazioni(_soloDipendente)
+{
+	elements.btn_attivamese.visible = 
+	elements.lbl_filtro_giornaliera.visible =
+	elements.btn_filtroattivo.visible = 
+	elements.btn_filtrodisattivato.visible =
+	elements.lbl_tipo_giornaliera.visible =
+	elements.btn_giornbudget.visible = 
+	elements.btn_giornnormale.visible = 
+	elements.btn_meseprec.enabled = 
+	elements.btn_mesesucc.enabled = 
+	elements.btn_selperiodo.enabled = !_soloDipendente;		
+}
