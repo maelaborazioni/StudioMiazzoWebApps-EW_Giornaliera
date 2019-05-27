@@ -247,3 +247,26 @@ function onShow(firstShow, event)
 {
 	plugins.busy.prepare();
 }
+
+/**
+ * Perform the element default action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @properties={typeid:24,uuid:"01CFD4A7-1D0F-4381-8282-7579A607CA51"}
+ */
+function importaTracciatoEsterno(event) 
+{
+	var idDitta = forms.giorn_header.idditta;
+	var idGrInst = globals.getGruppoInstallazioneDitta(idDitta);
+	var periodo = globals.getPeriodoAttivo();
+	
+	var frmName = forms.giorn_selezione_file_tracciato.controller.getName();
+	var frm = forms.giorn_selezione_file_tracciato;
+	
+	frm.vIdDitta = idDitta;
+	frm.vIdGruppoInst = idGrInst;
+	frm.vPeriodo = periodo;
+	
+	globals.ma_utl_showFormInDialog(frmName,'Importazione tracciato esterno');
+}
