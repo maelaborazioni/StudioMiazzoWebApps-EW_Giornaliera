@@ -46,25 +46,33 @@ var vGiornoDaCartolina = null;
  */
 function onShowForm(_firstShow, _event) 
 { 	
-	plugins.busy.prepare();
+	if(_firstShow)
+	   plugins.busy.prepare();
 	
 	var idLavoratore = _to_sec_user$user_id.sec_user_to_sec_user_to_lavoratori.idlavoratore;
 	vTimbratura = vGiornoDaCartolina|| globals.TODAY;
 	
 	elements.fld_data.enabled = 
 		elements.btn_conferma_inserimento.enabled =	false;
-	
+
+	elements.lbl_causale.visible = 
+		elements.fld_causale.visible = 
+			elements.lbl_causalizzata.visible =
+				elements.fld_causalizzata.visible = 
+					globals.ma_utl_hasKey(globals.Key.TIMBR_DIPENDENTE_CAUSALIZZATE);
+
+		
 	/** @type{JSFoundSet<db:/ma_presenze/e2timbratureserviziogestione>} */
 	var fsCaus = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.TIMBRATURE_SERVIZIOGESTIONE);
 	if(fsCaus.find())
 	{
 		fsCaus.idditta = globals.getDitta(idLavoratore);
-		elements.fld_causalizzata.enabled =
-			elements.fld_causale.enabled = fsCaus.search();
+		elements.fld_causalizzata.enabled = fsCaus.search();
 	}
 	
 	elements.btn_data.enabled = !vDaCartolina;
-	
+			
+	controller.focusField(elements.fld_timbratura.getName(),true);				
 	globals.ma_utl_setStatus(globals.Status.EDIT,controller.getName());	
 }
 
@@ -310,7 +318,7 @@ function onDataChangeTimbratura(oldValue, newValue, event)
 function onDataChangeCausalizzata(oldValue, newValue, event) 
 {
 	elements.fld_causale.enabled =
-		  elements.lbl_causale.enabled = newValue;
+	  elements.lbl_causale.enabled = newValue;
 	
 	if(newValue == 0)	  
 	  vCausale = null;
