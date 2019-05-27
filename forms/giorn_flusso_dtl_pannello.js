@@ -31,7 +31,8 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 			&& globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]])
 	{
 		var idDitta = globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].idditta;
-				
+		var periodo = globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].periodo;
+		
 		switch (globals.haOrologio(idDitta))
 		{
 			case 0:
@@ -50,6 +51,20 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 				frmOperativa.elements['btn_conteggia_timbrature'].visible = 
 					frmOperativa.elements['lbl_conteggia'].visible = 
 						frmOperativa.elements['lbl_conteggia_info'].visible = false;
+				if(globals.useTracciatiEsterni(idDitta,globals.getPeriodoAttivo()))	
+				{
+					frmAcquisizione.elements['lbl_scarica_tracciato_info'].visible =
+					frmAcquisizione.elements['lbl_scarica_tracciato'].visible =
+					frmAcquisizione.elements['btn_scarica_tracciato'].visible = true;
+				
+					frmAcquisizione.elements['btn_scarica_tracciato'].setLocation(670,5);
+					frmAcquisizione.elements['lbl_scarica_tracciato'].setLocation(710,5);
+					frmAcquisizione.elements['lbl_scarica_tracciato_info'].setLocation(710,25);
+					
+					frmAcquisizione.elements['lbl_scarica_tracciato_info'].enabled =
+					frmAcquisizione.elements['lbl_scarica_tracciato'].enabled =
+					frmAcquisizione.elements['btn_scarica_tracciato'].enabled = globals.isMeseDaAttivare({idditta : idDitta, periodo : periodo});
+				}
 				break;
 			case 1:
 			    frmAcquisizione.elements['btn_scarica'].visible = 
@@ -67,6 +82,16 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 				frmOperativa.elements['btn_conteggia_timbrature'].visible = 
 					frmOperativa.elements['lbl_conteggia'].visible = 
 						frmOperativa.elements['lbl_conteggia_info'].visible = true;
+				if(globals.useTracciatiEsterni(idDitta,globals.getPeriodoAttivo()))
+				{
+					frmAcquisizione.elements['lbl_scarica_tracciato_info'].visible =
+					frmAcquisizione.elements['lbl_scarica_tracciato'].visible =
+					frmAcquisizione.elements['btn_scarica_tracciato'].visible = true;
+					
+					frmAcquisizione.elements['lbl_scarica_tracciato_info'].enabled =
+					frmAcquisizione.elements['lbl_scarica_tracciato'].enabled =
+					frmAcquisizione.elements['btn_scarica_tracciato'].enabled = globals.isMeseDaAttivare({idditta : idDitta, periodo : periodo});
+				}
 		        break;
 			default:
 				globals.ma_utl_showErrorDialog('Identificazione presenza orologio non riuscita, contattare il gruppo informatico', 'Errore tracciati');

@@ -3524,10 +3524,11 @@ function rendiGiorniRiconteggiabili(employeesIds, giorniSelezionati, idDitta,per
  * @param idDitta
  * @param periodo
  * @param tipoConn
- *
+ * @param databaseCliente
+ * 
  * @properties={typeid:24,uuid:"78D3A108-294E-4061-850B-18AC4CF8BDBE"}
  */
-function rendiGiorniRiconteggiabiliWS(employeesIds, giorniSelezionati, idDitta,periodo,tipoConn)
+function rendiGiorniRiconteggiabiliWS(employeesIds, giorniSelezionati, idDitta,periodo,tipoConn, databaseCliente)
 {
 	var url = 'http://srv-epiweb/Leaf_Single/Timbrature/Riconteggia';
 	var params =
@@ -3536,7 +3537,8 @@ function rendiGiorniRiconteggiabiliWS(employeesIds, giorniSelezionati, idDitta,p
 		periodo				:	periodo,
 		giorniselezionati	:	giorniSelezionati,
 		iddipendenti		:	employeesIds,
-		tipoconnessione     :   globals.TipoConnessione.CLIENTE
+		tipoconnessione     :   globals.TipoConnessione.CLIENTE,
+		databasecliente     :   databaseCliente
 	};
 	
     var response = globals.getWebServiceResponse(url, params);
@@ -4072,7 +4074,7 @@ function getTotOreGiornata(idgiornaliera){
 function getTotOreOrdinarieGiorno(idgiornaliera,idevento)
 {
 	/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
-	var _fsGiornEv = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,'e2giornalieraeventi');
+	var _fsGiornEv = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_EVENTI);
 	if(_fsGiornEv.find())
 	{
 		_fsGiornEv.idgiornaliera = idgiornaliera;
@@ -5317,6 +5319,28 @@ function importaTracciatoDaFtp(_idditta,_periodo,_gruppoinst,_gruppolav)
     globals.importaDaFtp(params);
 }
 
+/**
+ * Lancia l'operazione lunga di acquisizione delle presenze da un file tracciato esterno
+ * 
+ * @param {Number} idDitta
+ * @param {Number} periodo
+ * @param {Number} idGruppoInst
+ *
+ * @properties={typeid:24,uuid:"6D327266-5FEA-467B-AEE8-6125D22A30D0"}
+ */
+function importaTracciatoDaFileEsterno(idDitta,periodo,idGruppoInst)
+{
+	// chiamata al metodo del web service per l'acquisizione del tracciato dalla lettura del file caricato
+	var params = globals.inizializzaParametriFileTracciatoImportazione(idDitta,
+					                                                   periodo,
+																	   idGruppoInst,
+																	   '',
+																	   true);
+	var url = globals.WS_TRACK_EXT_URL + "/Tracciati/ImportaTracciatoEsterno";
+	addJsonWebServiceJob(url,
+		                 params,
+						 vUpdateOperationStatusFunction);
+}
 
 /**
  * Ritorna il tipo di installazione della ditta per il periodo specificati
@@ -9169,6 +9193,8 @@ function inizializzaParametriFileTimbrature(idditta, periodo, idgruppoinstallazi
 //	nomeCartella += strCodDittaGrInst;
 	
 	var nomeCartella = 'Cliente' + _to_sec_owner$owner_id.database_name;
+	if(globals.getCodDitta(idditta) == 200219)
+	   nomeCartella = 'Cliente200219';
 	
 	return {
 				user_id                 : security.getUserName(), 
@@ -9182,6 +9208,31 @@ function inizializzaParametriFileTimbrature(idditta, periodo, idgruppoinstallazi
 				cartellatimbrature      : nomeCartella,
 				timbraturenonscartate   : timbraturenonscartate
 		   };
+}
+
+/**
+ * TODO generated, please specify type and doc for the params
+ * @param idditta
+ * @param periodo
+ * @param idgruppoinstallazione
+ * @param gruppolavoratori
+ * @param daesterno
+ *
+ * @properties={typeid:24,uuid:"DC8270BA-99F4-4695-9470-7E3B2E06C365"}
+ */
+function inizializzaParametriFileTracciatoImportazione(idditta, periodo, idgruppoinstallazione, gruppolavoratori, daesterno)
+{
+	return {
+		user_id                 : security.getUserName(), 
+		client_id               : security.getClientID(),
+		idditta 				: idditta,
+		codiceditta 			: globals.getCodDitta(idditta),
+		iddipendenti 			: [-1],
+		periodo 				: periodo,
+		idgruppoinstallazione 	: idgruppoinstallazione,
+		codgruppogestione 		: gruppolavoratori,
+		daesterno               : daesterno ? daesterno : false
+   };
 }
 
 /**
@@ -10124,4 +10175,22 @@ function getEventiDaDefinire()
 	}
 	
 	return arrEvDaDef;
+}
+
+/**
+ * @param {Number} idDitta
+ * @param {Number} periodo
+ *
+ * @properties={typeid:24,uuid:"0BD19268-BBFD-4E76-9439-F3E509060FC9"}
+ */
+function useTracciatiEsterni(idDitta,periodo)
+{
+	var sqlQuery = "SELECT * FROM F_Ditta_SW(?,?,1,'GTE')";
+	var arrQuery = [idDitta,periodo];
+	var dataset = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,sqlQuery,arrQuery,1);
+	
+	if(dataset && dataset.getMaxRowIndex() > 0)
+		return true;
+	
+	return false;
 }
