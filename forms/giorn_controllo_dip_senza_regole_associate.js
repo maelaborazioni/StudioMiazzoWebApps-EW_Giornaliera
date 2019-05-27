@@ -108,18 +108,15 @@ function apriGestioneDecorrenze(event)
     
 }
 
-
 /**
- * Perform the element default action.
- *
- * @param {JSEvent} event the event that triggered the action
- *
- * @private
- *
- * @properties={typeid:24,uuid:"18136206-68B8-452D-8F06-5EF1ED114A32"}
  * @AllowToRunInFind
+ * 
+ * TODO generated, please specify type and doc for the params
+ * @param event
+ *
+ * @properties={typeid:24,uuid:"C7FC98C5-9CD3-49B9-9A2A-6C8FFFA02D9A"}
  */
-function confermaElenco(event) 
+function process_conferma_dip_senza_regole(event)
 {
 	// aggiornamento delle regole mancanti con quelle inserite
 	var frm = event.getFormName() == forms.giorn_dip_modifica_decorrenze.controller.getName() ? forms['giorn_dip_modifica_decorrenze_tbl_temp'] : forms['giorn_controllo_dip_senza_regole_associate_tbl_temp'];
@@ -245,7 +242,36 @@ function confermaElenco(event)
 
 	} finally {
 		databaseManager.setAutoSave(autosave);
+		plugins.busy.unblock();
 	}
+}
+
+/**
+ * Perform the element default action.
+ *
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"18136206-68B8-452D-8F06-5EF1ED114A32"}
+ * @AllowToRunInFind
+ */
+function confermaElenco(event) 
+{
+	var params = {
+		processFunction: process_conferma_dip_senza_regole,
+		message: '',
+		opacity: 0.5,
+		paneColor: '#434343',
+		textColor: '#EC1C24',
+		showCancelButton: false,
+		cancelButtonText: '',
+		dialogName: 'This is the dialog',
+		fontType: 'Arial,4,25',
+		processArgs: [event]
+	};
+	plugins.busy.block(params);
+		
 }
 
 
