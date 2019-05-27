@@ -486,7 +486,7 @@ function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUp
 								switch (tipoColOrd) 
 								{
 									case 2: // due eventi ordinari con stessa proprietà diurno
-									case 4:	// due eventi ordinari con la stessa proprietà notturno 
+									case 4:	// due eventi ordinari con la stessa proprietà notturno
 										if(arrCurrMese[arrRow][auxColsNo] == undefined)
 	         							   arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
 										else
@@ -496,31 +496,40 @@ function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUp
 										switch (currEvProp)
 										{
 											case 'D':
-												arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
+											if(arrCurrMese[arrRow][auxColsNo] == undefined)
+			         							   arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
+												else
+			   								       arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv;
 												break;
 											case 'N':
 											    arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv;
 												break;
 										}									
 										break;
-									case 5: // due eventi ordinari uno con proprietà diurno e l'altro senza proprietà
+									case 5: // due eventi ordinari uno con proprietà diurno e l'altro senza proprietà || ingloba uno dei casi precedenti
 										switch (currEvProp) 
 										{			
 											case 'D':
-												arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
-												break;
+												if(arrCurrMese[arrRow][auxColsNo] == undefined)
+	                                    		   arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
+										        else
+	  								    	       arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv; 
+												 break;
 											case '':
-												arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv;
-												break;
+												 arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv;
+												 break;
 										}
 										break;
 				
-									case 6: // due eventi ordinari uno con proprietà notturno e l'altro senza proprietà
+									case 6: // due eventi ordinari uno con proprietà notturno e l'altro senza proprietà									
 										switch (currEvProp) 
 										{			
 											case 'N':
-												arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
-												break;
+											   if(arrCurrMese[arrRow][auxColsNo] == undefined)
+	                                    		  arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
+										       else
+	  								    	      arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv; 
+											   break;
 											case '':
 												arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv;
 												break;
@@ -561,7 +570,7 @@ function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUp
 									}
 									break;
 									
-							      case 5: // tre eventi ordinari due con la stessa proprietà notturno ed il terzo diurno
+							      case 5: // tre eventi ordinari due con la stessa proprietà notturno ed il primo diurno
 									switch (currEvProp)
 									{
 										case 'N':
@@ -575,7 +584,29 @@ function preparaGiornaliera(idlavoratore, anno, mese, tipoGiornaliera, indexToUp
 											break;
 									}
 									break;
-								   case 7:
+							      case 6: //tre eventi ordinari con proprietà notturno o due con proprietà diurno ed il terzo notturno
+							    	  switch (currEvProp)
+										{
+											case 'D':
+											   if(arrCurrMese[arrRow][auxColsNo] == undefined)
+	                                    		  arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
+										       else
+	  								    	      arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv; 
+												break;
+											case '':
+											    arrCurrMese[arrRow][auxColsNo + 2] = currIdGiornEv;
+												break;
+											case 'N':
+												if(arrCurrMese[arrRow][auxColsNo] == undefined)
+	                                    		  arrCurrMese[arrRow][auxColsNo] = currIdGiornEv;
+										        else if(arrCurrMese[arrRow][auxColsNo + 1] == undefined)
+	  								    	      arrCurrMese[arrRow][auxColsNo + 1] = currIdGiornEv;
+										        else
+										        	arrCurrMese[arrRow][auxColsNo + 2] = currIdGiornEv;
+												break;
+										}
+										break;	
+								  case 7:
 									   switch(currEvProp)
 									   {
 										   case 'D':
@@ -994,7 +1025,7 @@ function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno, _
 		var fieldNo = tempForm.getFields().length - globals.fieldsGg;
 		if (fieldNo < _numEv) 
 		{
-			var onRightClickMethod = _soloDipendente ? tempForm.getMethod('apriPopupGiornalieraDipendente') : tempForm.getMethod('apriPopupMostraTimbr');
+			var onRightClickMethod = _soloDipendente ? tempForm.getMethod('apriPopupGiornalieraDipendente') : tempForm.getMethod('apriPopupVistaMensile');
 			//var onRenderMethod = _soloDipendente ? tempForm.getMethod('onRenderTimbrCartolina') : tempForm.getMethod('onRenderTimbr');
 			
 			for (var i = fieldNo + 1; i <= _numEv; i++) 
