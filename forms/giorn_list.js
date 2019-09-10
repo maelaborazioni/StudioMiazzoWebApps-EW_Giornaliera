@@ -626,10 +626,8 @@ function lkpInserisciCertificato(_itemInd, _parItem, _isSel, _parMenTxt, _menuTx
 			break;
 	}
 	
-	
-	if(globals.isSocioCollaboratore(forms.giorn_header.idlavoratore)
-	   || _idEvClasse == globals.EventoClasse.PARENTALE_PATERNO
-			&& globals.isFemmina(forms.giorn_header.idlavoratore))
+	if((globals.isCollaboratore(forms.giorn_header.idlavoratore)) 	
+	   || _idEvClasse == globals.EventoClasse.PARENTALE_PATERNO	&& globals.isFemmina(forms.giorn_header.idlavoratore))
 	{
 		globals.ma_utl_showWarningDialog('Funzione non abilitata per questo lavoratore','Inserimento eventi lunghi');
 	    return;
@@ -789,7 +787,7 @@ function apriPopupVistaMensile(_event)
 	var _cambiaEvento = _popUpMenuEventi.addMenuItem('Cambia un evento ', globals.cambiaEventoMultiplo);
 		_cambiaEvento.methodArguments = [_event,foundset[_event.getElementName()]];
 		_cambiaEvento.enabled = !_isBudget;
-    var nonHaOrologio = globals.haOrologio(forms.giorn_header.idditta) === 0;	// 0 - no timbrature
+    var nonHaOrologio = globals.haOrologio(globals.isInterinale(forms.giorn_header.idditta) ? globals.getDittaRiferimento(forms.giorn_header.idditta) : forms.giorn_header.idditta) === 0;	// 0 - no timbrature
     
     if(nonHaOrologio)
 	{

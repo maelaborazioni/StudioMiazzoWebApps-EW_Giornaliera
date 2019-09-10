@@ -23,6 +23,9 @@ function onShowForm(_firstShow, _event)
 	_super.onShowForm(_firstShow, _event);
 	vPeriodoStr = globals.getNomeMese(globals.getMese()) + ' ' + globals.getAnno();
 	elements.fld_search.readOnly = false;
+	
+	//if(_firstShow)
+		foundset.sort('lavoratori_to_persone.nominativo asc, lavoratori_to_lavoratori_personeesterne.nominativo asc,assunzione asc, cessazione asc')
 }
 
 

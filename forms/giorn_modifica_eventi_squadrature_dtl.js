@@ -488,3 +488,94 @@ function FiltraProprietaSquadrature(_fs)
 	
 	return _fs;	
 }
+
+/**
+ * Handle changed data.
+ *
+ * @param {Number} oldValue old value
+ * @param {Number} newValue new value
+ * @param {JSEvent} event the event that triggered the action
+ *
+ * @returns {Boolean}
+ *
+ * @private
+ *
+ * @properties={typeid:24,uuid:"352ACCA9-6D77-4B5F-A1D7-69CB85E9EAF9"}
+ */
+function onDataChangeOre(oldValue, newValue, event)
+{
+    _oldOre = oldValue;
+	
+	//se viene inserito un numero di ore >= 0 (può esistere un evento con ore a zero)
+	if(newValue > 0 || oldValue > 0)
+		vCoperturaOrarioTeorico = 0;
+	if(newValue == null)
+	    vCoperturaOrarioTeorico = 1;
+	
+	if(!isValid(newValue))
+		_ore = oldValue;
+	else
+		_totOre = _totOre - oldValue * 100 + newValue * 100;
+	
+	var frmOpt = _daEventiSel ? forms.giorn_list_eventi_sel_ditta : forms.giorn_list_squadrati_ditta;
+	
+	// controllo informativi statistici per tutti i giorni selezionati dei lavoratori
+	for(var l = (frmOpt.currPage - 1) * frmOpt.dipPerPage; l < Math.min(frmOpt.currPage *  frmOpt.dipPerPage,frmOpt.arrDipSquadrati.length); l++)
+	{
+		var arrGiorniSel = [];
+		var frmDipSquadrato = forms['giorn_list_squadrati_dipendente_' + frmOpt.arrDipSquadrati[l]];
+		/** @type {RuntimeTabPanel}*/
+		var tab = frmDipSquadrato.elements['tab_squadrati_dip'];
+		var frmSquadratureDip = forms[tab.getTabFormNameAt(1)];
+		for(var sq = 1; sq <= frmSquadratureDip.foundset.getSize(); sq++)
+		{
+			if(frmSquadratureDip.foundset.getRecord(sq)['checked'])
+				arrGiorniSel.push(globals.getGiornoDaIdGiornaliera(frmSquadratureDip.foundset.getRecord(sq)['idgiornaliera']).getDate());
+		}
+		
+		if(arrGiorniSel.length > 0)
+		{
+			// controllo informativi statistici per i casi con controllo su ore
+		    var response = controllaInformativiStatistici(frmOpt.arrDipSquadrati[l],_periodo,arrGiorniSel);
+			
+			//se non ci sono blocchi su informativi statistici
+			if (response['retValue'] == true)
+			{
+				if (response.message && response.message != '')
+				{
+					globals.ma_utl_showWarningDialog(response.message, 'Controllo informativi statistici');
+		            return false;
+				}
+			} 
+			else 
+			{
+				//se c'è il blocco viene mostrato il messaggio
+				var innerMsg = response['innerMessage'] ? ("<p><strong>Dettagli</strong><br/>"  + response['innerMessage'] + '</p>') : ''
+				globals.ma_utl_showWarningDialog(response.message +  innerMsg, 'Controllo informativi statistici');
+				//e resettato l'inserimento dell'evento
+				_idevento = null;
+				_codevento = ''
+				_descevento = '';
+				_ideventoclasse = null;
+				_idpropcl = null;
+				_codprop = '';
+				_descprop = '';
+				_importo = 0;
+				_ore = null;
+				_oldIdEvento = null;
+				_oldCodEvento = '';
+				_oldIdPropCl = null;
+				_oldCodProp = '';
+				_oldOre = -1;
+				_oldImporto = -1;
+				vCoperturaOrarioTeorico = 1;
+				
+				return false;
+			}
+		}
+	}
+	
+	verificaOrarioTeorico();
+	
+	return true;
+}

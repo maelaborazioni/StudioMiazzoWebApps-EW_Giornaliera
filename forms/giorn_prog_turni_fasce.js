@@ -110,10 +110,13 @@ function onHide(event)
 	
 	// eventuale ridisegno della giornaliera correntemente visualizzata 
 	var selTabName = forms.svy_nav_fr_openTabs.vTabObjects[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]];
-    if(selTabName && utils.stringLeft(selTabName.program,16) == 'LEAF_Giornaliera')
-       forms.giorn_header.preparaGiornaliera();
-    else if(utils.stringLeft(selTabName.program,22) == 'PT_VisualizzaCopertura')
-       forms.giorn_prog_turni_visualizza_copertura_situazione.fromOutsideRefresh();
+    if(selTabName)
+    {
+		if(utils.stringLeft(selTabName.program,16) == 'LEAF_Giornaliera')
+	       forms.giorn_header.preparaGiornaliera();
+	    else if(utils.stringLeft(selTabName.program,22) == 'PT_VisualizzaCopertura')
+	       forms.giorn_prog_turni_visualizza_copertura_situazione.fromOutsideRefresh();
+    }
     
     return true;
 }

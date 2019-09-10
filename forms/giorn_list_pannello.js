@@ -152,7 +152,9 @@ function apriPopupVistaMensilePannello(_event)
 	var _delEvento = _popUpMenuEventi.addMenuItem('Elimina l\'evento ', eliminazioneEvento);
 	_delEvento.methodArguments = [_event];
         	
-    var nonHaOrologio = globals.haOrologio(globals.getDitta(forms[_event.getFormName()].foundset.getSelectedRecord()['idlavoratore'])) === 0;	// 0 - no timbrature
+	var idDitta = globals.getDitta(forms[_event.getFormName()].foundset.getSelectedRecord()['idlavoratore']);
+    var isInterinale = globals.isInterinale(idDitta);
+	var nonHaOrologio = globals.haOrologio(isInterinale ? globals.getDittaRiferimento(idDitta) : idDitta) === 0;	// 0 - no timbrature
     
     if(nonHaOrologio)
 	{

@@ -328,7 +328,8 @@ styleClass:"check",
 toolTipText:"Abilita filtro",
 transparent:true,
 typeid:4,
-uuid:"723EB3BC-6897-4EF2-BFA6-0106939EC3EC"
+uuid:"723EB3BC-6897-4EF2-BFA6-0106939EC3EC",
+visible:false
 },
 {
 customProperties:"methods:{\
@@ -432,7 +433,7 @@ onDataChangeMethodID:"6E4EC0A3-5B7E-42F2-884C-89FEB5C4C450",
 size:"195,20",
 typeid:4,
 uuid:"A7905BB0-F9C7-484C-8AC6-05A872AF5E48",
-valuelistID:"41F073DE-E3B1-42CE-AF66-6694E58410F5"
+valuelistID:"D54EDC70-D93F-4FBA-89F0-EE5F8BAB40E5"
 },
 {
 borderType:"EmptyBorder,0,0,0,0",
@@ -473,7 +474,8 @@ size:"124,20",
 text:"Gruppo lavoratori",
 transparent:true,
 typeid:7,
-uuid:"C39AF3DE-63D0-43FA-9A1D-149245814A1A"
+uuid:"C39AF3DE-63D0-43FA-9A1D-149245814A1A",
+visible:false
 },
 {
 borderType:"EmptyBorder,0,0,0,0",

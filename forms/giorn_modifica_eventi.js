@@ -826,7 +826,7 @@ function controllaInformativiStatistici(idLav,periodo,giorni)
 		periodo : periodo ? periodo : globals.getPeriodo(),
 		giorniselezionati: giorniSelezionati,
 		iddipendenti: idLav ? [idLav] : [forms.giorn_header.idlavoratore],
-		idditta: forms.giorn_header.idditta,
+		idditta: idLav ? globals.getDitta(idLav) : globals.getDitta(forms.giorn_header.idlavoratore),
 		idevento: _idevento,
 		ore: _ore != null ? _ore * 100 : 0, 
 		codproprieta: '',

@@ -57,7 +57,8 @@ function apriPopupVistaMensileSquadrature(_event)
 		
 		_popUpMenu.addSeparator();
 		
-	    var haOrologio = globals.haOrologio(_idDitta) === 0;	// 0 - no timbrature
+		var isInterinale = globals.isInterinale(_idDitta);
+	    var haOrologio = globals.haOrologio(isInterinale ? globals.getDittaRiferimento(_idDitta) : _idDitta) === 0;	// 0 - no timbrature
 	    
 	    if(haOrologio)
 		{

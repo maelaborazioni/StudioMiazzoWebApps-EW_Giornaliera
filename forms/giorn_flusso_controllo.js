@@ -16,7 +16,7 @@ function stampaGiornalieraPannello()
 	var formName = form.controller.getName();
 	var fs = forms.giorn_header.lavoratori_to_ditte;
 	
-	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),false);
+	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),true);
 	globals.ma_utl_setStatus(globals.Status.EDIT, formName);
 	globals.ma_utl_showFormInDialog(formName, 'Opzioni di stampa', fs);
 }
@@ -56,7 +56,7 @@ function stampaAnomalieTimbraturePannello(event)
 	
 	var fs = forms.giorn_header.lavoratori_to_ditte;
 	
-	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),false);
+	globals.abilitaRaggruppamenti(forms.stampa_filtri_anagrafici.controller.getName(),true);
 	globals.ma_utl_setStatus(globals.Status.EDIT,form);
 	globals.ma_utl_showFormInDialog(form, 'Opzioni di stampa', fs);
 }

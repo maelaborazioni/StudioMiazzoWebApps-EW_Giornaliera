@@ -59,16 +59,18 @@ function preparaGiornaliera(useCache, indexToUpdate, soloCartolina, forzaRidiseg
 		var mese = _params['mese'];
 		var firstIdLavoratore = null;
 		
-		if(idlavoratore == null)
+		if(soloCartolina)
+			firstIdLavoratore = forms.giorn_cart_header.idlavoratore;
+		else
 		{
-			if(soloCartolina)
-				firstIdLavoratore = forms.giorn_cart_header.idlavoratore;
-			else
+			if(idlavoratore == null)
 			{
 				var arrIdLavoratori = globals.getLavoratoriDittaDalAl([_params['idditta']],new Date(anno,mese - 1,1),new Date(anno,mese,1));
 				if(arrIdLavoratori.length > 0)
 				   firstIdLavoratore = arrIdLavoratori[0];
 			}
+			else
+				firstIdLavoratore = idlavoratore;
 		}
 		
 		switch (_params['selected_tab']) 
@@ -81,7 +83,7 @@ function preparaGiornaliera(useCache, indexToUpdate, soloCartolina, forzaRidiseg
 					(
 						anno
 						, mese
-						, idlavoratore || firstIdLavoratore
+						, firstIdLavoratore
 						, soloCartolina
 						, indexToUpdate || null
 						, null
@@ -154,6 +156,8 @@ function preparaCartolinaDipendente()
 		forms.giorn_mostra_timbr_cartolina.preparaTimbratura(anno,
 			                                                 mese,
 															 forms.giorn_cart_header.idlavoratore,
+															 true,
+															 null,
 															 true);
 	}
 }
@@ -262,7 +266,7 @@ function onShowForm(_firstShow, _event,_soloCartolina) {
 		if(globals.isCliente())
 		{
 			tabElements = forms['LEAF_Giornaliera_tab'].elements['tabs'];
-			_haOrologio = globals.haOrologio(forms.giorn_header.idditta);
+			_haOrologio = globals.haOrologio(globals.isInterinale(forms.giorn_header.idditta) ? globals.getDittaRiferimento(forms.giorn_header.idditta) : forms.giorn_header.idditta);
 			
 			tabElements.removeTabAt(4);
 		
@@ -314,7 +318,8 @@ function apriPopupUtilita(event) {
 	var popUpMenu = plugins.window.createPopupMenu();
 	
 	// solamente le ditte che timbrano hanno la gestione timbrature
-	if (globals.haOrologio(idditta))
+	var isInterinale = globals.isInterinale(idditta);
+	if (globals.haOrologio(isInterinale ? globals.getDittaRiferimento(idditta) : idditta))
 	{
 		var cercaBadge = popUpMenu.addMenuItem('Cerca badge', apriCercaBadge);
 		cercaBadge.methodArguments = [event];

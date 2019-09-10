@@ -1149,7 +1149,8 @@ function process_prepara_giornaliera()
 		else
 		{
 			// abilita o meno la visualizzazione del tab delle timbrature
-			if(!globals.haOrologio(forms.giorn_header.idditta))
+			var isInterinale = globals.isInterinale(forms.giorn_header.idditta);
+			if(!globals.haOrologio(isInterinale ? globals.getDittaRiferimento(forms.giorn_header.idditta) : forms.giorn_header.idditta))
 			   abilitaTabTimbrature(false);
 			else
 			   abilitaTabTimbrature(true);

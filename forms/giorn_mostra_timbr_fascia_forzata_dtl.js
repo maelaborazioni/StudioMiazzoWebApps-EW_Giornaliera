@@ -54,7 +54,9 @@ var _arrGiorni = [];
  */
 function FiltraFasciaForzata(fs)
 {
-	fs.addFoundSetFilterParam('idditta','=',forms.giorn_header.idditta);
+	fs.addFoundSetFilterParam('idditta','=',(forms.giorn_header.lavoratori_to_ditte.tipologia == globals.Tipologia.ESTERNA 
+			&& forms.giorn_header.lavoratori_to_ditte.ditte_to_ditte_legami.tipoesterni == 0) ?
+				forms.giorn_header.lavoratori_to_ditte.ditte_to_ditte_legami.iddittariferimento	: forms.giorn_header.idditta);
 	return fs;
 }
 

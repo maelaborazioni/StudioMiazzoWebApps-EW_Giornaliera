@@ -9,6 +9,8 @@ function mostraTabs(idDitta)
 	elements.tab_centrale_l.removeAllTabs()
 	elements.tab_centrale_r.removeAllTabs()
 	
+	var isInterinale = globals.isInterinale(idDitta);
+	
 	if (globals._tipoConnessione == globals.Connessione.SEDE) {
 		
 		var tipoInst = globals.getTipoInstallazione(forms.giorn_header.idditta,globals.getPeriodo());
@@ -40,7 +42,7 @@ function mostraTabs(idDitta)
 		
 	} else {
 		
-		switch (globals.haOrologio(idDitta)) {
+		switch (globals.haOrologio(isInterinale ? globals.getDittaRiferimento(idDitta) : idDitta)) {
 
 		case 0:
 			elements.tab_iniziale.addTab('giorn_flusso_iniziale_cliente_compiladalal','Compilazione giornaliera',null,null);

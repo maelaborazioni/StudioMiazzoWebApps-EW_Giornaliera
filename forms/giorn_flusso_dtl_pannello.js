@@ -31,9 +31,11 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 			&& globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]])
 	{
 		var idDitta = globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].idditta;
-		var periodo = globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].periodo;
+		var periodo = globals.objGiornParams[frm.vTabNames[frm.vSelectedTab]].periodo || (globals.TODAY.getFullYear() * 100 + globals.TODAY.getMonth() + 1);
+		var tipologiaDitta = globals.getTipologiaDitta(idDitta);
+		var isInterinale = globals.isInterinale(idDitta);
 		
-		switch (globals.haOrologio(idDitta))
+		switch (isInterinale ? globals.haOrologio(globals.getDittaRiferimento(idDitta)) : globals.haOrologio(idDitta))
 		{
 			case 0:
 				frmAcquisizione.elements['btn_scarica'].visible = 
@@ -51,7 +53,7 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 				frmOperativa.elements['btn_conteggia_timbrature'].visible = 
 					frmOperativa.elements['lbl_conteggia'].visible = 
 						frmOperativa.elements['lbl_conteggia_info'].visible = false;
-				if(globals.useTracciatiEsterni(idDitta,globals.getPeriodoAttivo()))	
+				if(globals.useTracciatiEsterni(idDitta,periodo))	
 				{
 					frmAcquisizione.elements['lbl_scarica_tracciato_info'].visible =
 					frmAcquisizione.elements['lbl_scarica_tracciato'].visible =
@@ -82,7 +84,7 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 				frmOperativa.elements['btn_conteggia_timbrature'].visible = 
 					frmOperativa.elements['lbl_conteggia'].visible = 
 						frmOperativa.elements['lbl_conteggia_info'].visible = true;
-				if(globals.useTracciatiEsterni(idDitta,globals.getPeriodoAttivo()))
+				if(globals.useTracciatiEsterni(idDitta,periodo))
 				{
 					frmAcquisizione.elements['lbl_scarica_tracciato_info'].visible =
 					frmAcquisizione.elements['lbl_scarica_tracciato'].visible =
@@ -101,8 +103,7 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 		// per le ditte di tipo non standard disabilitiamo lo scarico della giornaliera e le operazioni
 		// di controlli preliminari,di predisposizione ed invio perchè superflue
 		if (idDitta)
-		{
-			var tipologiaDitta = globals.getTipologiaDitta(idDitta);   
+		{			   
 			frmAcquisizione.elements['btn_scarica_giornaliera'].enabled = tipologiaDitta == globals.Tipologia.STANDARD;
 			frmOperativa.elements['btn_controlli_preliminari'].enabled = (tipologiaDitta == globals.Tipologia.STANDARD 
 					                                                   || tipologiaDitta == globals.Tipologia.GESTITA_UTENTE);
@@ -111,6 +112,24 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 			frmInvio.elements['btn_invia_giornaliera'].enabled = (tipologiaDitta == globals.Tipologia.STANDARD 
                                                                || tipologiaDitta == globals.Tipologia.GESTITA_UTENTE);
 			
+		}
+		
+		// verifica l'eventuale presenza di un blocco impostato sull'invio della giornaliera tramite chiave
+		if(globals.ma_utl_hasKey(globals.Key.BLOCCA_INVIO_GIORNALIERA))
+		{
+			frmInvio.elements['btn_chiusura_mese'].enabled = 
+				frmInvio.elements['btn_invia_giornaliera'].enabled = false;
+		}
+		
+		if(globals.ma_utl_hasKey(globals.Key.BLOCCA_IMPORTAZIONE_TIMBR))
+		{
+			frmAcquisizione.elements['btn_scarica'].enabled = false;
+		}
+		
+		if(globals.ma_utl_hasKey(globals.Key.FTP_NO_CONTROLLO))
+		{
+			frmAcquisizione.elements['btn_ricevi_tabelle'].enabled =
+				frmAcquisizione.elements['btn_scarica_giornaliera'].enabled = false;
 		}
 	}
 }

@@ -13,11 +13,12 @@ function onShow(firstShow, event)
 	var frmOpt = forms.giorn_list_eventi_sel_ditta;
     var idLavoratore = parseInt(utils.stringMiddle(event.getSource().controller.getName(),44,event.getSource().controller.getName().length));
 	var idDitta = globals.getDitta(idLavoratore);
+	var isInterinale = globals.isInterinale(idDitta);
 	var frm = forms.giorn_vista_mensile_pannello;
 	frm.vCurrCaseOfUse = globals.TipoUtilizzoGiornalieraPannello.EVENTI_GIORNALIERA_PANNELLO;
 	
 	// abilita o meno la visualizzazione del tab delle timbrature
-	if(!globals.haOrologio(idDitta))
+	if(!globals.haOrologio(isInterinale ? globals.getDittaRiferimento(idDitta) : idDitta))
 	   frm.abilitaTabTimbrature(false,idDitta,true);
 	else
 	   frm.abilitaTabTimbrature(true,idDitta,true);

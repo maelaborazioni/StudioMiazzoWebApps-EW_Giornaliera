@@ -330,7 +330,10 @@ function reset(name)
  */
 function filterContratto(fs)
 {
-	return filter(fs, 'SELECT idGruppoContrattuale FROM [dbo].[F_Ditta_Contratti_Al](?,?)', [idditta, vDateTo]);
+	var vIdDitta = idditta;
+	if(globals.isInterinale(idditta))
+		vIdDitta = globals.getDittaRiferimento(idditta);
+	return filter(fs, 'SELECT idGruppoContrattuale FROM [dbo].[F_Ditta_Contratti_Al](?,?)', [vIdDitta, vDateTo]);
 }
 
 /**
@@ -340,7 +343,10 @@ function filterContratto(fs)
  */
 function filterQualifica(fs)
 {
-	return filter(fs, 'SELECT idTabQualifiche FROM [dbo].[F_Ditta_Qualifiche_Al](?,?)', [idditta, vDateTo]);
+	var vIdDitta = idditta;
+	if(globals.isInterinale(idditta))
+		vIdDitta = globals.getDittaRiferimento(idditta);
+	return filter(fs, 'SELECT idTabQualifiche FROM [dbo].[F_Ditta_Qualifiche_Al](?,?)', [vIdDitta, vDateTo]);
 }
 
 /**
@@ -350,7 +356,10 @@ function filterQualifica(fs)
  */
 function filterPosizioneInps(fs)
 {
-	return filter(fs, 'SELECT idDittaInps FROM [dbo].[F_Ditta_PosizioneInps_Al](?,?)', [idditta, vDateTo]);
+	var vIdDitta = idditta;
+	if(globals.isInterinale(idditta))
+		vIdDitta = globals.getDittaRiferimento(idditta);
+	return filter(fs, 'SELECT idDittaInps FROM [dbo].[F_Ditta_PosizioneInps_Al](?,?)', [vIdDitta, vDateTo]);
 }
 
 /**
@@ -360,7 +369,11 @@ function filterPosizioneInps(fs)
  */
 function filterSedeLavoro(fs)
 {
-	fs = filter(fs, 'SELECT idDittaSede FROM [dbo].[F_Ditta_Sedi_Al](?,?)', [idditta, vDateTo]);
+	var vIdDitta = idditta;
+	if(globals.isInterinale(idditta))
+		vIdDitta = globals.getDittaRiferimento(idditta);
+	
+	fs = filter(fs, 'SELECT idDittaSede FROM [dbo].[F_Ditta_Sedi_Al](?,?)', [vIdDitta, vDateTo]);
 	fs.addFoundSetFilterParam('codtiposede', globals.ComparisonOperator.EQ, globals.codSEDEOPERATIVA);
 	
 	return fs;
@@ -404,7 +417,9 @@ function filterRaggruppamento(fs)
  */
 function filterRaggruppamentoDettaglio(fs)
 {
-	fs.addFoundSetFilterParam('iddittaclassificazione','IN',vIdDittaClassificazione);
+	fs.addFoundSetFilterParam('iddittaclassificazione'
+							  ,'IN'
+							  ,vIdDittaClassificazione);
 	return fs;
 	
 //	return filter(fs

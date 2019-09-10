@@ -14,6 +14,7 @@ function onShow(firstShow, event)
 	var frmOpt = forms.giorn_visualizza_copertura_situazione;
     var idLavoratore = parseInt(utils.stringMiddle(event.getSource().controller.getName(),43,event.getSource().controller.getName().length));
 	var idDitta = globals.getDitta(idLavoratore);
+	var isInterinale = globals.isInterinale(idDitta);
 	var frm = forms.giorn_vista_mensile_pannello;
 	frm.vCurrCaseOfUse = globals.TipoUtilizzoGiornalieraPannello.RIEPILOGO_EVENTI;
 	
@@ -21,7 +22,7 @@ function onShow(firstShow, event)
 	globals.FiltraEventiSelezionabili(idLavoratore,frmOpt.vDal.getFullYear() * 100 + frmOpt.vDal.getMonth() + 1,globals.TipoGiornaliera.NORMALE);
 	
 	// abilita o meno la visualizzazione del tab delle timbrature
-	if(!globals.haOrologio(idDitta))
+	if(!globals.haOrologio(isInterinale ? globals.getDittaRiferimento(idDitta) : idDitta))
 	   frm.abilitaTabTimbrature(false,idDitta,true);
 	else
 	   frm.abilitaTabTimbrature(true,idDitta,true);

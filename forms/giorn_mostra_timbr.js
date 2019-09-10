@@ -511,7 +511,7 @@ function preparaTimbratura(anno, mese, idlavoratore, cartolina, indexToUpdate, f
     // Aggiorna il periodo dell'intestazione
 	globals.aggiornaPeriodoIntestazione();
 	
-	// filtra escludendo i giorni posteriori alla fine del mese
+	// filtra escludendo i giorni posteriori alla fine del meseM
 	if(selectionForm)
 	{
 		var selection_fs = selectionForm.foundset;

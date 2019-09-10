@@ -18,7 +18,10 @@ function onShow(firstShow, event)
 	// aggiorna le intestazioni per la giornaliera standard
 	aggiornaIntestazioni(false);
 	
-	if(!globals.haOrologio(globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].idditta))
+	var idDitta = globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].idditta;
+	var isInterinale = globals.isInterinale(idDitta);
+	
+	if(!globals.haOrologio(isInterinale ? globals.getDittaRiferimento(idDitta) : idDitta))
 	   abilitaTabTimbrature(false);
 	else
 	   abilitaTabTimbrature(true);
