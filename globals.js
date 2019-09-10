@@ -600,7 +600,7 @@ function apriProgrammazioneTurni(_event,_idditta,_anno,_mese,_iddip)
 
 		for(var f in progObj.filter)
 			fs.addFoundSetFilterParam(progObj.filter[f].filter_field_name, progObj.filter[f].filter_operator, progObj.filter[f].filter_value, progObj.filter[f].filter_name);
-			
+		
 		if(fs.loadAllRecords() && fs.getSize() === 0)
 			globals.ma_utl_showInfoDialog('Nessun dipendente per il periodo selezionato', 'i18n:svy.fr.lbl.excuse_me');
 		else
@@ -614,8 +614,7 @@ function apriProgrammazioneTurni(_event,_idditta,_anno,_mese,_iddip)
 				progParams.idditta = _idditta;
 				
  		    	globals.openProgram(progName,progParams,true);
-		  		    
-		}
+ 		}
 	}	// FINE if(dipendenti)
 	else
 		globals.ma_utl_showErrorDialog('La richiesta al server è fallita, riprovare', 'Errore di comunicazione');
@@ -1624,7 +1623,7 @@ function ricalcolaGiornaliera(periodo, idDitta, gruppoInstallazione, gruppoLavor
 	}
 	
 	//le ditte che non timbrano non hanno il tab di Mostra timbrature
-    var _haOrologio = globals.haOrologio(idDitta);
+    var _haOrologio = globals.haOrologio(globals.isInterinale(idDitta) ? globals.getDittaRiferimento(idDitta) : idDitta);
 	//in caso di connessione di tipo cliente il tab delle voci non è visibile
 	if(globals._tipoConnessione == 1)
 	{
@@ -3541,10 +3540,9 @@ function rendiGiorniRiconteggiabiliWS(employeesIds, giorniSelezionati, idDitta,p
 		databasecliente     :   databaseCliente
 	};
 	
-    var response = globals.getWebServiceResponse(url, params);
+    var response = globals.getWebServiceResponseWS(url,params,databaseCliente);//globals.getWebServiceResponse(url, params);
 			
 	return response;
-	
 }
 
 /**
@@ -4698,7 +4696,7 @@ function costruisciRiepilogoRegoleNonAssociate(arrDip,idDitta)
 	/** @type {RuntimeForm}*/
 	var frmCont;
 	
-	var haorologio = globals.haOrologio(idDitta);
+	var haorologio = globals.haOrologio(globals.isInterinale(idDitta) ? globals.getDittaRiferimento(idDitta) : idDitta);
 	var hagestioneturno = globals.haGestioneTurno(idDitta);
 	if(haorologio && hagestioneturno)
 		frmCont = forms.giorn_controllo_dip_senza_regole_associate;
@@ -4857,7 +4855,7 @@ function costruisciRiepilogoRegole(arrDip,idDitta)
 	/** @type {RuntimeForm}*/
 	var frmCont;
 	
-	var haorologio = globals.haOrologio(idDitta);
+	var haorologio = globals.haOrologio(globals.isInterinale(idDitta) ? globals.getDittaRiferimento(idDitta) : idDitta);
 	var hagestioneturno = globals.haGestioneTurno(idDitta);
     
 	frmCont = forms.giorn_dip_modifica_decorrenze;
@@ -5337,9 +5335,8 @@ function importaTracciatoDaFileEsterno(idDitta,periodo,idGruppoInst)
 																	   '',
 																	   true);
 	var url = globals.WS_TRACK_EXT_URL + "/Tracciati/ImportaTracciatoEsterno";
-	addJsonWebServiceJob(url,
-		                 params,
-						 vUpdateOperationStatusFunction);
+
+	addJsonWebServiceJob(url,params,vUpdateOperationStatusFunction);
 }
 
 /**
@@ -5359,8 +5356,7 @@ function getTipoInstallazione(_idditta,_periodo){
 		_arrTracciato.push(_periodo);
 	var _dsTracciato = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,_strTracciato,_arrTracciato,1);
 
-	return _dsTracciato.getValue(1,1);
-	
+	return _dsTracciato.getValue(1,1);	
 }
 
 /**
@@ -5379,8 +5375,7 @@ function getAnomalieGiornata(idlavoratore,giorno)
     var arrAnomalie = [idlavoratore,giorno];
     var dsAnomalie = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,sqlAnomalie,arrAnomalie,1);
     
-    return dsAnomalie.getValue(1,1);
-    
+    return dsAnomalie.getValue(1,1);    
 }
 
 /**
@@ -6313,42 +6308,55 @@ function ottieniArrayDipConAnomalie(idDitta,dal,al,arrDipFiltrati)
  * @return {Array<Number>}
  * 
  * @properties={typeid:24,uuid:"6E36D8DC-D93E-4847-9B0B-B79DFCCE979F"}
+ * @AllowToRunInFind
  */
 function ottieniArrayDipConSquadrature(idDitta,dal,al,opzioniSquadrature,arrEvFiltro,arrDipFiltrati)
 {
-	// insieme unione tra i dipendenti squadrati rispetto all'orario e quelli con l'evento ? in giornaliera
- 	var _sqDittaQuery = 'SELECT L.idLavoratore,P.Nominativo FROM Lavoratori L \
-                         INNER JOIN Persone P ON L.CodiceFiscale = P.CodiceFiscale \
-                         WHERE idLavoratore IN ';
-	var _sqDittaArr;
+	var dsSqDitta = null;
 	
-	switch(opzioniSquadrature)
+	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>}*/
+	var fsLav = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
+	if(fsLav.find())
 	{
-		case 1:
-		case 3:	
-		    _sqDittaQuery += '(SELECT IdDip AS idLavoratore FROM F_Gio_Filtro(?, ?, ?, 0, 0, 0, 0, 0, ?, 0, 0, 0)'
-		    _sqDittaArr = [idDitta,
-		                   dateFormat(dal,globals.ISO_DATEFORMAT),
-						   dateFormat(al,globals.ISO_DATEFORMAT),
-						   arrEvFiltro.join(',')];
-			break;
-		case 2:
-			_sqDittaQuery += '(SELECT IdLavoratore AS idLavoratore FROM F_Gio_FiltroSquadrati(?,?,?)';
-			_sqDittaArr = [idDitta,dateFormat(dal,globals.ISO_DATEFORMAT),dateFormat(al,globals.ISO_DATEFORMAT)];
-			break;
-		default:
-			break;
+		if(arrDipFiltrati && arrDipFiltrati.length > 0)
+			fsLav.idlavoratore = arrDipFiltrati;
+		
+		fsLav.search();
+		
+		var arrLav = globals.foundsetToArray(fsLav,'idlavoratore');
+	
+		// insieme unione tra i dipendenti squadrati rispetto all'orario e quelli con l'evento ? in giornaliera
+	 	var _sqDittaQuery = 'SELECT L.idLavoratore,P.Nominativo FROM Lavoratori L \
+	                         INNER JOIN Persone P ON L.CodiceFiscale = P.CodiceFiscale \
+	                         WHERE idLavoratore IN (' + arrLav.join(',') + ')\
+							 AND idLavoratore IN ';
+		var _sqDittaArr;
+		
+		switch(opzioniSquadrature)
+		{
+			case 1:
+			case 3:	
+			    _sqDittaQuery += '(SELECT IdDip AS idLavoratore FROM F_Gio_Filtro(?, ?, ?, 0, 0, 0, 0, 0, ?, 0, 0, 0))'
+			    _sqDittaArr = [idDitta,
+			                   dateFormat(dal,globals.ISO_DATEFORMAT),
+							   dateFormat(al,globals.ISO_DATEFORMAT),
+							   arrEvFiltro.join(',')];
+				break;
+			case 2:
+				_sqDittaQuery += '(SELECT IdLavoratore AS idLavoratore FROM F_Gio_FiltroSquadrati(?,?,?))';
+				_sqDittaArr = [idDitta,dateFormat(dal,globals.ISO_DATEFORMAT),dateFormat(al,globals.ISO_DATEFORMAT)];
+				break;
+			default:
+				break;
+		}
+		
+		_sqDittaQuery += ' ORDER BY P.Nominativo';
+	
+		dsSqDitta = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,_sqDittaQuery,_sqDittaArr,-1);
 	}
-               
-	if(arrDipFiltrati && arrDipFiltrati.length > 0)
-	   _sqDittaQuery += ' WHERE idLavoratore IN (' + arrDipFiltrati.map(function(d){return d}).join(',') + '))';
-	else
-		_sqDittaQuery += ')';
 	
-	_sqDittaQuery += ' ORDER BY P.Nominativo';
 	
-	var dsSqDitta = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE,_sqDittaQuery,_sqDittaArr,-1);
-    return dsSqDitta.getColumnAsArray(1);
+    return dsSqDitta != null ? dsSqDitta.getColumnAsArray(1) : null;
 }
 
 /**
@@ -7254,37 +7262,6 @@ function ottieniTimbratureMancantiGiorno(event,idLavoratore,giorno)
 	}
 	
 	return false;
-}
-
-/**
- * Ottieni la data in cui è avvenuta l'ultima importazione delle timbrature
- *
- * @param {Array<Number>} idditte
- *
- * @return Date
- * 
- * @properties={typeid:24,uuid:"B9CFFBF6-DE4C-43D0-B2FB-6AC3B5EA6A71"}
- * @AllowToRunInFind
- */
-function getDataUltimoScarico(idditte)
-{
-	/** @type {JSFoundSet<db:/ma_presenze/e2wk_attivitaeseguiteditta>}*/
-	var fs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.ATTIVITA_DITTA);
-	
-	if(fs.find())
-	{
-		fs.idditta = idditte;
-		fs.e2wk_attivitaeseguiteditta_to_e2wk_tabattivita.codice = globals.AttivitaDitta.IMPORTAZIONE_TIMBRATURE;
-		
-		if(fs.search() > 0)
-		{
-		   fs.sort('ultimaesecuzioneil desc');
-		   return fs.ultimaesecuzioneil;
-		}
-		else
-			return null;
-	}
-	return null;
 }
 
 /**
@@ -9121,6 +9098,10 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 		for(g = 0; g < arrGiorni.length; g++)
 		{
 			var currGiorno = new Date(anno, mese - 1, arrGiorni[g]);
+			var regolaGiorno = globals.getRegolaLavoratoreGiorno(arrLav[l],currGiorno);
+			if(regolaGiorno && regolaGiorno.ammettedistribuzione)
+				continue;
+			
 			var currEvGiornNormale = getRecGiornaliera(arrLav[l],currGiorno,globals.TipoGiornaliera.NORMALE);
 			var currEvGiornBudget = getRecGiornaliera(arrLav[l],currGiorno,globals.TipoGiornaliera.BUDGET);
 			
@@ -9211,7 +9192,6 @@ function inizializzaParametriFileTimbrature(idditta, periodo, idgruppoinstallazi
 }
 
 /**
- * TODO generated, please specify type and doc for the params
  * @param idditta
  * @param periodo
  * @param idgruppoinstallazione
@@ -10193,4 +10173,21 @@ function useTracciatiEsterni(idDitta,periodo)
 		return true;
 	
 	return false;
+}
+/**
+ * @properties={typeid:24,uuid:"9EB035D4-AB48-41CF-B6A4-822CF9DF2D1A"}
+ * @AllowToRunInFind
+ */
+function getCategoriaParticolare(idLavoratore)
+{
+	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>} */
+	var fs = databaseManager.getFoundSet(globals.Server.MA_ANAGRAFICHE,globals.Table.LAVORATORI);
+	if(fs.find())
+	{
+		fs.idlavoratore = idLavoratore;
+		if(fs.search())
+			return fs.codcategoriaparticolare;
+	}
+	
+	return null;
 }
