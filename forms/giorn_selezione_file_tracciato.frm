@@ -61,7 +61,6 @@ uuid:"547FABC4-BC4F-4157-B8BB-A8594926DE69"
 {
 anchors:6,
 customProperties:"",
-enabled:false,
 location:"291,65",
 mediaOptions:2,
 name:"btn_confermaselgiorn",

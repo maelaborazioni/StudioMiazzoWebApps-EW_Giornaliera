@@ -108,7 +108,7 @@ function onShow(firstShow, event)
 	elements.lbl_info.text = '';
 	elements.btn_info.visible = false;
 
-	elements.btn_confermaselgiorn.enabled = false;
+	//elements.btn_confermaselgiorn.enabled = false;
 }
 
 /**
