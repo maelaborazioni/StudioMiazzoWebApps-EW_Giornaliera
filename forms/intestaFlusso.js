@@ -24,11 +24,11 @@ function abilitaMese(event) {
 	if(answer)
 	{
 	   var params = globals.inizializzaParametriAttivaMese(forms.giorn_header.idditta, 
-		                                                globals.getPeriodo(),
-														globals.getGruppoInstallazione(), 
-														globals.getGruppoLavoratori(),
-														globals._tipoConnessione,
-														forms.giorn_header.idlavoratore)
+			                                               globals.getPeriodo(),
+														   globals.getGruppoInstallazione(), 
+														   globals.getGruppoLavoratori(),
+														   globals._tipoConnessione,
+														   forms.giorn_header.idlavoratore)
        
 	   // la disattivazione di eventuali filtri implica che ci si riposizioni sul primo dipendente
 	   // perciò la facciamo esclusivamente in presenza di filtri attivi

@@ -119,8 +119,8 @@ function tornaAllaGiornaliera(event)
  *
  * @properties={typeid:24,uuid:"45E9864E-48AF-452D-A967-A161898CB8DF"}
  */
-function vaiAllaGiornalieraFiltrata(event) {
-	
+function vaiAllaGiornalieraFiltrata(event) 
+{
 	var _fs = forms.giorn_header.foundset
 	var _catArr = new Array
 	if(_eb) _catArr.push(_ebStr)
@@ -129,7 +129,10 @@ function vaiAllaGiornalieraFiltrata(event) {
 	if(_nc) _catArr.push(_ncStr)
 	
 	if(_catArr.length == 0)
+	{
 		tornaAllaGiornaliera(event);
+		return;
+	}
 	
 	try
 	{

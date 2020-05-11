@@ -80,7 +80,6 @@ function process_acquisisci_giornaliera_admin(event)
 {
 	try
 	{
-		globals.inizializzaParametriAttivaMese(_idditta,_anno * 100 +  _mese,_idgruppoinst,_codgrlav);
 		globals.importaTracciatoDaFtp(_idditta,_anno * 100 +  _mese,_idgruppoinst,_codgrlav);
 		globals.svy_mod_closeForm(event);
 	}

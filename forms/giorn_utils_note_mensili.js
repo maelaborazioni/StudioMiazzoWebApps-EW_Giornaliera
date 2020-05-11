@@ -60,7 +60,7 @@ function confermaNote(event)
 		
 	}
 
-	done = plugins.rawSQL.executeSQL(globals.customer_dbserver_name,'dbo.e2giornalierainfomensili',sql,null);	
+	done = plugins.rawSQL.executeSQL(globals.customer_dbserver_name,sql,null);	
 	
 	if (done)
 	{

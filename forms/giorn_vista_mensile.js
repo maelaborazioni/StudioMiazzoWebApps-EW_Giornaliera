@@ -1104,6 +1104,7 @@ function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno, _
 	   forms.giorn_vista_mensile.aggiornaRiepiloghiGiorno(forms[_tempFormName].foundset['idgiornaliera']);
 }
 
+
 /**
  * Callback method for when form is shown.
  *

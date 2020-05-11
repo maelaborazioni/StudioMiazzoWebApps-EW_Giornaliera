@@ -926,8 +926,8 @@ function process_conteggia_singolo_dip_anomalie(idLavoratore,gg)
 	{
         // il conteggio avviene direttamente senza conferma
 		var response = conteggiaGiornoAnomalie(idLavoratore,gg);
-		if (!response['returnValue'])
-			globals.ma_utl_showErrorDialog('Si è verificato un errore durante il conteggio, riprovare', 'Conteggio timbrature');
+		if(!response || response.StatusCode != globals.HTTPStatusCode.OK || !response.ReturnValue)
+			throw new Error('Si è verificato un errore durante il conteggio, riprovare', 'Conteggio timbrature');
 		else
 		{
 			var _yy = gg.getFullYear();
@@ -1005,15 +1005,10 @@ function process_conteggia_dip_anomalie(_idLavoratore)
 			var gg = utils.parseDate(fsLav.getRecord(g)['giornomese'], globals.EU_DATEFORMAT);
 			
 			var response = conteggiaGiornoAnomalie(_idLavoratore, gg);
-			if(!response['returnValue'])
-			{
-				plugins.busy.unblock();
-				globals.ma_utl_showErrorDialog('Si è verificato un errore durante il conteggio del dipendente ' + 
-				                             	globals.getNominativo(_idLavoratore) + ' , riprovare', 'Conteggio timbrature');
-				return;
-			}
-		}
-		
+			if(!response || response.StatusCode != globals.HTTPStatusCode.OK || !response.ReturnValue)
+			throw new Error('Si è verificato un errore durante il conteggio del dipendente ' + 
+				           	globals.getNominativo(_idLavoratore) + ' , riprovare', 'Conteggio timbrature');
+		}		
 		// aggiorniamo la situazione generale delle anomalie sulle timbrature
 		forms.giorn_timbr_mancanti_ditta.preparaAnomalieDitta
 		(
@@ -1091,13 +1086,9 @@ function process_conteggia_tutti_giorni_anomalie()
 				var gg = utils.parseDate(fsLav.getRecord(g)['giornomese'], globals.EU_DATEFORMAT);
 				
 				var response = conteggiaGiornoAnomalie(_idLavoratore, gg);
-				if(!response['returnValue'])
-				{
-					plugins.busy.unblock();
-					globals.ma_utl_showErrorDialog('Si è verificato un errore durante il conteggio del dipendente ' + 
-					                             	globals.getNominativo(_idLavoratore) + ' , riprovare', 'Conteggio timbrature');
-					return;
-				}
+				if(!response || response.StatusCode != globals.HTTPStatusCode.OK || !response.ReturnValue)
+					throw new Error('Si è verificato un errore durante il conteggio del dipendente ' + 
+					              	globals.getNominativo(_idLavoratore) + ' , riprovare', 'Conteggio timbrature');
 			}
 		}
 		// aggiorniamo la situazione generale delle anomalie sulle timbrature
@@ -1126,7 +1117,9 @@ function process_conteggia_tutti_giorni_anomalie()
  * 
  * @param {Number} _idLavoratore
  * @param {Date} _giorno
- *
+ * 
+ * @return {{ReturnValue: Object, StatusCode: Number, Message: String}}
+ * 
  * @properties={typeid:24,uuid:"A1C6EB10-4CFA-4201-90A0-E53F313CAA90"}
  */
 function conteggiaGiornoAnomalie(_idLavoratore,_giorno)
@@ -1136,13 +1129,12 @@ function conteggiaGiornoAnomalie(_idLavoratore,_giorno)
 	var _MM = _giorno.getMonth() + 1;
 	var _periodo = _yy * 100 + _MM;
 
-	var params = globals.inizializzaParametriCompilaConteggio(_idDitta,
-		_periodo,
-		globals.TipoGiornaliera.NORMALE,
-		globals.TipoConnessione.CLIENTE,
-		[_giorno.getDate()],
-		[_idLavoratore],
-		true
+	var params = globals.inizializzaParametriConteggio(_idDitta,
+													   _periodo,
+													   globals.TipoConnessione.CLIENTE,
+													   [_giorno.getDate()],
+													   [_idLavoratore],
+													    true
 	);
 
 	//teniamo traccia dei dipendenti che sono stati modificati e che risulteranno da chiudere
@@ -1150,13 +1142,9 @@ function conteggiaGiornoAnomalie(_idLavoratore,_giorno)
 		return null;
 
 	//lanciamo il calcolo per la compilazione
-	var url = globals.WS_URL + "/Timbrature/Conteggia";
+	var url = globals.WS_STAMPING + "/Stamping32/Conteggia";
 	// nel caso di dipendente singolo il conteggio è sincrono
 	var response = globals.getWebServiceResponse(url + 'Singolo', params);
-	
-//	forms.giorn_mostra_timbr.markAsDirty(_idLavoratore, _periodo);
-//	forms.giorn_vista_mensile.markAsDirty(_idLavoratore, _periodo);
-		
 	return response;
 }
 

@@ -352,8 +352,8 @@ function refreshCoperturaAssenze(event) {
 				|| frm.vTipoRichieste == 1 && arrDipConRichieste[k-1] == 0)
 		    dsCop.removeRow(k - (dsSize - dsCop.getMaxRowIndex()));
 		}
-	}
-		
+	}	
+	
 	// nel caso di nessun dipendente presente nella selezione mostriamo un messaggio
 	if(dsCop.getMaxRowIndex() == 0)
 		forms[frmContName].elements.tab_copertura.transparent = true;	
@@ -521,8 +521,10 @@ function refreshCoperturaTurni(event) {
     
     // dataset copertura turni
 	var size = foundset.search();
-	//foundset.sort('nominativo');
-	foundset.sort('lavoratori_to_persone.nominativo asc, lavoratori_to_lavoratori_personeesterne.nominativo asc,assunzione asc, cessazione asc');
+	
+	foundset.sort('lavoratori_to_persone.nominativo asc, lavoratori_to_lavoratori_personeesterne.nominativo asc');
+//	foundset.sort('lavoratori_to_persone.nominativo asc, lavoratori_to_lavoratori_personeesterne.nominativo asc,assunzione asc, cessazione asc');
+	
 	var types = [JSColumn.NUMBER,JSColumn.NUMBER,JSColumn.TEXT];
 	var columns = ['IdLavoratore','Codice','Nominativo'];
 	var dsCop = databaseManager.createEmptyDataSet(size,columns);
@@ -603,6 +605,7 @@ function refreshCoperturaTurni(event) {
 					var totOreEvSost = 0;
 					var evGestitoConStorico = false;
 					var oreTeoricheGiorno = objFascia.totaleorefascia;
+					/** @type {JSRecord<db:/ma_presenze/e2giornalieraeventi>} */
 					var currRecGiornEv = null;
 					for(var r = 1; r <= resSize; r++)
 					{
@@ -675,8 +678,7 @@ function refreshCoperturaTurni(event) {
 						dsCop.setValue(l,g + 3,objFascia.codalternativo ? objFascia.codalternativo + '_' + g + '_' : null);
 				
 				// altrimenti, se il giorno non è ancora stato conteggiato, verifica possibili coperture date da richieste non ancora confermate
-				if(//!_isConteggiato &&
-				   dsCop.getValue(l,g + 3) == null)
+				if(dsCop.getValue(l,g + 3) != null)
 				{
 					_tipoAssenza = globals.TipoAssenza.RICHIESTA;
 					// recupera giorni ed eventi di richieste non ancora confermate
@@ -858,6 +860,8 @@ function refreshCoperturaTurni(event) {
 				 ,frm.vIdSede
 				 ,frm.vCodCentroDiCosto
 				 ].join('_');
+		
+		dsCop.sort(3,true);
 		
 		var dSCop = dsCop.createDataSource(dSCopName, types);
 		var dSRiep = dsRiep.createDataSource('_vcDataSourceRiep_' + '_' + numGiorni + '_' + numDip,typesRiep);

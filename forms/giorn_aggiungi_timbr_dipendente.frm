@@ -77,7 +77,6 @@ visible:false
 dataProviderID:"vSenso",
 displayType:2,
 editable:false,
-enabled:false,
 formIndex:7,
 location:"100,25",
 name:"fld_senso",

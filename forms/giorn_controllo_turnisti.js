@@ -75,6 +75,16 @@ function process_controllo_turnisti(event)
 {
 	try
 	{
+		// add new operation info for future updates
+		var operation = scopes.operation.create(vParams['idditta'],vParams['idgruppoinstallazione'],vParams['periodo'],globals.OpType.AM);
+		if(operation == null || operation.operationId == null)
+		{
+			globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+			return;
+		}
+		
+		vParams.operationid = operation.operationId;
+		vParams.operationhash = operation.operationHash;
 		//primo ingresso in un mese senza turnisti : lancia operazione lunga
 		if (vPrimoIngresso) {
 			globals.svy_mod_closeForm(event);

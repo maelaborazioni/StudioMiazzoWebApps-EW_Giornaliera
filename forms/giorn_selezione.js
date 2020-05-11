@@ -632,39 +632,43 @@ function confermaDittaPeriodoDaAcquisire(event) {
 	                  											  _anno * 100 + _mese,
 																  _idgruppoinst,
 																  _codgrlav);
-	if(ctrlRes['returnValue'] == 0)
+	if(ctrlRes && ctrlRes.StatusCode == globals.HTTPStatusCode.OK)
 	{
-		var msg = ctrlRes['returnMessage'] + '<br/>';
+		if(ctrlRes.ReturnValue == 0)
+		{
+			var msg = ctrlRes.Message + '<br/>';
+			
+			var recOpDitta = scopes.giornaliera.getUltimaOperazioneDitta(_idditta,
+								                                         _idgruppoinst,
+																		 _codgrlav,
+																		 _anno * 100 + _mese,
+																		 globals.getIdTabAttivita(globals.AttivitaDitta.IMPORTAZIONE_GIORNALIERA))
+			
+		    if(recOpDitta)
+		       msg += ('Ultima acquisizione effettuata il ' + globals.dateFormat(recOpDitta.ultimaesecuzioneil,globals.LOGINFO_DATEFORMAT));
+			
+			globals.svy_mod_closeForm(event);
+			globals.ma_utl_showWarningDialog(msg,'Importa giornaliera');
+			return;
+		}
 		
-		var recOpDitta = scopes.giornaliera.getUltimaOperazioneDitta(_idditta,
-							                                         _idgruppoinst,
-																	 _codgrlav,
-																	 _anno * 100 + _mese,
-																	 globals.getIdTabAttivita(globals.AttivitaDitta.IMPORTAZIONE_GIORNALIERA))
+		var params = {
+	        processFunction: process_acquisizione,
+	        message: '', 
+	        opacity: 0.5,
+	        paneColor: '#434343',
+	        textColor: '#EC1C24',
+	        showCancelButton: false,
+	        cancelButtonText: '',
+	        dialogName : 'This is the dialog',
+	        fontType: 'Arial,4,25',
+	        processArgs: [event]
+	    };
 		
-	    if(recOpDitta)
-	       msg += ('Ultima acquisizione effettuata il ' + globals.dateFormat(recOpDitta.ultimaesecuzioneil,globals.LOGINFO_DATEFORMAT));
-		
-		globals.svy_mod_closeForm(event);
-		globals.ma_utl_showWarningDialog(msg,'Importa giornaliera');
-		return;
+		plugins.busy.block(params);
 	}
-	
-	var params = {
-        processFunction: process_acquisizione,
-        message: '', 
-        opacity: 0.5,
-        paneColor: '#434343',
-        textColor: '#EC1C24',
-        showCancelButton: false,
-        cancelButtonText: '',
-        dialogName : 'This is the dialog',
-        fontType: 'Arial,4,25',
-        processArgs: [event]
-    };
-	
-	plugins.busy.block(params);
-	
+	else
+		globals.ma_utl_showWarningDialog('Errore durante la verifica della presenza di giornaliere ancora da importare');
 }
 
 /**

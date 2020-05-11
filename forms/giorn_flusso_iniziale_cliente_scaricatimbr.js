@@ -12,9 +12,8 @@ function scaricaTimbrature(event) {
 			       forms.giorn_header.lavoratori_to_ditte.ditte_to_ditte_legami.iddittariferimento : forms.giorn_header.idditta;
 	var _periodo = globals.getPeriodo();
 	var _gruppoinst = globals.getGruppoInstallazioneDitta(_idditta);
-	var _gruppolav = globals.getGruppoLavoratori();
-	
-	var _params = globals.inizializzaParametriScaricaTimbrature(_idditta,_periodo,_gruppoinst,_gruppolav,globals._tipoConnessione);
+		
+	var _params = globals.inizializzaParametriScaricaTimbrature(_idditta,_periodo,_gruppoinst,globals._tipoConnessione);
     globals.scaricaTimbratureDaFtp(_params);	
 }
 

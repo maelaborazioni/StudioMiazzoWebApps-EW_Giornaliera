@@ -502,19 +502,6 @@ function getMinDaTimbrFormattata(_timbratura){
 }
 
 /**
- * Salvataggio della nuova voce o della voce modificata
- * 
- * @param {Object} _vociParams
- *
- * @properties={typeid:24,uuid:"0575640A-E277-4E45-8060-94C1F03854C3"}
- */
-function salvaVoce(_vociParams)
-{
-	var url = WS_URL + "/Voci/Salva"
-    return getWebServiceResponse(url,_vociParams);
-}
-
-/**
  * @properties={typeid:24,uuid:"71752951-4B89-4890-B861-69D8D5A8C38B"}
  */
 function showDettagliEventiGiorno() {
@@ -659,15 +646,15 @@ function apriCartolina(_event, _idDitta, _anno, _mese, _annoAttivo, _meseAttivo,
 
 			var params = globals.inizializzaParametriAttivaMese
 			(_idDitta,
-				periodo,
-				_grInst,
-				_grLav,
-				globals._tipoConnessione
+			 periodo,
+			 _grInst,
+			 _grLav,
+			 globals._tipoConnessione
 			);
 
-			var response = globals.isMeseDaAttivare(params);
-			if (response && response.returnValue && response['returnValue'] === true) {
-//				if (response['activate'] === false) {
+			var response = scopes.giornaliera.isMeseDaAttivare(params);
+			if (response && response.ReturnValue == true) 
+			{
 					/** @type {{anno:Number,mese:Number,anno_attivo:Number,mese_attivo:Number,
 					 *                     periodo:Number,periodo_attivo:Number,giorni_sel:Array,index_sel:Number,
 					 *                     gruppo_inst:Number,gruppo_lav:String,idditta:Number,
@@ -714,9 +701,10 @@ function apriCartolina(_event, _idDitta, _anno, _mese, _annoAttivo, _meseAttivo,
  */
 function confermaEventi(params,bloccaChiusura)
 {
-	var url = WS_URL + "/Trattamenti/ConfermaEventi";
+	/** WARNING Non utilizzata! Lato sede  */
+	var url = WS_CALENDAR + "/Consolidating32/ConfermaEventi";
 	var response = getWebServiceResponse(url,params);
-	if (response && response.returnValue) {
+	if (response && response.ReturnValue) {
 		if (response['processing'] === true) {
 			
 			//se la chiusura è bloccata, il processo di conferma degli eventi selezionati è completato ma non essendo
@@ -791,7 +779,17 @@ function elencoTurnisti(params)
  */
 function importaDaFtp(params)
 {
-	var ftpUrl = WS_MULTI_URL + "/Giornaliera/ImportaDaFtp";
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.IT);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	var ftpUrl = WS_LU + "/Lu32/ImportaDaFtpAsync";
 	addJsonWebServiceJob(ftpUrl,
 		                 params,
 						 vUpdateOperationStatusFunction);
@@ -808,7 +806,16 @@ function importaDaFtp(params)
  */
 function scaricaTimbratureDaFtp(params,doCallback)
 {
-	var ftpUrl = WS_MULTI_URL + "/Timbrature/ScaricaTimbratureDaFtp";
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.ST);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	var ftpUrl = WS_CALENDAR + "/Stamping32/ScaricaTimbratureDaFtpAsync";
 	if(doCallback)
 	{
 	   apriGestioneAnomalie();	
@@ -829,11 +836,11 @@ function scaricaTimbratureDaFtp(params,doCallback)
  */
 function verificaPresenzaFileTimbrature(params)
 {
-	var ftpUrl = WS_URL + "/Timbrature/VerificaPresenzaFileTimbrature";
+	var ftpUrl = WS_LU + "/Ftp32/VerificaPresenzaFileTimbrature";
 	var response = getWebServiceResponse(ftpUrl,params);
 	
 	if(response)
-	   return response.returnValue;
+	   return response.ReturnValue == true;
 	return false;
 }
 
@@ -985,7 +992,16 @@ function selezione_ditta_giornaliera(event)
  */
 function inviaGiornalieraSuFtp(params)
 {
-	var ftpUrl = WS_MULTI_URL + "/Giornaliera/InviaGiornalieraSuFtp";
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.IG);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	var ftpUrl = WS_LU + "/Lu32/InviaGiornalieraSuFtpAsync";
 	addJsonWebServiceJob(ftpUrl,params);
 	
 }
@@ -1001,7 +1017,17 @@ function inviaGiornalieraSuFtp(params)
  */
 function chiusuraMese(params)
 {
-	var url = WS_MULTI_URL + "/Trattamenti/ChiusuraMese";
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.CE);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	
+	var url = WS_CALENDAR + "/Consolidating32/ChiusuraMeseAsync";
 	addJsonWebServiceJob(url,params);	
 }
 
@@ -1022,6 +1048,16 @@ function chiusuraEdInvio(params)
 	var arrIdDipDaInviare = params.iddipendentidainviare;
 	var arrIdDipIngresso = params.iddipendentiingresso;
 	
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.CM);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	
 	// eliminazione parametri per evitare problemi di lunghezza nella deserializzazione della stringa JSON
 	params.iddipendentidachiudere = [];
 	params.iddipendentidainviare = [];
@@ -1032,14 +1068,17 @@ function chiusuraEdInvio(params)
 		// settaggio del parametro 'iddipendenti' per l'operazione di chiusura del mese
 		params.iddipendenti = arrIdDipDaChiudere;
 		
-		var url = WS_MULTI_URL + "/Trattamenti/ChiusuraMese";
+		var url = WS_CALENDAR + "/Consolidating32/ChiusuraMeseAsync";
 		addJsonWebServiceJob(url,
 					         params,
 							 vUpdateOperationStatusFunction,
 							 null
-							 ,function(retObj)
+							 ,function(_retObj)
 							 {
-								    if(!retObj || retObj['status']['op_status'] == 255) 
+								    /**@type {{statusCode:Number, returnValue:Object, message:String, operationId:String,  
+								    		   operationHash:String, status:Number, start:Date, end:Date, progress:Number, lastProgress:Date}} */
+								    var retObj = _retObj;
+								    if(!retObj || retObj.status == 255) 
 								    //se non dovesse essere abbastanza || retObj['status']['op_message'] == 'Chiusura mese terminata correttamente'
 								    {
 								    	plugins.busy.unblock();
@@ -1113,39 +1152,6 @@ function chiusuraEdInvio(params)
 		}
 						
 	}
-}
-
-/**
- * Ottiene la stringa da concatenare alla query per ottenere l'array 
- * dei dipendenti ancora da chiudere (NON USATA)
- * 
- * @param {Object} params
- * 
- * @return {String}
- *
- * @properties={typeid:24,uuid:"2E4686D6-371C-4482-9573-C2422E92895D"}
- */
-function ottieniStrDipChiusura(params){
-	
-	/** @type {String} */
-	var _retStr = null
-	var url = WS_URL + "/Trattamenti/ElencoDipendentiChiusura"
-	var _responseObj = getWebServiceResponse(url,params)	
-	
-	if (_responseObj != null){
-	
-		if(_responseObj['returnValue'] == true){
-	
-		    _retStr = _responseObj['sqlStr']   
-		
-		}else		
-			globals.ma_utl_showErrorDialog('Si è verificato il seguente errore : ' + _responseObj['message'],'Chiusura annullata')
-									
-	}else		
-		globals.ma_utl_showErrorDialog('Il server non risponde, si prega di riprovare','Errore di comunicazione')
-	
-	return _retStr;
-
 }
 				
 /**
@@ -1275,8 +1281,8 @@ function chiusuraMeseCliente(params,fromPannelloVariazioni) {
 		if (response)
 		{
 			_noconnection = false;
-			_response = response['returnValue'];
-			_retvalue = response['retValue'];
+			_response = response && response.StatusCode == HTTPStatusCode.OK;
+			_retvalue = response.ReturnValue;
 		}
 		else
 		{
@@ -1432,34 +1438,18 @@ function setPeriodo(periodo)
 }
 
 /**
- * Elimina una voce manuale esistente
- * 
- * @param {Object} _vociParams
- *
- *
- * @properties={typeid:24,uuid:"BA5B5438-70E7-4502-A4BB-E47453743FCD"}
- */
-function eliminaVoce(_vociParams){
-	
-	var url = WS_URL + "/Voci/Elimina"
-	return getWebServiceResponse(url, _vociParams);
-}
-
-/**
  * Elimina un evento esistente
  * 
  * @param {Object} _evParams
  * 
- * @return {{ returnValue: Boolean, message: String }}
- *
+ * @return {{ReturnValue: Object, StatusCode: Number, Message: String}}
+ * 
  * @properties={typeid:24,uuid:"6EE3374C-FB0A-4BF5-AA46-398557031C4C"}
  */
 function eliminaEvento(_evParams)
 {
-	var url = WS_URL + "/Eventi/Elimina";	
-	/** @type {{ returnValue: Boolean, message: String }} */
+	var url = WS_EVENT + "/Event32/EliminaEvento";	
 	var response = getWebServiceResponse(url,_evParams);
-	
 	return response;
 }
 
@@ -1471,8 +1461,7 @@ function eliminaEvento(_evParams)
  */
 function FiltraLavoratoriDittaGiorn(_fs)
 {
-	_fs.addFoundSetFilterParam('idditta','=', _fs['idditta'])
-	
+	_fs.addFoundSetFilterParam('idditta','=', _fs['idditta'])	
 	return _fs
 }
 
@@ -1705,7 +1694,7 @@ function ricalcolaGiornaliera(periodo, idDitta, gruppoInstallazione, gruppoLavor
 		if(idLavoratore != null	&& idLavoratore != undefined && employees.lastIndexOf(idLavoratore) != -1)
 			globals.lookupFoundset(idLavoratore,forms[form].foundset);
 				
-		forms.giorn_header.preparaGiornaliera();
+		forms.giorn_header.preparaGiornaliera(false, null, false, true);
 		
 		globals.verificaDipendentiFiltrati(idLavoratore);
 		
@@ -2308,7 +2297,7 @@ function FiltraLavoratoriGiornaliera(_fs)
 {
 	if(globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].filtro_anag)
 	{
-		var response = globals.ma_utl_showYesNoQuestion('Sono presenti dei filtri attivi. Rimuoverli prima di proseguire?','Predisposizione invio');
+		var response = globals.ma_utl_showYesNoQuestion('Sono presenti dei filtri attivi. Rimuoverli prima di proseguire?','Filtro giornaliera attivo');
 		if(response)
 		{
 			globals.disattivaFiltri(new JSEvent);
@@ -2479,27 +2468,23 @@ function checkForConcurrentOperations(userID, idditta, iddipendente, periodo)
 	var msg = 'Un\'altra operazione potrebbe essere in corso sui dati richiesti.<br/>I dati potrebbero non essere aggiornati.';
 	var response = globals.askForConcurrentOperations(userID, idditta, iddipendente, periodo);
 
-	if(response.returnValue && response.returnValue === false)
+	if(!response || response.Status != HTTPStatusCode.OK)
 	{
-		globals.ma_utl_showErrorDialog(response.message,'Errore');
+		globals.ma_utl_showErrorDialog(response.Message,'Errore');
 		return false;
 	}
-	else if(response.status !== 0)
-	{		
-		if(response.status === 1)
-		{
-			// Same user's operation
-			globals.ma_utl_showWarningDialog('<br/>Per una lista delle operazioni, selezionare la voce <strong>\'Storico operazioni\'</strong><br/>dal menu Giornaliera','i18n:hr.msg.attention');
-		}
-		else if(response.status === -1)
-		{
-			// Other users' operations
-			globals.ma_utl_showWarningDialog(msg,'i18n:hr.msg.attention');
-		}
-		
+	if(response.Status === 1)
+	{
+		// Same user's operation
+		globals.ma_utl_showWarningDialog('<br/>Per una lista delle operazioni, selezionare la voce <strong>\'Storico operazioni\'</strong><br/>dal menu Giornaliera','i18n:hr.msg.attention');
 		return false;
 	}
-	
+	else if(response.Status === -1)
+	{
+		// Other users' operations
+		globals.ma_utl_showWarningDialog(msg,'i18n:hr.msg.attention');
+		return false;
+	}	
 	return true;
 }
 
@@ -2518,95 +2503,51 @@ var jsonParams = '';
  * @param {Number} _idditta
  * @param {Number} _periodo
  * @param {Number} _tipoconnessione
- * @param {Array} _giornisel
  * @param {Array} _idDipsel
  * @param {Boolean} _bSingoloDip
  *
  * @properties={typeid:24,uuid:"6062A4A6-1100-40CF-81BB-74547F4951B7"}
  */
-function inizializzaParametriControlli(_idditta, _periodo, _tipoconnessione, _giornisel, _idDipsel, _bSingoloDip)
+function inizializzaParametriControlli(_idditta, _periodo, _tipoconnessione, _idDipsel, _bSingoloDip)
 {	
 	return {
-		user_id            		 : security.getUserName(), 
-		client_id           	 : security.getClientID(),
+		userid                   : security.getUserName(), 
+		clientid                 : security.getClientID(),
+		server                   : globals.server_db_name,
+		databasecliente          : globals.customer_dbserver_name,
 		idditta					 : _idditta,
 		idgruppoinstallazione	 : globals.getGruppoInstallazioneDitta(_idditta), 
 		periodo					 : _periodo,
 		tipoconnessione			 : _tipoconnessione,
-		giorniselezionati		 : _giornisel,
 		iddipendenti			 : _idDipsel,
 		singolodipendente		 : _bSingoloDip
 	};
 }
 
 /**
- * Inizializza i parametri per l'inserimento/modifica di una voce
  * 
  * @param {Number} _idditta
+ * @param {String} _codgruppogest
  * @param {Number} _periodo
- * @param {Number} _tipoOperazione
- * @param {Array} _iddipendenti
- * @param {String} _codicepaghe
- * @param {Number} _quantita
- * @param {Number} _importo
- * @param {Number} _base
- * @param {Number} _percentuale
- * @param {Number} _portasujob
- * @param {Boolean} _isinmodifica
  * @param {Number} _tipoconnessione
+ * @param {Array} [_idDipsel]
  *
- * @properties={typeid:24,uuid:"E61699C4-81B5-4785-87E4-B9E388B9E952"}
+ *
+ * @properties={typeid:24,uuid:"75795925-E04F-4606-8463-68D8B281B51F"}
  */
-function inizializzaParametriVoce(_idditta,_periodo,_tipoOperazione,_iddipendenti,_codicepaghe,
-								  _quantita,_importo,_base,_percentuale,_portasujob,_isinmodifica,_tipoconnessione)
-{
-	
+function inizializzaParametriChiusura(_idditta, _codgruppogest, _periodo, _tipoconnessione,_idDipsel)
+{	
 	return {
-		user_id                 : security.getUserName(), 
-		client_id               : security.getClientID(),
-		idditta                 : _idditta,
-	    periodo                 : _periodo,
-	    tipooperazione          : _tipoOperazione,
-	    iddipendenti            : _iddipendenti,
-	    codicepaghe             : _codicepaghe,
-	    quantita                : _quantita,
-	    importo                 : _importo,
-	    base                    : _base,
-	    percentuale             : _percentuale,
-	    portasujob              : _portasujob,
-	    modifica                : _isinmodifica,
-		tipoconnessione         : _tipoconnessione
-		 
-	};
-}
-/**
- * Inizializza i parametri per l'importazione del tracciato del mese
- * 
- * @param {Number} _idditta
- * @param {Number} _periodo
- * @param {Number} _gruppoinst
- * @param {String} _gruppolav
- * @param {Array} _iddipendenti
- * @param {Number} _tracciatoOre
- * @param {Number} [_tipoconnessione]
- * 
- * @properties={typeid:24,uuid:"820A25A2-F941-4939-87F5-CF0EEABB6B8A"}
- */
-function inizializzaParametriTracciatoMese(_idditta, _periodo, _gruppoinst, _gruppolav, _iddipendenti,_tracciatoOre,_tipoconnessione)
-{
-	return {
-		user_id                 : security.getUserName(), 
-		client_id               : security.getClientID(),
-		idditta					: _idditta,
-		periodo					: _periodo,
-		idgruppoinstallazione	: _gruppoinst, // TODO da eliminare
-		gruppoinstallazione	    : _gruppoinst,
-		gruppolavoratori		: _gruppolav,
-		iddipendenti            : _iddipendenti,
-		idtracciatoore          : _tracciatoOre,
-		tipoconnessione         : _tipoconnessione
-		
-	};
+		userid                   : security.getUserName(), 
+		clientid                 : security.getClientID(),
+		server                   : globals.server_db_name,
+		databasecliente          : globals.customer_dbserver_name,
+		idditta					 : _idditta,
+		idgruppoinstallazione	 : globals.getGruppoInstallazioneDitta(_idditta), 
+		periodo					 : _periodo,
+		tipoconnessione			 : _tipoconnessione,
+		iddipendenti			 : _idDipsel ? _idDipsel : [],
+		codicegruppogestione     : _codgruppogest	};
 }
 
 /**
@@ -2615,21 +2556,20 @@ function inizializzaParametriTracciatoMese(_idditta, _periodo, _gruppoinst, _gru
  * @param {Number} _idditta
  * @param {Number} _periodo
  * @param {Number} _gruppoinst
- * @param {String} _gruppolav
  * @param {Number} _tipoconnessione
  * 
  * @properties={typeid:24,uuid:"B00BBACE-AA24-41B8-904C-EB2314D6D3A1"}
  */
-function inizializzaParametriScaricaTimbrature(_idditta, _periodo, _gruppoinst, _gruppolav,_tipoconnessione)
+function inizializzaParametriScaricaTimbrature(_idditta, _periodo, _gruppoinst, _tipoconnessione)
 {
 	return {
-		user_id                : security.getUserName(), 
-		client_id              : security.getClientID(),
+		userid                 : security.getUserName(), 
+		clientid               : security.getClientID(),
+		server                 : server_db_name,
+		databasecliente        : customer_db_name,
 		idditta                : _idditta,
 		periodo                : _periodo,
-		idgruppoinstallazione  : _gruppoinst, //TODO da eliminare
-		gruppoinstallazione    : _gruppoinst,
-	    gruppolavoratori       : _gruppolav,
+		idgruppoinstallazione  : _gruppoinst, 
 		tipoconnessione        : _tipoconnessione
 	};
 }
@@ -2770,18 +2710,17 @@ function compilaDalAlSingolo(employeesId, arrayGiorni, askYesNo, periodo)
 	/** @type {Number} */
 	var _periodo = periodo != null ? periodo : globals.getPeriodo();
 	
-	var params = globals.inizializzaParametriCompilaConteggio(
+	var params = globals.inizializzaParametriCompila(
 	                     forms.giorn_header.idditta,
 	                     _periodo,
 	                     forms.giorn_vista_mensile._tipoGiornaliera,
 	                     globals._tipoConnessione,
 	                     arrayGiorni,
-	                     [employeesId],
-						 false
+	                     [employeesId]
 	             );
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? WS_MULTI_URL + "/Giornaliera/CompilaDalAl" : WS_URL + "/Eventi/CompilaDalAl"
+	var url = WS_CALENDAR + "/Calendar32/CompilaDalAlSingolo";
 	
 	var msg = "Procedere con la compilazione?";
 	var answer =  askYesNo ? globals.ma_utl_showYesNoQuestion(msg,'Compilazione giorni') : true;
@@ -2822,21 +2761,20 @@ function compilaDalAlSingoloSync(employeesId, arrayGiorni, periodo)
 	/** @type {Number} */
 	var _periodo = periodo != null ? periodo : globals.getPeriodo();
 	
-	var params = globals.inizializzaParametriCompilaConteggio(
+	var params = globals.inizializzaParametriCompila(
 	                     forms.giorn_header.idditta,
 	                     _periodo,
 	                     forms.giorn_vista_mensile._tipoGiornaliera,
 	                     globals._tipoConnessione,
 	                     arrayGiorni,
-	                     [employeesId],
-						 false
+	                     [employeesId]
 	             );
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? WS_MULTI_URL + "/Giornaliera/CompilaDalAl" : WS_URL + "/Eventi/CompilaDalAl"
+	var url = WS_CALENDAR + "/Calendar32/CompilaDalAlSingolo";
 	
-	var response = globals.getWebServiceResponse(url + 'Singolo', params);
-	if (!response['returnValue'])
+	var response = globals.getWebServiceResponse(url, params);
+	if (!response.ReturnValue)
 		globals.ma_utl_showErrorDialog('Si è verificato un errore durante l\'aggiornamento della giornaliera, riprovare', 'Inserimento timbratura dipendente');
 }
 
@@ -2851,7 +2789,7 @@ function process_conteggia_singolo_dip(url,params)
 	try
 	{
 		var response = globals.getWebServiceResponse(url + 'Singolo', params);
-		if (!response['returnValue'])
+		if (!response.ReturnValue)
 			globals.ma_utl_showErrorDialog('Si è verificato un errore durante il conteggio, riprovare', 'Conteggia timbrature giorni');
 		else
 		{
@@ -2885,7 +2823,7 @@ function process_compila_singolo_dip(url,params)
 		   inizializzaGiornProgFasceNonCompilate(params.iddipendenti,params.periodo,params.giorniselezionati);
 		
 		var response = globals.getWebServiceResponse(url + 'Singolo', params);
-		if (!response['returnValue'])
+		if (!response.ReturnValue)
 			globals.ma_utl_showErrorDialog('Si è verificato un errore durante la compilazione, riprovare', 'Compilazione giorni');
 		else
 		{
@@ -2982,17 +2920,16 @@ function process_compila_singolo_dip_da_commesse(idLavoratore,anno,mese,arrayGio
 			var propEv;
 			var oreEv;
 	
-			var params = globals.inizializzaParametriCompilaConteggio(idDitta,
-																	  anno * 100 + mese,
-																	  forms.giorn_vista_mensile._tipoGiornaliera,
-																	  globals._tipoConnessione,
-																	  [arrayGiorni[g]],
-																	  [idLavoratore],
-																	  false
-																	);
+			var params = globals.inizializzaParametriCompila(idDitta,
+															 anno * 100 + mese,
+															 forms.giorn_vista_mensile._tipoGiornaliera,
+															 globals._tipoConnessione,
+															 [arrayGiorni[g]],
+															 [idLavoratore]
+															 );
 	
 			//lanciamo il calcolo per la compilazione
-			var url = WS_URL + "/Eventi/CompilaDalAl"
+			var url = WS_CALENDAR + "/Calendar32/CompilaDalAl"
 			
 			// operazione di compilazione iniziale
 			globals.getWebServiceResponse(url + 'Singolo', params);
@@ -3010,7 +2947,7 @@ function process_compila_singolo_dip_da_commesse(idLavoratore,anno,mese,arrayGio
 				else
 					idEv = 480 //672; // SD straordinario da definire 
 				
-				var arrProp = getProprietaSelezionabili(idEv,idLavoratore,anno * 100 + mese,arrayGiorni[g],forms.giorn_vista_mensile._tipoGiornaliera);	
+				var arrProp = getProprietaSelezionabili(idEv,idLavoratore,anno * 100 + mese,arrayGiorni[g],forms.giorn_vista_mensile._tipoGiornaliera).ReturnValue;	
 				propEv = globals.getCodiceProprieta(arrProp);
 				oreEv = isFestivo ? oreComm : oreComm - oreTeo;
 			}
@@ -3028,7 +2965,6 @@ function process_compila_singolo_dip_da_commesse(idLavoratore,anno,mese,arrayGio
 			{
 				params = globals.inizializzaParametriEvento(idDitta
 					, anno * 100 + mese
-					, 0
 					, [arrayGiorni[g]]
 					, forms.giorn_vista_mensile._tipoGiornaliera
 					, globals.TipoConnessione.CLIENTE
@@ -3079,17 +3015,26 @@ function compilaDalAl(employeesIds, arrayGiorni, soloNonConteggiati, idDitta, pe
 	var _tipoGiorn = forms.giorn_vista_mensile && forms.giorn_vista_mensile._tipoGiornaliera == globals.TipoGiornaliera.BUDGET ?
 			         globals.TipoGiornaliera.BUDGET : globals.TipoGiornaliera.NORMALE; // TODO da verificare...
 		
-	var params = globals.inizializzaParametriCompilaConteggio(   _idDitta,
-											                     _periodo,
-											                     _tipoGiorn,
-											                     globals._tipoConnessione,
-											                     arrayGiorni,
-											                     employeesIds,
-																 false
-	                                                         );
+	var params = globals.inizializzaParametriCompila( _idDitta,
+											          _periodo,
+											          _tipoGiorn,
+											          globals._tipoConnessione,
+											          arrayGiorni,
+											          employeesIds
+													  );
+	
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.CG);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? WS_MULTI_URL + "/Giornaliera/CompilaDalAl" : WS_MULTI_URL + "/Eventi/CompilaDalAl";
+	var url = WS_CALENDAR + "/Calendar32/CompilaDalAlAsync";
 	
 	var msg = "Procedere con la compilazione?";
 	var answer = askYesNo ? globals.ma_utl_showYesNoQuestion(msg,'Compilazione giorni') : true;
@@ -3118,9 +3063,8 @@ function compilaDalAlSync(params, nonInteractive)
 {
 	nonInteractive = nonInteractive == true;
 	
-	/** @type {{ returnValue: Boolean, message: String }} */ 
 	var result;
-	var url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? WS_MULTI_URL + "/Giornaliera/CompilaDalAlSync" : WS_MULTI_URL + "/Eventi/CompilaDalAlSync"
+	var url = WS_CALENDAR + "/Giornaliera/CompilaDalAlSync";
 	
 	var answer = nonInteractive || globals.ma_utl_showYesNoQuestion('Procedere con la compilazione?', 'Compilazione giorni');
 	if (answer)
@@ -3130,7 +3074,7 @@ function compilaDalAlSync(params, nonInteractive)
 			result = globals.getWebServiceResponse(url, params);
 	}
 	
-	return { error: !result.returnValue, message: result.message };
+	return result;
 }
 
 /**
@@ -3144,8 +3088,10 @@ function compilaDalAlSync(params, nonInteractive)
 function salvaEventoMultiplo(employeesIds, arrayGiorni, unknown, argsEvento)
 {
 	var params = {
-		user_id                 : security.getUserName(), 
-		client_id               : security.getClientID(),
+		userid                  : security.getUserName(), 
+		clientid                : security.getClientID(),
+	    server                  : globals.server_db_name,
+		databasecliente         : globals.customer_db_name,
 		periodo                 : globals.getPeriodo(),
 		idditta                 : forms.giorn_header.idditta,
 		iddipendenti            : employeesIds,
@@ -3161,7 +3107,17 @@ function salvaEventoMultiplo(employeesIds, arrayGiorni, unknown, argsEvento)
 		ricalcolaproprieta      : argsEvento['ricalcolaproprieta']
 	}
 	
-	var url = WS_MULTI_URL + "/Eventi/SalvaAsync";
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.SE);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	
+	var url = WS_EVENT + "/Event32/SalvaEventoAsync";
 	
 	//teniamo traccia dei dipendenti che sono stati modificati e che risulteranno da chiudere
 	if(!scopes.giornaliera.cancellaChiusuraDipPerOperazione(employeesIds, forms.giorn_header.idditta))
@@ -3173,11 +3129,13 @@ function salvaEventoMultiplo(employeesIds, arrayGiorni, unknown, argsEvento)
 		, params
 		, vUpdateOperationStatusFunction
 		, null
-		, function(retObj)
+		, function(_retObj)
 		  {
+			  /** @type {{statusCode:Number, returnValue:Object, message:String, operationId:String, 
+                          operationHash:String, status:Number, start:Date, end:Date, progress:Number, lastProgress:Date}} */
+			  var retObj = _retObj;
 			  forms.giorn_vista_mensile.markAsDirty(params.iddipendenti, params.periodo);
-			  forms.giorn_mostra_timbr.markAsDirty(params.iddipendenti, params.periodo);
-			  
+			  forms.giorn_mostra_timbr.markAsDirty(params.iddipendenti, params.periodo);			  
 			  forms.mao_history.operationDone(retObj);
 		  }
 	);
@@ -3299,10 +3257,9 @@ function conteggiaTimbratureMultiplo(event,timbr,daFlusso)
  */
 function conteggiaTimbratureSingolo(employeesIds, arrayGiorni, soloNonConteggiati,idDitta,periodo,tipoGiorn,askYesNo)
 {
-	var params = globals.inizializzaParametriCompilaConteggio(
+	var params = globals.inizializzaParametriConteggio(
 	                     idDitta != null ? idDitta : forms.giorn_header.idditta,
                    		 periodo != null ? periodo : globals.getPeriodo(),
-	                     tipoGiorn != null ? tipoGiorn : forms.giorn_vista_mensile._tipoGiornaliera,
 	                     globals.TipoConnessione.CLIENTE,
 	                     arrayGiorni,
 	                     employeesIds,
@@ -3310,7 +3267,7 @@ function conteggiaTimbratureSingolo(employeesIds, arrayGiorni, soloNonConteggiat
 	             );
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_URL + "/Timbrature/Conteggia";
+	var url = WS_STAMPING + "/Stamping32/Conteggia";
 	
 	var msg =  "Procedere con il conteggio?";
 	var answer = askYesNo ? globals.ma_utl_showYesNoQuestion(msg ,'Conteggia timbrature') : true;
@@ -3353,24 +3310,24 @@ function conteggiaTimbratureSingolo(employeesIds, arrayGiorni, soloNonConteggiat
  */
 function conteggiaTimbratureSingoloDiretto(employeesIds, arrayGiorni, soloNonConteggiati,idDitta,periodo)
 {
-	var params = globals.inizializzaParametriCompilaConteggio(
+	var params = globals.inizializzaParametriConteggio(
 						idDitta != null ? idDitta : forms.giorn_header.idditta,
 						periodo != null ? periodo : globals.getPeriodo(),
-						forms.giorn_vista_mensile._tipoGiornaliera,
-					    globals.TipoConnessione.CLIENTE,
+						globals.TipoConnessione.CLIENTE,
 					    arrayGiorni,
 					    employeesIds,
 					    soloNonConteggiati != null ? soloNonConteggiati : false
 					    );
 
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_URL + "/Timbrature/Conteggia";
+	var url = WS_STAMPING + "/Stamping32/Conteggia";
 	
 	//teniamo traccia dei dipendenti che sono stati modificati e che risulteranno da chiudere
 	if(!scopes.giornaliera.cancellaChiusuraDipPerOperazione(employeesIds
-	                                , idDitta != null ? idDitta : forms.giorn_header.idditta
-	                                , periodo ? periodo : globals.getPeriodo()))
-	return false;
+							                                , idDitta != null ? idDitta : forms.giorn_header.idditta
+							                                , periodo ? periodo : globals.getPeriodo()))
+							                                return false;
+	
 	var response = globals.getWebServiceResponse(url + 'Singolo', params);
 	return response;
 }
@@ -3384,16 +3341,15 @@ function conteggiaTimbratureSingoloDiretto(employeesIds, arrayGiorni, soloNonCon
  * @param {String} [tipoGiorn]
  * @param {Boolean} [askYesNo]
  * 
- * @return {Object}
+ * @return {Boolean}
  * 
  * @properties={typeid:24,uuid:"2727C308-C428-479F-8597-C7F5C4399B92"}
  */
 function conteggiaTimbratureSingoloDaMenu(employeesIds, arrayGiorni, soloNonConteggiati,idDitta,periodo,tipoGiorn,askYesNo)
 {
-	var params = globals.inizializzaParametriCompilaConteggio(
+	var params = globals.inizializzaParametriConteggio(
 	                     idDitta != null ? idDitta : forms.giorn_header.idditta,
                    		 periodo != null ? periodo : globals.getPeriodo(),
-	                     tipoGiorn != null ? tipoGiorn : forms.giorn_vista_mensile._tipoGiornaliera,
 	                     globals.TipoConnessione.CLIENTE,
 	                     arrayGiorni,
 	                     employeesIds,
@@ -3401,7 +3357,7 @@ function conteggiaTimbratureSingoloDaMenu(employeesIds, arrayGiorni, soloNonCont
 	             );
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_URL + "/Timbrature/Conteggia";
+	var url = WS_STAMPING + "/Stamping32/Conteggia";
 	
 	var msg =  "Procedere con il conteggio?";
 	var answer = askYesNo ? globals.ma_utl_showYesNoQuestion(msg ,'Conteggia timbrature') : true;
@@ -3414,14 +3370,9 @@ function conteggiaTimbratureSingoloDaMenu(employeesIds, arrayGiorni, soloNonCont
 			                                         , periodo ? periodo : globals.getPeriodo()))
 			return false;
 		
-		var response = globals.getWebServiceResponse(url + 'Singolo', params);
-		return response;
-//		if (!response['returnValue'])
-//				globals.ma_utl_showErrorDialog('Si è verificato un errore durante il conteggio, riprovare', 'Conteggio timbrature');
-//			else
-//			    forms.giorn_header.preparaGiornaliera();		
-				
-	} else
+		return globals.getWebServiceResponse(url + 'Singolo', params).ReturnValue == true;
+	}
+	else
 		return false;
 }
 
@@ -3441,20 +3392,28 @@ function conteggiaTimbrature(employeesIds, arrayGiorni, soloNonConteggiati,idDit
 	/** @type {Number} */
 	var _periodo = periodo != null ? periodo : globals.getPeriodo();
 	var _idDitta = idDitta != null ? idDitta : forms.giorn_header.idditta;
-	var _tipoGiorn = globals.TipoGiornaliera.NORMALE;
-    
-	var params = globals.inizializzaParametriCompilaConteggio(
+	
+	var params = globals.inizializzaParametriConteggio(
 	                     _idDitta,
 	                     _periodo,
-	                     _tipoGiorn,
 	                     globals._tipoConnessione,
 	                     arrayGiorni,
 	                     employeesIds,
 						 soloNonConteggiati != null ? soloNonConteggiati : false
 	             );
 	
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.CT);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_MULTI_URL + "/Timbrature/Conteggia";
+	var url = WS_STAMPING + "/Stamping32/ConteggiaAsync";
 	
 	var msg =  "Procedere con il conteggio?";
 	var answer = askYesNo ? globals.ma_utl_showYesNoQuestion(msg ,'Conteggia timbrature') : true;
@@ -3471,14 +3430,16 @@ function conteggiaTimbrature(employeesIds, arrayGiorni, soloNonConteggiati,idDit
 				, params
 				, vUpdateOperationStatusFunction
 				, null
-				, function(retObj)
+				, function(_retObj)
 				  {
+					  /** @type {{statusCode:Number, returnValue:Object, message:String, operationId:String, 
+					  			 operationHash:String, status:Number, start:Date, end:Date, progress:Number, lastProgress:Date}} */
+					  var retObj = _retObj;
 					  if(idDitta == null)
 					  {
 						  forms.giorn_mostra_timbr.markAsDirty(employeesIds, _periodo);
 						  forms.giorn_vista_mensile.markAsDirty(employeesIds, _periodo);
-					  }
-					  
+					  }					  
 					  forms.mao_history.operationDone(retObj);
 				  }
 			);
@@ -3495,13 +3456,19 @@ function conteggiaTimbrature(employeesIds, arrayGiorni, soloNonConteggiati,idDit
  * @param periodo
  * @param tipoConn
  *
+ * @return {{ReturnValue: Object, StatusCode: Number, Message: String}}
+ * 
  * @properties={typeid:24,uuid:"B690392E-5F87-4A46-BCF0-DA2DDA877C79"}
  */
 function rendiGiorniRiconteggiabili(employeesIds, giorniSelezionati, idDitta,periodo,tipoConn)
 {
-	var url = globals.WS_URL + '/Timbrature/Riconteggia';
+	var url = globals.WS_STAMPING + '/Stamping32/RendiGiorniRiconteggiabili';
 	var params =
 	{
+		userid              :   security.getUserName(), 
+		clientid            :   security.getClientID(),
+		server              :   globals.server_db_name,
+		databasecliente     :   globals.customer_dbserver_name,
 		idditta				:	idDitta,
 		periodo				:	periodo,
 		giorniselezionati	:	giorniSelezionati,
@@ -3509,10 +3476,8 @@ function rendiGiorniRiconteggiabili(employeesIds, giorniSelezionati, idDitta,per
 		tipoconnessione     :   globals.TipoConnessione.CLIENTE
 	};
 	
-    var response = globals.getWebServiceResponse(url, params);
-			
-	return response;
-	
+    var response = globals.getWebServiceResponse(url, params);			
+	return response;	
 }
 
 /**
@@ -3529,9 +3494,13 @@ function rendiGiorniRiconteggiabili(employeesIds, giorniSelezionati, idDitta,per
  */
 function rendiGiorniRiconteggiabiliWS(employeesIds, giorniSelezionati, idDitta,periodo,tipoConn, databaseCliente)
 {
-	var url = 'http://srv-epiweb/Leaf_Single/Timbrature/Riconteggia';
+	var url = 'http://srv-epiweb/Stamping/Stamping32/RendiGiorniRiconteggiabili';
 	var params =
 	{
+		userid              :   security.getUserName(), 
+		clientid            :   security.getClientID(),
+		server              :   globals.server_db_name,
+		databasecliente     :   globals.customer_dbserver_name,
 		idditta				:	idDitta,
 		periodo				:	periodo,
 		giorniselezionati	:	giorniSelezionati,
@@ -3540,7 +3509,7 @@ function rendiGiorniRiconteggiabiliWS(employeesIds, giorniSelezionati, idDitta,p
 		databasecliente     :   databaseCliente
 	};
 	
-    var response = globals.getWebServiceResponseWS(url,params,databaseCliente);//globals.getWebServiceResponse(url, params);
+    var response = globals.getWebServiceResponseWS(url,params,databaseCliente);
 			
 	return response;
 }
@@ -3582,39 +3551,30 @@ function controlliPreliminariDitta(event)
 function controlliPreliminari(employeesIds, singoloDipendente, idDitta, anno, mese, gruppoLav) 
 {
     var _idDitta = idDitta != null ? idDitta : forms.giorn_header.idditta;
+    var _idgruppoinstallazione = getGruppoInstallazioneDitta(_idDitta);
     var _anno = anno != null ? anno : globals.getAnno();
     var _mese = mese != null ? mese : globals.getMese();
 	var _periodo = anno != null && mese != null ? anno * 100 + mese : globals.getPeriodo();
     var _gruppoLav = gruppoLav != null ? gruppoLav : globals.getGruppoLavoratori();
-	
-	/** @type {Array} */
-	var _arrGiorni = globals.getGiorniSelezionatiEv();
-		
+			
 	if (!scopes.giornaliera.cancellaChiusuraDipPerOperazione(employeesIds, _idDitta)) {
 		plugins.busy.unblock();
 		globals.ma_utl_showWarningDialog('<html>Errore in cancellazione chiusura operazione</html>', 'Controlli preliminari');
 		return;
-	}
-	var ctrParams = globals.inizializzaParametriAttivaMese( _idDitta,
-															_periodo,
-															globals.getGruppoInstallazioneDitta(_idDitta),
-															_gruppoLav, // TODO globals.getGruppoLavoratori(),
-															globals._tipoConnessione
-															);
-	
+	}	
 	// procedi con i controlli preliminari
 	var params = globals.inizializzaParametriControlli(_idDitta,
 														_periodo,
 														globals._tipoConnessione,
-														_arrGiorni,
 														employeesIds,
 														singoloDipendente === true ? singoloDipendente : false
 														);
     params.tipogiornaliera = globals.TipoGiornaliera.NORMALE;
     _paramsPostControlli = params;
 
-    var url = WS_MULTI_URL + "/Ratei/ControlliPreliminari";
-    	
+    var url = WS_CALENDAR + "/Control32/ControlliPreliminariAsync";
+    //singoloDipendente ? url += "Sync" : url += "Async";
+    
     // nel caso cliente va verificato che il flusso sia completo quindi che abbia
     // scaricato la giornaliera del mese precedente
 	var _response;
@@ -3634,8 +3594,8 @@ function controlliPreliminari(employeesIds, singoloDipendente, idDitta, anno, me
 		if (response)
 		{
 			_noconnection = false;
-			_response = response['returnValue'];
-			_retvalue = response['retValue'];
+			_response = response && response.StatusCode == HTTPStatusCode.OK;
+			_retvalue = response.ReturnValue;
 		}
 		else
 		{
@@ -3650,13 +3610,24 @@ function controlliPreliminari(employeesIds, singoloDipendente, idDitta, anno, me
 	{
     	// acquisizione precedente ok, procedere con i controlli preliminari
 	    if (_retvalue == 1) 
+	    {
+	    	// add new operation info for future updates
+	    	var operation = scopes.operation.create(_idDitta,_idgruppoinstallazione,_periodo,globals.OpType.CP);
+	    	if(operation == null || operation.operationId == null)
+	    	{
+	    		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+	    		return;
+	    	}
+	    	params.operationid = operation.operationId;
+	    	params.operationhash = operation.operationHash;
+	    	
 		   // procedi con i controlli preliminari
 		   globals.addJsonWebServiceJob(url,
 			                            params, 
 										vUpdateOperationStatusFunction,
 										null,
 										vOperationDoneFunction);
-
+	    }
 	    // acquisizioni periodi precedenti non completate
 	    else {
 			   var answer = globals.ma_utl_showYesNoQuestion('Completare le importazioni dei periodi precedenti prima di proseguire.<br/> Procedere con lo scarico?', 'Controllo acquisizione giornaliere');
@@ -3674,8 +3645,8 @@ function controlliPreliminari(employeesIds, singoloDipendente, idDitta, anno, me
 					}
                    globals.importaTracciatoDaFtp(_idDitta
                 	                             ,periodoPrec
-												 ,ctrParams.idgruppoinstallazione
-												 ,ctrParams.codgruppogestione);				
+												 ,_idgruppoinstallazione
+												 ,_gruppoLav);				
 			   }
 			   return;
 
@@ -3787,15 +3758,15 @@ function showCambiaEvento(idDitta, periodo, dallaData, allaData, idEvento, propE
  */
 function controlloFestivita(params, openProg, progParams, primoIngresso) {
 	
-	var url = WS_URL + "/Trattamenti/ElencoFestivita";
+	var url = WS_CALENDAR + "/Holiday32/ElencoFestivita";
 
-	/** @type {{ returnValue: Boolean, festivita: Array<Array> }} */
 	var response = getWebServiceResponse(url, params);
-	if (response && response.returnValue === true)
+	if (response && response.StatusCode === HTTPStatusCode.OK)
 	{
 		var dataset = databaseManager.createEmptyDataSet(0, ['data', 'descrizione', 'accinfra', 'accriposo']);
 
-		var festivita = response.festivita;
+		/** @type{Array<Array<String>>} */
+		var festivita = response.ReturnValue;
 		if (//!primoIngresso && 
 		    festivita && festivita.length > 0)
 		{
@@ -3884,15 +3855,26 @@ function controlloTurni(params, openProg, progParams, primoIngresso)
 	if (primoIngresso) 
 	{
 		globals.openProgram('LEAF_Giornaliera', progParams, true);
+		// add new operation info for future updates
+		var operation = scopes.operation.create(params.idditta,params.idgruppoinstallazione,params.periodo,globals.OpType.AM);
+		if(operation == null || operation.operationId == null)
+		{
+			globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+			return null;
+		}
+		
+		params.operationid = operation.operationId;
+		params.operationhash = operation.operationHash;
+
 		globals.attivazioneMese(params);
 	}
 	//attiva il mese e calcola la giornaliera in modalità sincrona
 	else 
 	{
-		var response = globals.isMeseDaAttivare(params);
-	    if (response && response['returnValue'] != null && response['returnValue'] === true) 
+		var response = scopes.giornaliera.isMeseDaAttivare(params);
+	    if (response && response.StatusCode == HTTPStatusCode.OK) 
 	    {
-		   if(response['activate'] === false)
+		   if(response.ReturnValue === false)
 			  globals.attivazioneMeseSync(params);
 		   else
 		      globals.attivazioneMese(params);
@@ -3931,7 +3913,7 @@ function controlloTurni(params, openProg, progParams, primoIngresso)
  */
 function attivaMese(params, openProg, progParams, primoIngresso)
 {
-	var response = globals.preAttivaMese(params);
+	var response = scopes.giornaliera.preAttivaMese(params);
 
 	if(response !== globals.TipoAttivazione.NEGATA)
 	{
@@ -3964,8 +3946,21 @@ function attivaMese(params, openProg, progParams, primoIngresso)
 				
 			// Controlla se vi siano o meno dipendenti da attivare
 			var responseChkDip = checkDipendentiDaAttivare(params);
-			if (responseChkDip && responseChkDip['returnValue'] === true && responseChkDip['activate'] === true)
+			if (responseChkDip && responseChkDip.StatusCode == HTTPStatusCode.OK && responseChkDip.ReturnValue == true)
+			{
+				// add new operation info for future updates
+				var operation = scopes.operation.create(params['idditta'],params['idgruppoinstallazione'],params['periodo'],globals.OpType.AM);
+				if(operation == null || operation.operationId == null)
+				{
+					globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+					return;
+				}
+				
+				params.operationid = operation.operationId;
+				params.operationhash = operation.operationHash;
+
 				globals.attivazioneMese(params);
+			}
 			else if(!primoIngresso)
 			{
 				globals.controlloFestivita(params, openProg, progParams, primoIngresso);
@@ -4010,7 +4005,7 @@ function attivaMese(params, openProg, progParams, primoIngresso)
  */
 function copiaRigaInGiornaliera(params)
 {
-	var url = WS_URL + '/Giornaliera/CopiaGiornata';	
+	var url = WS_EVENT + '/Event32/CopiaGiornata';	
 	return getWebServiceResponse(url, params);
 }
 
@@ -4027,7 +4022,7 @@ function copiaRigaInGiornaliera(params)
 function getTotOreGiornata(idgiornaliera){
 	
 	/** @type {JSFoundSet<db:/ma_presenze/e2giornalieraeventi>} */
-	var _fsGiornEv = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,'e2giornalieraeventi');
+	var _fsGiornEv = databaseManager.getFoundSet(globals.Server.MA_PRESENZE,globals.Table.GIORNALIERA_EVENTI);
 	_fsGiornEv.removeFoundSetFilterParam('ftr_giornEvDaIdGiorn');
 	_fsGiornEv.addFoundSetFilterParam('idgiornaliera','=',idgiornaliera,'ftr_giornEvDaIdGiorn');
 	_fsGiornEv.loadAllRecords();
@@ -4450,14 +4445,14 @@ function ottieniDipendentiFiltrati()
 			sqlFiltri += (" AND L.PosizioneInps IN (" + frmFtrAnag.vPosizioniInps.join(',') + ")") //frmFtrAnag.vPosizioniInps
 	}
 	
-	if(frmFtrAnag.vFilterGruppiLavoratori && frmFtrAnag.vGruppoLavoratori != '')
+	if(frmFtrAnag.vFilterGroupLavoratori && frmFtrAnag.vGroupLavoratori != '')
 	{
 		var params = globals.inizializzaParametriAttivaMese
 		(
 			fs.idditta, 
             periodo,
 			globals.getGruppoInstallazioneDitta(fs.idditta), 
-			frmFtrAnag.vGruppoLavoratori,
+			frmFtrAnag.vGroupLavoratori,
 			globals._tipoConnessione
 		);
 		
@@ -5306,13 +5301,12 @@ function importaTracciatoDaFtp(_idditta,_periodo,_gruppoinst,_gruppolav)
 		return;
 	}
 	
-	var params = globals.inizializzaParametriTracciatoMese(idditta,
-		                                                   periodo,
-														   gruppoinst,
-														   gruppolav,
-														   [-1],
-														   -1,
-														   globals._tipoConnessione);
+	var params = globals.inizializzaParametriAcquisizioneGiornaliera(idditta,
+					                                                 [-1],
+																	 periodo,
+																	 gruppoinst,
+																	 gruppolav,
+																	 globals._tipoConnessione);
 	
     globals.importaDaFtp(params);
 }
@@ -5334,7 +5328,17 @@ function importaTracciatoDaFileEsterno(idDitta,periodo,idGruppoInst)
 																	   idGruppoInst,
 																	   '',
 																	   true);
-	var url = globals.WS_TRACK_EXT_URL + "/Tracciati/ImportaTracciatoEsterno";
+	// add new operation info for future updates
+	var operation = scopes.operation.create(idDitta,idGruppoInst,periodo,globals.OpType.ITE);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	
+	var url = globals.WS_CALENDAR + "/Track32/ImportaTracciatoEsternoAsync";
 
 	addJsonWebServiceJob(url,params,vUpdateOperationStatusFunction);
 }
@@ -5379,50 +5383,6 @@ function getAnomalieGiornata(idlavoratore,giorno)
 }
 
 /**
- * Lancia l'operazione di ricalcolo dei ratei del dipendente per il mese selezionato
- * 
- * @param {Number} iddip
- * @param {Number} periodo
- *
- * @properties={typeid:24,uuid:"546299F0-B7C5-4B4F-B6C7-9EFA753BD351"}
- */
-function ricalcolaRatei(iddip,periodo) {
-	
-	var params = {
-		iddipendenti : [iddip],
-		periodo : periodo,
-		tipoConnessione : globals._tipoConnessione
-	}
-	
-	var url = globals.WS_MULTI_URL + "/Voci/RicalcolaRatei";
-	globals.addJsonWebServiceJob(url,
-		                         params,
-								 vUpdateOperationStatusFunction);
-}
-
-/**
- * Lancia l'operazione di ricalcolo dei codici del dipendente per il mese selezionato
- * 
- * @param {Number} iddip
- * @param {Number} periodo
- *
- * @properties={typeid:24,uuid:"2D2F18A1-1C89-4528-8C60-0EDDB3CBA707"}
- */
-function ricalcolaCodici(iddip,periodo) {
-
-	var params = {
-		iddipendenti : [iddip],
-		periodo : periodo,
-		tipoConnessione : globals._tipoConnessione
-	}
-	
-	var url = globals.WS_MULTI_URL + "/Voci/RicalcolaCodici";
-	globals.addJsonWebServiceJob(url,
-		                         params,
-								 vUpdateOperationStatusFunction);
-}
-
-/**
  * Apre la form con le opzioni per la stampa delle cartoline
  *
  * @param {JSEvent} event 
@@ -5455,8 +5415,8 @@ function stampaOreSettimane(event,vIdDitta)
 {
 	var anno = globals.getAnno();
 	var mese = globals.getMese();
-	var primaSettimanaPeriodo = globals.getWeekNumber(new Date(anno,mese - 1,1));
-	var ultimaSettimanaPeriodo = globals.getWeekNumber(new Date(anno,mese - 1,globals.getTotGiorniMese(mese,anno)));
+	var primaSettimanaPeriodo = globals.getWeekNumber(new Date(anno,mese - 1,1))['week'];
+	var ultimaSettimanaPeriodo = globals.getWeekNumber(new Date(anno,mese - 1,globals.getTotGiorniMese(mese,anno)))['week'];
 	
 	try
 	{		
@@ -5742,7 +5702,7 @@ function esistonoGiorniUtilizzabiliInBudget(idLav,mese,anno)
 		 progParams.selected_elements = [];
 		 progParams.op_id = null;
 		 
-	if(globals.isMeseDaAttivare(progParams))
+	if(scopes.giornaliera.isMeseDaAttivare(progParams).ReturnValue == true)
 		return true;
 		 
 	var _numGiorniMese = globals.getTotGiorniMese(mese, anno);
@@ -6203,7 +6163,8 @@ function ottieniDataSetAnomalie(idDip,dal,al)
 	/** @type {String} */
 	var _anoQuery = "SELECT * FROM [E2Giornaliera] WHERE "
 	var _anoWhereEU = "IdDip = ? AND Giorno BETWEEN ? AND ? \
-	                   AND Anomalie NOT IN (0,1,2,16,32,64,128,512) AND TipoDiRecord = 'N'";  
+	                   AND Anomalie NOT IN (0,1,2,16,32,64,128,512) AND TipoDiRecord = 'N' \
+	                   ORDER BY Giorno ASC";  
 	var _parArrAno = [];
 	
 	_anoQuery += _anoWhereEU;
@@ -6312,6 +6273,7 @@ function ottieniArrayDipConAnomalie(idDitta,dal,al,arrDipFiltrati)
  */
 function ottieniArrayDipConSquadrature(idDitta,dal,al,opzioniSquadrature,arrEvFiltro,arrDipFiltrati)
 {
+	var isDittaEsterna = globals.isEsterna(idDitta);
 	var dsSqDitta = null;
 	
 	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>}*/
@@ -6326,10 +6288,13 @@ function ottieniArrayDipConSquadrature(idDitta,dal,al,opzioniSquadrature,arrEvFi
 		var arrLav = globals.foundsetToArray(fsLav,'idlavoratore');
 	
 		// insieme unione tra i dipendenti squadrati rispetto all'orario e quelli con l'evento ? in giornaliera
-	 	var _sqDittaQuery = 'SELECT L.idLavoratore,P.Nominativo FROM Lavoratori L \
-	                         INNER JOIN Persone P ON L.CodiceFiscale = P.CodiceFiscale \
-	                         WHERE idLavoratore IN (' + arrLav.join(',') + ')\
-							 AND idLavoratore IN ';
+	 	var _sqDittaQuery = 'SELECT L.idLavoratore, \
+	 	                     P.Nominativo FROM Lavoratori L \
+	                         INNER JOIN '
+	 		isDittaEsterna ? _sqDittaQuery += ' Lavoratori_PersoneEsterne P ON L.idLavoratore = P.idLavoratore' : _sqDittaQuery += ' Persone P ON L.CodiceFiscale = P.CodiceFiscale ';
+	        
+	 		_sqDittaQuery += ' WHERE L.idLavoratore IN (' + arrLav.join(',') + ') AND L.idLavoratore IN ';
+	 		
 		var _sqDittaArr;
 		
 		switch(opzioniSquadrature)
@@ -7077,7 +7042,6 @@ function process_salva_prog_fasce()
 			var sqlProgfasce = "DELETE FROM E2GiornalieraProgFasce WHERE idDip = ? AND Giorno IN (" + 
 			                   dsGiorniModificati.getColumnAsArray(1).map(function(pf){return '\'' + pf + '\''}).join(',') + ")";
 			var success = plugins.rawSQL.executeSQL(globals.Server.MA_PRESENZE,
-				                                   globals.Table.GIORNALIERA_PROGFASCE,
 												   sqlProgfasce,
 												   [idLavoratore]);
 			if(!success)
@@ -7211,7 +7175,7 @@ function ottieniTimbratureGiorno(event,giorno)
 	{
 		var giorniSelezionati = globals.getGiorniSelezionatiTimbr();
 			giorniSelezionati = giorniSelezionati.length > 0 && giorniSelezionati || [giorno];
-		var url = globals.WS_URL + '/Timbrature/Ripristina'
+		var url = globals.WS_STAMPING + '/Stamping32/Ripristina'
 		var params =
 		{
 			idditta				:	forms.giorn_header.idditta,
@@ -7222,7 +7186,7 @@ function ottieniTimbratureGiorno(event,giorno)
 		};
 		
 		var response = globals.getWebServiceResponse(url, params);
-		return response['returnValue'];
+		return response.ReturnValue;
 	}
 	return false;
 }
@@ -7247,7 +7211,7 @@ function ottieniTimbratureMancantiGiorno(event,idLavoratore,giorno)
 		includiManuali = true;
 		
 		var giorniSelezionati = [giorno.getDate()];
-		var url = globals.WS_URL + '/Timbrature/Ripristina'
+		var url = globals.WS_STAMPING + '/Stamping32/Ripristina'
 		var params =
 		{
 			idditta				:	globals.getDitta(idLavoratore),
@@ -7258,7 +7222,7 @@ function ottieniTimbratureMancantiGiorno(event,idLavoratore,giorno)
 		};
 		
 		var response = globals.getWebServiceResponse(url, params);
-		return response['returnValue'];
+		return response.ReturnValue;
 	}
 	
 	return false;
@@ -8085,20 +8049,23 @@ function apriGestioneFileTimbrature()
 	
 	// acquisisci lettura file da ws
 	var params = globals.inizializzaParametriFileTimbrature(globals.getIdDitta(codice),
-		                                                    globals.TODAY.getFullYear() * 100 + globals.TODAY.getMonth() + 1,
-															grInst,
-															'',
-															'')
+		                                                    grInst
+															);
 	var response = getFileTimbratureScartate(params);
 															
-	if(!response['returnValue'])
+	if(!response || response.StatusCode != HTTPStatusCode.OK)
 	{
-		globals.ma_utl_showWarningDialog(response['fileString'],'Gestione file timbrature scartate');
+		globals.ma_utl_showWarningDialog('Errore durante il recupero delle timbrature precedentemente scartate','Gestione file timbrature scartate');
+		return;
+	}
+	else if(response.ReturnValue == '')
+	{
+		globals.ma_utl_showWarningDialog('Non sono presenti timbrature precedentemente scartate','Gestione file timbrature scartate');
 		return;
 	}
 	
 	/** @type {String} */
-	var fileString = response['fileString'];
+	var fileString = response.ReturnValue;
 	var arrTxt = fileString.split('\r\n');
 	var dsTimbrScartate = databaseManager.createEmptyDataSet();
 	dsTimbrScartate.addColumn('selected',1,JSColumn.NUMBER);
@@ -8185,12 +8152,14 @@ function apriGestioneFileTimbrature()
  * Restituisce il file di testo relativo al file PRESEPI2.DAT delle timbrature scartate
  *  
  * @param params
- *
+ * 
+ * @return {{ReturnValue: Object, StatusCode: Number, Message: String}}
+ * 
  * @properties={typeid:24,uuid:"BA2DF4AB-22AC-4020-B89E-D82B7F4299A5"}
  */
 function getFileTimbratureScartate(params)
 {
-	var url = globals.WS_URL + "/Timbrature/GetFileTimbrature";
+	var url = globals.WS_STAMPING + "/Stamping32/GetFileTimbrature";
 	var response = globals.getWebServiceResponse(url,params);
 	
 	return response;
@@ -8207,7 +8176,10 @@ function verificaSuperamentoLimiteFileTimbratureScartate(params)
 {
 	var response = getFileTimbratureScartate(params);
 	
-	if(!response['returnValue']) //nessun file di timbrature scartate
+	if(!response || response.StatusCode != HTTPStatusCode.OK)
+	  throw new Error('Errore durante il recupero del file delle timbrature precedentemente scartate');
+	
+	if(response.ReturnValue == '') //nessun file di timbrature scartate
 		return false;
 	
 	/** @type {String} */
@@ -8462,8 +8434,7 @@ function eliminaFasceProgrammate(arrLavoratori,dal,al)
 	                   " AND Giorno BETWEEN ? AND ?";
 	
 	var success = plugins.rawSQL.executeSQL(globals.Server.MA_PRESENZE,
-		                                    globals.Table.GIORNALIERA_PROGFASCE,
-											sqlProgfasce,
+		                                    sqlProgfasce,
 											[utils.dateFormat(dal,globals.ISO_DATEFORMAT),utils.dateFormat(al,globals.ISO_DATEFORMAT)]);
 	
 //	var success = plugins.rawSQL.executeSQL(globals.getSwitchedServer(globals.Server.MA_PRESENZE),
@@ -8627,8 +8598,7 @@ function getRecsGiornaliera(idLav,dal,al,tipoRecord)
 	   	  fsGiorn.tipodirecord = tipoRecord;
 	   if(fsGiorn.search())
 		   return fsGiorn;
-	}
-	
+	}	
 	return null;
 }
 
@@ -8701,8 +8671,10 @@ function cambiaEventoAsync(idDitta,periodo,dipSel,dalGg,alGg,idEventoOld,idEvent
 {
 	var params = 
 	{
-		user_id                 : security.getUserName(), 
-		client_id               : security.getClientID(),
+		userid                  : security.getUserName(), 
+		clientid                : security.getClientID(),
+		server                  : globals.server_db_name,
+		databasecliente         : globals.customer_db_name,
 		periodo                 : periodo,
 		idditta                 : idDitta,
 		iddipendenti            : dipSel,
@@ -8715,14 +8687,27 @@ function cambiaEventoAsync(idDitta,periodo,dipSel,dalGg,alGg,idEventoOld,idEvent
 		tipogiornaliera         : tipoGiornaliera,
 		tipoconnessione         : tipoConnessione
 	}
+	
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.CE);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
 
-	var url = globals.WS_MULTI_URL + "/Eventi/CambiaEvento";
+	var url = globals.WS_EVENT + "/Event32/CambiaEvento";
 	globals.addJsonWebServiceJob(url,
 		                         params,
 								 null,
 								 null,
-								 function(retObj)
+								 function(_retObj)
 								 { 
+									 /** @type {{statusCode:Number, returnValue:Object, message:String, operationId:String, 
+									 			 operationHash:String, status:Number, start:Date, end:Date, progress:Number, lastProgress:Date}} */
+									 var retObj = _retObj;
 									 forms.giorn_vista_mensile.is_dirty = true;
 									 forms.mao_history.operationDone(retObj);
 								 });
@@ -8760,7 +8745,7 @@ function cambiaEventoSync(idDitta,periodo,dipSel,dalGg,alGg,idEventoOld,idEvento
 		tipoconnessione: tipoConnessione
 	}
 
-	var url = globals.WS_URL + "/Eventi/CambiaEventoSync";
+	var url = globals.WS_EVENT + "/Event32/CambiaEventoSync";
 	return globals.getWebServiceResponse(url,params);
 }
 
@@ -8922,22 +8907,26 @@ AND (O.OreLavorate - K.OreCommessa) != 0';
  * @param {Number} idDitta
  * @param {Number} periodo
  * @param {Number} idDittaMensa
- * @param {Number} idGruppoInst
- * @param {String} gruppoLav
  *
  * @properties={typeid:24,uuid:"83611B2E-E7D1-48E8-AF0B-CA998CAABF47"}
  */
-function generaTracciatoMensa(idDitta,periodo,idDittaMensa,idGruppoInst,gruppoLav)
+function generaTracciatoMensa(idDitta,periodo,idDittaMensa)
 {
-	var params = globals.inizializzaParametriAttivaMese(idDitta
-												        ,periodo
-														,idGruppoInst
-														,gruppoLav
-														,globals.TipoConnessione.CLIENTE);
-    // TODO richiesta di selezione tipo tracciato (se esiste)
-    params.iddittamensa = 3;
-
-	var url = globals.WS_DOTNET_CASE == WS_DOTNET.CORE ? WS_MULTI_URL + "/Tracciati/GeneraTracciatoMensa" : WS_MULTI_URL + "/Giornaliera/GeneraTracciatoMensa";
+	var params = globals.inizializzaParametriRapportoMensa(idDitta
+												           ,periodo
+														   ,idDittaMensa);
+	
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.MGTW);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+    
+	var url = WS_CALENDAR + "/Track32/GeneraTracciatoMensaAsync";
 	addJsonWebServiceJob(url,
 		                 params,
 						 vUpdateOperationStatusFunction);
@@ -9099,8 +9088,8 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 		{
 			var currGiorno = new Date(anno, mese - 1, arrGiorni[g]);
 			var regolaGiorno = globals.getRegolaLavoratoreGiorno(arrLav[l],currGiorno);
-			if(regolaGiorno && regolaGiorno.ammettedistribuzione)
-				continue;
+			if(regolaGiorno && !regolaGiorno.ammettedistribuzione)
+			   break;
 			
 			var currEvGiornNormale = getRecGiornaliera(arrLav[l],currGiorno,globals.TipoGiornaliera.NORMALE);
 			var currEvGiornBudget = getRecGiornaliera(arrLav[l],currGiorno,globals.TipoGiornaliera.BUDGET);
@@ -9160,34 +9149,40 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 }
 
 /**
+ * @param {Number} idditta
+ * @param {Number} idgruppoinstallazione
+ * 
  * @properties={typeid:24,uuid:"6DBB801F-58D3-4DDD-94EC-D983E0B64A3C"}
  */
-function inizializzaParametriFileTimbrature(idditta, periodo, idgruppoinstallazione, gruppolavoratori, timbraturenonscartate)
-{
-//	var codDittaGrInst = scopes.giornaliera.getCodDittaSedeInstallazione(idgruppoinstallazione);	
-//	var strCodDittaGrInst = codDittaGrInst.toString();
-//	var nomeCartella = 'Cliente';
-//		
-//	for(var i = 6; i > codDittaGrInst.toString().length; --i)
-//		nomeCartella += '0';
-//	
-//	nomeCartella += strCodDittaGrInst;
-	
-	var nomeCartella = 'Cliente' + _to_sec_owner$owner_id.database_name;
-	if(globals.getCodDitta(idditta) == 200219)
-	   nomeCartella = 'Cliente200219';
-	
+function inizializzaParametriFileTimbrature(idditta, idgruppoinstallazione)
+{	
 	return {
-				user_id                 : security.getUserName(), 
-				client_id               : security.getClientID(),
-				idditta 				: idditta,
+				userid                  : security.getUserName(), 
+				clientid                : security.getClientID(),
+				server                  : globals.server_db_name,
+				databasecliente         : globals.customer_dbserver_name,
 				codiceditta 			: globals.getCodDitta(idditta),
-				iddipendenti 			: [],
-				periodo 				: periodo,
+				idgruppoinstallazione 	: idgruppoinstallazione				
+		   };
+}
+
+/**
+ * @param {Number} idditta
+ * @param {Number} idgruppoinstallazione
+ * @param {String} timbratureStr
+ *
+ * @properties={typeid:24,uuid:"E1700437-1440-4949-88B7-28FFBC422DA8"}
+ */
+function inizializzaParametriUpdateFileTimbrature(idditta, idgruppoinstallazione, timbratureStr)
+{	
+	return {
+				userid                  : security.getUserName(), 
+				clientid                : security.getClientID(),
+				server                  : globals.server_db_name,
+				databasecliente         : globals.customer_dbserver_name,
+				codiceditta 			: globals.getCodDitta(idditta),
 				idgruppoinstallazione 	: idgruppoinstallazione,
-				codgruppogestione 		: gruppolavoratori,
-				cartellatimbrature      : nomeCartella,
-				timbraturenonscartate   : timbraturenonscartate
+				timbrature              : timbratureStr
 		   };
 }
 
@@ -9423,7 +9418,7 @@ function disegnaVisualizzazioneCoperturaTurni(dSCop, frmName, frmContName, dal, 
 		// per ogni giorno richiesto costruiamo il relativo campo
 		for (var i = 1; i <= numGiorni; i++) 
 		{
-			_nuovoGiorno.setDate(dal.getDate() + (i - 1));
+			_nuovoGiorno = new Date(dal.getFullYear(), dal.getMonth(),dal.getDate() + (i - 1));
 			
 			// per gestione codici evento con differenziazione normale/budget/richieste in sospeso
 			var calcDescTurnoName = 'calc_to_desc_turno_' + globals.dateFormat(_nuovoGiorno,globals.ISO_DATEFORMAT);
@@ -9802,7 +9797,7 @@ function disegnaVisualizzazioneCoperturaCalendario(dSCop, idDitta, numGiorni, nu
 		// per ogni giorno richiesto costruiamo il relativo campo
 		for (var g = 1; g <= numGiorni; g++) 
 		{
-			_nuovoGiorno.setDate(dal.getDate() + (g - 1));
+			_nuovoGiorno = new Date(dal.getFullYear(), dal.getMonth(), dal.getDate() + (g - 1));
 			
 			//TODO periodicità = 7 in questo caso...
             if(g > offset && currBlocco == 1)

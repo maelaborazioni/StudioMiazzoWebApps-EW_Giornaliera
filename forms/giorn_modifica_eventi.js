@@ -241,7 +241,6 @@ function getParametriEvento()
 	return globals.inizializzaParametriEvento(
 			 	 forms.giorn_header.idditta
 				,globals.getPeriodo()
-				,0
 				,[]
 				,forms.giorn_operazionemultipla_aggiungievento.vPortaInBudget == 1 ? globals.TipoGiornaliera.BUDGET : forms.giorn_vista_mensile._tipoGiornaliera //,globals.TipoGiornaliera.NORMALE
 				,globals._tipoConnessione
@@ -302,70 +301,21 @@ function AggiornaSelezioneEvento(_rec,_event){
 	var response = controllaInformativiStatistici();
 	
 	response = gestioneInformativiStatistici(response);
+	if(!response)
+		return;
 	
-	if(response)
-	{
-		if (globals.needsCertificate(_ideventoclasse)) 
-        {
-        	globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
-        	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
-				
-        	if(_event)
-				globals.svy_mod_closeForm(_event);
-		}
-		else
-		{
-			AggiornaProprietaEvento(_rec);
-			controller.focusField(elements.fld_mod_ore.getName(),false);
-		}
+	if (globals.needsCertificate(_ideventoclasse)) 
+    {
+    	globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
+    	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
+			
+    	if(_event)
+			globals.svy_mod_closeForm(_event);
+    	return;
 	}
 	
-//	//se non ci sono blocchi su informativi statistici
-//	if (response['retValue'] == true)
-//	{
-//		if (response.message && response.message != '')
-//		{
-//			globals.ma_utl_showWarningDialog(response.message, 'Controllo informativi statistici');
-//            return false;
-//		}
-//        if (globals.needsCertificate(_ideventoclasse)) 
-//        {
-//        	globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
-//        	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
-//			
-//        	if(_event)
-//				globals.svy_mod_closeForm(_event);
-//		}
-//
-//		AggiornaProprietaEvento(_rec);
-//	} 
-//	else 
-//	{
-//		//se c'è il blocco viene mostrato il messaggio
-//		var innerMsg = response['innerMessage'] ? ("<p><strong>Dettagli</strong><br/>"  + response['innerMessage'] + '</p>') : ''
-//		globals.ma_utl_showWarningDialog(response.message +  innerMsg, 'Controllo informativi statistici');
-//		//e resettato l'inserimento dell'evento
-//		_idevento = null;
-//		_codevento = ''
-//		_descevento = '';
-//		_ideventoclasse = null;
-//		_idpropcl = null;
-//		_codprop = '';
-//		_descprop = '';
-//		_importo = 0;
-//		_ore = null;
-//		_oldIdEvento = null;
-//		_oldCodEvento = '';
-//		_oldIdPropCl = null;
-//		_oldCodProp = '';
-//		_oldOre = -1;
-//		_oldImporto = -1;
-//		vCoperturaOrarioTeorico = 1;
-//		
-//		return false;
-//	}
-//	
-//	return true;
+	AggiornaProprietaEvento(_rec);
+	controller.focusField(elements.fld_mod_ore.getName(),false);
 }
 
 /**
@@ -425,10 +375,8 @@ function confermaSelezioneEventoDaAlbero(idevento)
 		else
 		    elements.chk_copertura.enabled = true;
     	
-    	forms.giorn_modifica_eventi_dtl.AggiornaSelezioneEvento(eventiFs.getRecord(1));
-    	
-    }	
-  
+    	forms.giorn_modifica_eventi_dtl.AggiornaSelezioneEvento(eventiFs.getRecord(1));    	
+    }	  
 }
 
 /**
@@ -679,40 +627,7 @@ function onDataChangeOre(oldValue, newValue, event)
 	// controllo informativi statistici per i casi con controllo su ore
     var response = controllaInformativiStatistici();
 	
-	//se non ci sono blocchi su informativi statistici
-	if (response['retValue'] == true)
-	{
-		if (response.message && response.message != '')
-		{
-			globals.ma_utl_showWarningDialog(response.message, 'Controllo informativi statistici');
-            return false;
-		}
-	} 
-	else 
-	{
-		//se c'è il blocco viene mostrato il messaggio
-		var innerMsg = response['innerMessage'] ? ("<p><strong>Dettagli</strong><br/>"  + response['innerMessage'] + '</p>') : ''
-		globals.ma_utl_showWarningDialog(response.message +  innerMsg, 'Controllo informativi statistici');
-		//e resettato l'inserimento dell'evento
-		_idevento = null;
-		_codevento = ''
-		_descevento = '';
-		_ideventoclasse = null;
-		_idpropcl = null;
-		_codprop = '';
-		_descprop = '';
-		_importo = 0;
-		_ore = null;
-		_oldIdEvento = null;
-		_oldCodEvento = '';
-		_oldIdPropCl = null;
-		_oldCodProp = '';
-		_oldOre = -1;
-		_oldImporto = -1;
-		vCoperturaOrarioTeorico = 1;
-		
-		return false;
-	}
+	gestioneInformativiStatistici(response);
 	
 	verificaOrarioTeorico();
 	
@@ -744,11 +659,15 @@ function FiltraProprietaSelezionabili(idEvento,idLav,periodo,gg,tipoGiorn)
 {	
 	var response = globals.getProprietaSelezionabili(idEvento,idLav,periodo,gg,tipoGiorn);
 
-	/** @type {Array} */
-	_arrIdPropSelezionabili = response;
-	if (!(_arrIdPropSelezionabili && _arrIdPropSelezionabili.length > 0))
-		globals.ma_utl_showWarningDialog('Non esistono eventi selezionabili, riprovare o verificare','i18n:hr.msg.attention');
-			
+	if(response && response.StatusCode == globals.HTTPStatusCode.OK)
+	{
+		/** @type {Array} */
+		_arrIdPropSelezionabili = response.ReturnValue;
+		if (!(_arrIdPropSelezionabili && _arrIdPropSelezionabili.length > 0))
+			globals.ma_utl_showWarningDialog('Non esistono proprietà selezionabili, riprovare o verificare','Filtraggio proprietà selezionabili evento');
+	}
+	else
+		globals.ma_utl_showWarningDialog('Errore durante il recupero delle proprietà dell\'evento','Filtraggio proprietà selezionabili evento');
 }
 
 /**
@@ -771,7 +690,7 @@ function verificaOrarioTeorico()
 {
 	// Verifica che l'evento sia Ordinario o Sostitutivo, altrimenti annulla il controllo
 	/** @type {JSFoundSet<db:/ma_presenze/e2eventi>} */
-	var eventiFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, 'e2eventi');
+	var eventiFs = databaseManager.getFoundSet(globals.Server.MA_PRESENZE, globals.Table.EVENTI);
 	if(eventiFs && eventiFs.find())
 	{
 		eventiFs.idevento = _idevento;
@@ -795,7 +714,7 @@ function verificaOrarioTeorico()
 	{
 		if(elements.lbl_previste_inserite)
 		{
-			elements.lbl_previste_inserite.fgcolor = '#D0373F';
+			elements.lbl_previste_inserite.fgcolor = '#31AD12';
 			_segnalazioniOreInserite = 'Ore previste : ' + (_totOreTeorico / 100).toFixed(2);
 		}
 		else
@@ -810,7 +729,7 @@ function verificaOrarioTeorico()
  * @param {Number} [periodo]
  * @param {Array<Number>} [giorni]
  * 
- * @return Object
+ * @return {{ ReturnValue: Boolean, Message: String }}
  * 
  * @properties={typeid:24,uuid:"352C06A3-D7AF-4488-A25E-7F711953537D"}
  */
@@ -821,8 +740,12 @@ function controllaInformativiStatistici(idLav,periodo,giorni)
 //	var giorniSelezionati = giorni ? giorni : globals.getGiorniSelezionatiEv();
 //	var url = giorniSelezionati.length == 1 ? globals.WS_URL + '/Eventi/ControllaInformativi' : globals.WS_URL + '/Eventi/ControllaInformativiMultiplo';
 	var giorniSelezionati = giorni ? giorni : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg];
-    var url = globals.WS_URL + '/Eventi/ControllaInformativi';
+    var url = globals.WS_EVENT + '/Event32/ControllaInformativi';
 	var params = {
+		userid              :   security.getUserName(), 
+		clientid            :   security.getClientID(),
+		server              :   globals.server_db_name,
+		databasecliente     :   globals.customer_dbserver_name,
 		periodo : periodo ? periodo : globals.getPeriodo(),
 		giorniselezionati: giorniSelezionati,
 		iddipendenti: idLav ? [idLav] : [forms.giorn_header.idlavoratore],
@@ -832,9 +755,10 @@ function controllaInformativiStatistici(idLav,periodo,giorni)
 		codproprieta: '',
 		tipoconnessione : globals._tipoConnessione
 	};
-
+    
+	/**@type {{ StatusCode : Number, ReturnValue: Boolean, Message: String }} */
 	var _response = globals.getWebServiceResponse(url, params);
-	if (_response) 
+	if (_response && _response.StatusCode == globals.HTTPStatusCode.OK) 
 		return _response;
 	else {
 		globals.ma_utl_showErrorDialog('Controlla informativi non riuscito', 'Errore del server');
@@ -845,26 +769,15 @@ function controllaInformativiStatistici(idLav,periodo,giorni)
 /**
  * Gestione della risposta alla chiamata sugli informativi dell'evento
  * 
- * @param {Object} response
+ * @param {{ ReturnValue: Boolean, Message: String }} response
  *
  * @properties={typeid:24,uuid:"FFFB8853-8C0A-4DDE-9603-96F17B707E9C"}
  */
 function gestioneInformativiStatistici(response)
 {
 	//se non ci sono blocchi su informativi statistici
-	if (response['retValue'] == true)
+	if(!response.ReturnValue) 
 	{
-		if (response.message && response.message != '')
-		{
-			globals.ma_utl_showWarningDialog(response.message, 'Controllo informativi statistici');
-            return false;
-		}
-    } 
-	else 
-	{
-		//se c'è il blocco viene mostrato il messaggio
-		var innerMsg = response['innerMessage'] ? ("<p><strong>Dettagli</strong><br/>"  + response['innerMessage'] + '</p>') : ''
-		globals.ma_utl_showWarningDialog(response.message +  innerMsg, 'Controllo informativi statistici');
 		//e resettato l'inserimento dell'evento
 		_idevento = null;
 		_codevento = ''
@@ -883,10 +796,11 @@ function gestioneInformativiStatistici(response)
 		_oldImporto = -1;
 		vCoperturaOrarioTeorico = 1;
 		
-		return false;
-	}
-	
-	return true;
+		//se c'è il blocco viene mostrato il messaggio
+		var innerMsg = response.Message ? ("<p><strong>Dettagli</strong><br/>"  + response.Message + '</p>') : ''
+		globals.ma_utl_showWarningDialog(innerMsg, 'Controllo informativi statistici');
+	}	
+	return response.ReturnValue;
 }
 
 /**

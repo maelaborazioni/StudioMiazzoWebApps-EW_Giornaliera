@@ -32,18 +32,16 @@ function process_chiusura_mese()
 {
 	try
 	{
-		var params = globals.inizializzaParametriAttivaMese(forms.giorn_header.idditta,
-			                                                globals.getPeriodo(),
-			                                                globals.getGruppoInstallazione(),
-			                                                globals.getGruppoLavoratori(),
-															globals._tipoConnessione
-		                                                   );
+		var params = globals.inizializzaParametriChiusura(forms.giorn_header.idditta,
+														  globals.getGruppoLavoratori(),
+														  globals.getPeriodo(),
+			                                              globals._tipoConnessione
+		                                                  );
 		
 		forms.giorn_controllo_cp._daControlliPreliminari = false;
 		forms.giorn_controllo_annotazioni_ditta._daControlliPreliminari = false;
 		
-		globals.chiusuraMeseCliente(params);
-	    
+		globals.chiusuraMeseCliente(params);	    
 	}
 	catch(ex)
 	{
@@ -110,8 +108,8 @@ function inviaGiornalieraPannello(event)
     	var response = scopes.giornaliera.controllaAcquisizioneCM(_params);
     	if(response)
     	{
-    		_response = response['returnValue'];
-    		_retvalue = response['retValue'];
+    		_response = response && response.StatusCode == globals.HTTPStatusCode.OK;
+    		_retvalue = response.ReturnValue;
     		_noconnection = false;
     	}
     	else 
@@ -149,9 +147,9 @@ function inviaGiornalieraPannello(event)
 						else 
 						{
 							// controllo presenza di eventuali giornaliere ancora da importare da parte dello studio
-							var ctrlUrl = globals.WS_LU_URL + "/Giornaliera/ControlloGioInviate";
+							var ctrlUrl = globals.WS_LU + "/Ftp32/ControlloGioInviate";
 							ctrlRes = globals.getWebServiceResponse(ctrlUrl,_params);
-							_result = ctrlRes['returnValue'];
+							_result = ctrlRes.ReturnValue;
 						}
 						
 						if(_result == 0)

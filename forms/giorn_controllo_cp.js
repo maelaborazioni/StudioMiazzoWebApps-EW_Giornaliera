@@ -37,8 +37,9 @@ function annullaConfermaEventi(event) {
  *
  * @properties={typeid:24,uuid:"98C3AD9D-99E7-4FF5-BE69-807C187FBCCB"}
  */
-function confermaEventiChiusura(event) {
-	
+function confermaEventiChiusura(event) 
+{
+	/** WARNING Non utilizzata! Lato sede  */
 	var frmCE = forms['giorn_controllo_cp_eventi_tbl'];
 	var sizeCE = databaseManager.getFoundSetCount(frmCE.foundset);
 	var arrCE = frmCE.ottieniArrCE();

@@ -38,7 +38,7 @@ uuid:"5B2AE7E2-4ABB-462A-B789-9265FF2F8494"
 {
 location:"750,400",
 name:"btn_conferma",
-onActionMethodID:"2B84C9A4-2C3D-4384-B6C7-216C18E0140C",
+onActionMethodID:"-1",
 showClick:false,
 showFocus:false,
 size:"30,30",

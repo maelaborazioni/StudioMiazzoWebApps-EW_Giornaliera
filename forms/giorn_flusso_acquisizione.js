@@ -8,18 +8,24 @@
  */
 function scaricaTimbraturePannello(event) 
 {
-	var frm = event.getFormName() == 'pann_flusso_acquisizione' ? forms.pann_header_dtl : forms.giorn_header;
+	var frm = event.getFormName() == 'pann_flusso_acquisizione' ? forms['pann_header_dtl'] : forms.giorn_header;
 	var _idditta = globals.getTipologiaDitta(frm.idditta) == globals.Tipologia.ESTERNA ?
-	               frm.foundset.lavoratori_to_ditte.ditte_to_ditte_legami.iddittariferimento : frm.idditta;
-    var _periodo = globals.TODAY.getFullYear() * 100 + globals.TODAY.getMonth() + 1; 
+	               frm.foundset['lavoratori_to_ditte']['ditte_to_ditte_legami'].iddittariferimento : frm.idditta;
     var _gruppoinst = globals.getGruppoInstallazioneDitta(_idditta);
-    var _gruppolav = ''; // globals.getGruppoLavoratori();
+    
+	var _timbParams = globals.inizializzaParametriFileTimbrature(_idditta,_gruppoinst);
 
-	var _timbParams = globals.inizializzaParametriFileTimbrature(_idditta,_periodo,_gruppoinst,_gruppolav,globals._tipoConnessione);
+//	var answer = true;
+//	if(globals.ma_utl_hasKey('TestFtp'))
+//	{
+//		answer = globals.verificaPresenzaFileTimbrature(_timbParams)
+//		   || globals.ma_utl_showYesNoQuestion('Nessun nuovo file di timbrature da acquisire presente.\n Si desidera procedere comunque per la riassegnazione di eventuali timbrature precedentemente scartate?','Acquisizione timbrature');
+//	}
+	
 	if(globals.verificaPresenzaFileTimbrature(_timbParams)
 	   || globals.ma_utl_showYesNoQuestion('Nessun nuovo file di timbrature da acquisire presente.\n Si desidera procedere comunque per la riassegnazione di eventuali timbrature precedentemente scartate?','Acquisizione timbrature')
 	)
-	{
+	{	
 //		if(globals.verificaSuperamentoLimiteFileTimbratureScartate(_timbParams)
 //		   && !globals.ma_utl_showYesNoQuestion('Il file delle timbrature scartate o non associate ha superato il numero limite.\n \
 //		                                         L\'operazione di acquisizione potrebbe risultare più lunga del previsto.\n \
@@ -43,8 +49,7 @@ function scaricaTimbraturePannello(event)
 	        processArgs: [event,_timbParams]
 	    };
 		plugins.busy.block(params);
-	}
-	
+	}	
 }
 
 /**
@@ -139,26 +144,31 @@ function process_acquisisci_giornaliera_pannello(event)
 		var _gruppolav = ''; // TODO globals.getGruppoLavoratori();
 		
 		var ctrlRes = scopes.giornaliera.esisteGiornalieraDaImportare(_idditta,_periodo,_gruppoinst,_gruppolav);
-		if(ctrlRes['returnValue'] == 0)
+		if(ctrlRes && ctrlRes.StatusCode == globals.HTTPStatusCode.OK)
 		{
-			var msg = ctrlRes['returnMessage'] + '<br/>';
-			
-			var recOpDitta = scopes.giornaliera.getUltimaOperazioneDitta(_idditta,
-															             _gruppoinst,
-																		 _gruppolav,
-																		 _periodo,
-																		 globals.getIdTabAttivita(globals.AttivitaDitta.IMPORTAZIONE_GIORNALIERA))
-			
-			if(recOpDitta)
-			msg += ('Ultima acquisizione effettuata il ' + globals.dateFormat(recOpDitta.ultimaesecuzioneil,globals.LOGINFO_DATEFORMAT));
-			
-			globals.svy_mod_closeForm(event);
-			plugins.busy.unblock();
-			globals.ma_utl_showWarningDialog(msg,'Importa giornaliera');
-			return;
+			if(ctrlRes.ReturnValue == false)
+			{
+				var msg = ctrlRes.Message + '<br/>';
+				
+				var recOpDitta = scopes.giornaliera.getUltimaOperazioneDitta(_idditta,
+																             _gruppoinst,
+																			 _gruppolav,
+																			 _periodo,
+																			 globals.getIdTabAttivita(globals.AttivitaDitta.IMPORTAZIONE_GIORNALIERA))
+				
+				if(recOpDitta)
+				msg += ('Ultima acquisizione effettuata il ' + globals.dateFormat(recOpDitta.ultimaesecuzioneil,globals.LOGINFO_DATEFORMAT));
+				
+				globals.svy_mod_closeForm(event);
+				plugins.busy.unblock();
+				globals.ma_utl_showWarningDialog(msg,'Importa giornaliera');
+				return;
+			}
+			else
+				globals.importaTracciatoDaFtp(_idditta,_periodo,_gruppoinst,_gruppolav);
 		}
-		
-	    globals.importaTracciatoDaFtp(_idditta,_periodo,_gruppoinst,_gruppolav);
+		else
+			throw new Error("Errore durante la verifica della presenza di giornaliere definitive da importare");
 	}
 	catch(ex)
 	{

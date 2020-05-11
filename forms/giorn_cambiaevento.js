@@ -380,33 +380,32 @@ function FiltraProprieta(_fs)
  */
 function FiltraProprietaSelezionabili(idEvento)
 {	
-	var bReturn = false;
-	var url = globals.WS_URL + "/Eventi/FiltraProprieta";
+	var url = globals.WS_EVENT + "/Event32/FiltraProprieta";
 	/** @type Number*/
 	var periodo = globals.getPeriodo();
 	
 	var gg = globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].index_sel - globals.offsetGg;
 		
-	var params = globals.inizializzaParametriFiltroEvento(
-					 forms.giorn_header.idditta
-					,periodo
-					,forms.giorn_vista_mensile._tipoGiornaliera //,globals.TipoGiornaliera.NORMALE
+	var params = globals.inizializzaParametriFiltroProprietaEvento(
+		            forms.giorn_vista_mensile._tipoGiornaliera 
 					,globals._tipoConnessione
+					,[forms.giorn_header.idlavoratore]  
 					,[gg]
-					,[-1]
+					,periodo
 					,idEvento
 					);
 	
+	/** {{ReturnValue: Object, StatusCode: Number, Message: String}} */
 	var response = globals.getWebServiceResponse(url, params);
-
-	/** @type {Array} */
-	_arrIdPropSelezionabili = response['proprieta'];
-	if (_arrIdPropSelezionabili.length > 0)
-	    bReturn = true;
-	else
-		globals.ma_utl_showWarningDialog('Non esistono proprietà selezionabili, riprovare o verificare','i18n:hr.msg.attention');
-		
-	return bReturn;
+    if(response && response.StatusCode == globals.HTTPStatusCode.OK)
+    {
+	/** @type {Array<String>} */
+	_arrIdPropSelezionabili = response.ReturnValue;
+	if (_arrIdPropSelezionabili.length == 0)
+		globals.ma_utl_showWarningDialog('Non esistono proprietà selezionabili, riprovare o verificare','Filtra proprietà evento');
+    }
+    else 
+    	globals.ma_utl_showWarningDialog('Errore durante il recupero delle proprietà dell\'evento selezionato','Filtra proprietà evento');
 }
 
 /**

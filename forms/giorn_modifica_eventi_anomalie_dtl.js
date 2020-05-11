@@ -130,7 +130,6 @@ function process_modifica_evento_anomalie(event)
 		
 		params = globals.inizializzaParametriEvento(globals.getDitta(_idLav)
 			                                        ,_periodo
-													,0
 													,giorniSelezionati
 													,globals.TipoGiornaliera.NORMALE
 													,globals.TipoConnessione.CLIENTE

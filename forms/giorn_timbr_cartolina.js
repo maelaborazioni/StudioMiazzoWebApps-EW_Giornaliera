@@ -266,8 +266,10 @@ function stampaCartolinaMensileDipendente(_itemInd, _parItem, _isSel, _parMenTxt
 		return;
 	}
 		
-	params['user_id'] = security.getUserName(); 
-	params['client_id'] = security.getClientID();
+	params['userid'] = security.getUserName();
+    params['clientid'] = security.getClientID();
+    params['server'] = globals.server_db_name;
+    params['databasecliente'] = globals.customer_db_name;
 	params['iddipendenti'] = [idlavoratore];
 	params['periodo'] = _anno * 100 + _mese;
 	params['daticontrattuali'] = 1;
@@ -287,7 +289,17 @@ function stampaCartolinaMensileDipendente(_itemInd, _parItem, _isSel, _parMenTxt
 	params['groupraggruppamento'] = 0;
 	params['grouptiporaggruppamento'] = 0;
 	
-	var url = globals.WS_REPORT_URL + (globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ?  "/Report" : "/Stampe") + "/StampaCartolinaPresenze";
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.SCP);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	
+	var url = globals.WS_REPORT + "/Report32/StampaCartolinaPresenzeAsync";
 	globals.addJsonWebServiceJob(url, params);
 }
 
@@ -318,8 +330,10 @@ function stampaAnomalieTimbratureDipendente(_itemInd, _parItem, _isSel, _parMenT
     	return;
     }
     
-    params['user_id'] = security.getUserName(); 
-	params['client_id'] = security.getClientID();
+    params['userid'] = security.getUserName(); 
+	params['clientid'] = security.getClientID();
+	params['server'] = globals.server_db_name;
+    params['databasecliente'] = globals.customer_db_name;
     params['iddipendenti'] = iddipendenti;
     params['dalladata'] = utils.dateFormat(_dal,globals.EU_DATEFORMAT);
     params['alladata'] = utils.dateFormat(_al,globals.EU_DATEFORMAT);
@@ -335,7 +349,17 @@ function stampaAnomalieTimbratureDipendente(_itemInd, _parItem, _isSel, _parMenT
 	params['groupraggruppamento'] = 0;
 	params['grouptiporaggruppamento'] = 0;
 	
-    var url = globals.WS_REPORT_URL + (globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ?  "/Report" : "Stampe") + "/StampaAnomalieTimbrature";
+	// add new operation info for future updates
+	var operation = scopes.operation.create(params['idditta'],globals.getGruppoInstallazioneDitta(params['idditta']),params['periodo'],globals.OpType.CE);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
+	
+    var url = globals.WS_REPORT + "/Report32/StampaAnomalieTimbrature";
     globals.addJsonWebServiceJob(url,params);	
 }
 

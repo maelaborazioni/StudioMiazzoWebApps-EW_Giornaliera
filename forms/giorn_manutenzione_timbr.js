@@ -96,18 +96,16 @@ function process_conferma_eliminazione(event)
 			
 		// chiamata al metodo di pulizia del web service
 		// acquisisci lettura file da ws
-		var params = globals.inizializzaParametriFileTimbrature(globals.getIdDitta(vCodDitta),
-			                                                    globals.TODAY.getFullYear() * 100 + globals.TODAY.getMonth() + 1,
-																vGrInstDitta,
-																'',
-																strNewTimbr)
-		var url = globals.WS_TIMBR_URL + "/Timbrature/SetFileTimbrature";
+		var params = globals.inizializzaParametriUpdateFileTimbrature(globals.getIdDitta(vCodDitta),
+				                                                      vGrInstDitta,
+																	  strNewTimbr)
+		var url = globals.WS_STAMPING + "/Stamping32/SetFileTimbrature";
 		var response = globals.getWebServiceResponse(url,params);
 		
 		globals.svy_mod_closeForm(event);
 		
-		if(response['returnValue'])
-		   globals.ma_utl_showWarningDialog(response['returnMessage'],'Gestione file timbrature non associate');
+		if(response.ReturnValue)
+		   globals.ma_utl_showWarningDialog(response.Message,'Gestione file timbrature non associate');
 		else
 		   globals.ma_utl_showErrorDialog('Errore durante l\'operazione : ' + response['returnMessage'],'Gestione file timbrature non associate');		
 		}

@@ -396,23 +396,15 @@ function onDataChangeGruppoLav(oldValue, newValue, event) {
     _foundsetGruppi.addFoundSetFilterParam('codice','=',newValue,'ftr_gruppiGestDaCodice')
 	_foundsetGruppi.loadAllRecords()
 	
-	if(_foundsetGruppi.getSize() == 1){
-		
+	if(_foundsetGruppi.getSize() == 1)
+	{
 		_codgrlav = _foundsetGruppi['codice']
 		_descgrlav = _foundsetGruppi['descrizione']
-		
-//		var _retVal = globals.filtroEntrataInGiornaliera(_idditta,_idgruppoinst,_codgrlav)
-//		if (_retVal.returnValue){
-//			
-//			_stringaFiltro = _retVal.filterStr
-//			
-//		}
-			
-		
-	}else
+	}
+	else
 	     globals.svy_nav_showLookupWindow(event, '_codgrlav', 'LEAF_Lkp_Gruppigestione', 'AggiornaGruppiLavoratori', '', null, null, '', true)
 											
-    return true
+    return true;
 }
 
 /**

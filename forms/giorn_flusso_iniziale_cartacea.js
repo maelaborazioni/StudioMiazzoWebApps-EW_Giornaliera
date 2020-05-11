@@ -15,6 +15,16 @@ function compilaMeseDittaCartacea(event) {
 	var _gruppolav = globals.getGruppoLavoratori();
 
 	var params = globals.inizializzaParametriAttivaMese(_idditta,_periodo,_gruppoinst,_gruppolav,globals._tipoConnessione);
-	globals.attivazioneMese(params);
+	// add new operation info for future updates
+	var operation = scopes.operation.create(_idditta,_gruppoinst,_periodo,globals.OpType.AM);
+	if(operation == null || operation.operationId == null)
+	{
+		globals.ma_utl_showErrorDialog('Errore durante la preparazione dell\'operazione lunga. Riprovare o contattare il  servizio di Assistenza.');
+		return;
+	}
+	
+	params.operationid = operation.operationId;
+	params.operationhash = operation.operationHash;
 
+	globals.attivazioneMese(params);
 }

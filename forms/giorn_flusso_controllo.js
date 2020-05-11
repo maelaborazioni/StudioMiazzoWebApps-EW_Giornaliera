@@ -72,19 +72,13 @@ function stampaAnomalieTimbraturePannello(event)
  */
 function ottieniRapportoTracciatoMensa(event) 
 {
-	var params = globals.inizializzaParametriAttivaMese(forms.giorn_header.idditta
-		                                                ,globals.getPeriodo()
-														,globals.getGruppoInstallazione()
-														,globals.getGruppoLavoratori()
-														,globals.TipoConnessione.CLIENTE);
+	
 	// TODO richiesta di selezione tipo tracciato (se esiste)
-	params.iddittamensa = 3;
+	var iddittamensa = 3;
 	
 	globals.generaTracciatoMensa(forms.giorn_header.idditta
-		                          ,globals.getPeriodo()
-								  ,3
-								  ,globals.getGruppoInstallazione()
-								  ,globals.getGruppoLavoratori());
+		                         ,globals.getPeriodo()
+								 ,iddittamensa);
 	
 	return null;
 }

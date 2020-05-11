@@ -874,7 +874,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
 															   ,forms.giorn_header.idditta
 															   ,globals.getPeriodo()
 															   ,globals._tipoConnessione);
-			if (response && response['returnValue'] === true)
+			if (response && response.StatusCode == globals.HTTPStatusCode.OK && response.ReturnValue === true)
 				forms.giorn_header.preparaGiornaliera();
 			else
 				globals.ma_utl_showWarningDialog('Non tutti i giorni potrebbero essere stati resi riconteggiabili, controllare e riprovare','Rendi i giorni riconteggiabili');
@@ -894,8 +894,8 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
  */
 function analizzaPreConteggio(giorno,idLav,periodo)
 {
-    var  url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? globals.WS_URL + "/Giornaliera/AnalizzaPreConteggio" : globals.WS_URL + '/Eventi/AnalizzaPreConteggio';
-    
+	var  url = globals.WS_CALENDAR + "/Calendar32/AnalizzaPreConteggio";
+	
     var params = {
     	idditta : globals.getDitta(idLav ? idLav : forms.giorn_header.idlavoratore),
     	iddipendenti : idLav ? [idLav] : [forms.giorn_header.idlavoratore],
@@ -905,17 +905,13 @@ function analizzaPreConteggio(giorno,idLav,periodo)
     };
     
     if(idLav) params.idditta = globals.getDitta(idLav);
-    
+   
+    /** @type {{ReturnValue: Object, StatusCode: Number, Message: String}} */
     var _responseObj = globals.getWebServiceResponse(url,params);
 	
 	if(_responseObj != null)
-	{
-		if(_responseObj['returnValue'] == true)
-			return true;
-		else
-			return false;
-			
-	}else				
+		return _responseObj.StatusCode == globals.HTTPStatusCode.OK && _responseObj.ReturnValue == true;
+	else				
 		globals.ma_utl_showErrorDialog('Il server non risponde, si prega di riprovare','Errore di comunicazione');
 		
 	return false;
@@ -1537,7 +1533,7 @@ function ricalcolaCausalizzateGiorno(_itemInd, _parItem, _isSel, _parMenTxt, _me
 {
 	var _giorno = forms['giorn_timbr_temp'].foundset.getSelectedIndex() - globals.offsetGg;
 	
-	var url = globals.WS_URL + '/Timbrature/RicalcolaCausalizzate'
+	var url = globals.WS_STAMPING + '/Stamping32/RicalcolaCausalizzate'
 	var params =
 	{
 		idditta				:	forms.giorn_header.idditta,
@@ -1547,7 +1543,7 @@ function ricalcolaCausalizzateGiorno(_itemInd, _parItem, _isSel, _parMenTxt, _me
 	};
 	
 	var response = globals.getWebServiceResponse(url, params);
-	if (response && response['returnValue'] === true)
+	if (response && response.ReturnValue === true)
 	{
 		forms.giorn_header.preparaGiornaliera();
 		globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);
@@ -1570,7 +1566,7 @@ function ricalcolaForzateGiorno(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt
 {
 	var _giorno = forms['giorn_timbr_temp'].foundset.getSelectedIndex() - globals.offsetGg;
 	
-	var url = globals.WS_URL + '/Timbrature/RicalcolaForzate'
+	var url = globals.WS_STAMPING + '/Stamping32/RicalcolaForzate'
 	var params =
 	{
 		idditta				:	forms.giorn_header.idditta,
@@ -1580,7 +1576,7 @@ function ricalcolaForzateGiorno(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt
 	};
 	
 	var response = globals.getWebServiceResponse(url, params);
-	if (response && response['returnValue'] === true)
+	if (response && response.ReturnValue === true)
 	{
 		forms.giorn_header.preparaGiornaliera();
 		globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);

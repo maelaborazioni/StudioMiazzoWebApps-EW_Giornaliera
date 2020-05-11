@@ -65,7 +65,7 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 					
 					frmAcquisizione.elements['lbl_scarica_tracciato_info'].enabled =
 					frmAcquisizione.elements['lbl_scarica_tracciato'].enabled =
-					frmAcquisizione.elements['btn_scarica_tracciato'].enabled = globals.isMeseDaAttivare({idditta : idDitta, periodo : periodo});
+					frmAcquisizione.elements['btn_scarica_tracciato'].enabled = scopes.giornaliera.isMeseDaAttivare({idditta : idDitta, periodo : periodo});
 				}
 				break;
 			case 1:
@@ -92,7 +92,7 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 					
 					frmAcquisizione.elements['lbl_scarica_tracciato_info'].enabled =
 					frmAcquisizione.elements['lbl_scarica_tracciato'].enabled =
-					frmAcquisizione.elements['btn_scarica_tracciato'].enabled = globals.isMeseDaAttivare({idditta : idDitta, periodo : periodo});
+					frmAcquisizione.elements['btn_scarica_tracciato'].enabled = scopes.giornaliera.isMeseDaAttivare({idditta : idDitta, periodo : periodo});
 				}
 		        break;
 			default:

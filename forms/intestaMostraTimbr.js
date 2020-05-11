@@ -48,18 +48,18 @@ function process_abilita_mese(event)
 		if(answer)
 		{
 		   var params = globals.inizializzaParametriAttivaMese(forms.giorn_header.idditta, 
-			                                                globals.getPeriodo(),
-															globals.getGruppoInstallazione(), 
-															globals.getGruppoLavoratori(),
-															globals._tipoConnessione,
-															forms.giorn_header.idlavoratore)
+				                                               globals.getPeriodo(),
+															   globals.getGruppoInstallazione(), 
+															   globals.getGruppoLavoratori(),
+															   globals._tipoConnessione,
+															   forms.giorn_header.idlavoratore)
 	       
 		   // la disattivazione di eventuali filtri implica che ci si riposizioni sul primo dipendente
 		   // perciò la facciamo esclusivamente in presenza di filtri attivi
 		   if(active_filter)
 		   {
 			   globals.disattivaFiltri(event);
-			   forms.giorn_header.preparaGiornaliera(true,null,false);
+			   forms.giorn_header.preparaGiornaliera(true, null, false, true);
 		   }
 		   
 		   globals.attivaMese(params,false,null);
@@ -233,7 +233,7 @@ function process_mese_anno()
 {
 	try
 	{
-		forms.giorn_header.preparaGiornaliera();
+		forms.giorn_header.preparaGiornaliera(false, null, false, true);
 	}
 	catch(ex)
 	{
@@ -296,7 +296,7 @@ function process_disattiva_filtri(event)
 	try
 	{
 		scopes.globals.disattivaFiltri(event);
-		forms.giorn_header.preparaGiornaliera(true,null,false);
+		forms.giorn_header.preparaGiornaliera(true, null, false, true);
 	}
 	catch(ex)
 	{

@@ -55,6 +55,13 @@ typeid:4,
 uuid:"78EAC5F3-FB5D-4196-A8FE-D385AA048CFD"
 },
 {
+displayType:2,
+editable:false,
+extendsID:"E895DED9-27A6-4E3D-BE9D-6B20A3A9FD59",
+typeid:4,
+uuid:"9F071D14-6FC7-43A6-8027-56555883521C"
+},
+{
 extendsID:"BDA53240-C6B3-40B8-8C54-0850CB1650AA",
 location:"210,60",
 rolloverCursor:12,

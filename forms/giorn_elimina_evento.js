@@ -18,10 +18,10 @@ function confermaEliminazione(event) {
 	scopes.giornaliera.cancellaChiusuraDipPerOperazione([forms.giorn_header.idlavoratore],forms.giorn_header.idditta)
 	
 	var _retObj = globals.eliminaEvento(params);
-	var _retVal = _retObj.returnValue;
+	var _retVal = _retObj.ReturnValue;
 	
 	if(false === _retVal)		
-		globals.svy_mod_dialogs_global_showErrorDialog('i18n:svy.fr.lbl.excuse_me','Ops! Si è verificato un errore: ' + _retObj.message,'Elimina evento');	
+		globals.svy_mod_dialogs_global_showErrorDialog('i18n:svy.fr.lbl.excuse_me','Ops! Si è verificato un errore: ' + _retObj.Message,'Elimina evento');	
 	else
 	{
 

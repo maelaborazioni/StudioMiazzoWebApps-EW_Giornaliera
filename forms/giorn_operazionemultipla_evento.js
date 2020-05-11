@@ -76,7 +76,6 @@ function salvaEventoMultiplo(event)
 	}
 	vOperationArgs = globals.inizializzaParametriEvento(forms.giorn_header.idditta,
 		                                                globals.getPeriodo(),
-														0,
 														[],
 														forms.giorn_operazionemultipla_aggiungievento.vPortaInBudget == 1 ? globals.TipoGiornaliera.BUDGET : forms.giorn_vista_mensile._tipoGiornaliera,
 														globals._tipoConnessione,

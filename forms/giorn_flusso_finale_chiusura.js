@@ -10,12 +10,11 @@
  */
 function preparaChiusuraMese(event) {
 
-	var params = globals.inizializzaParametriAttivaMese(forms.giorn_header.idditta,
-		                                                globals.getPeriodo(),
-		                                                globals.getGruppoInstallazione(),
-		                                                globals.getGruppoLavoratori(),
-														globals._tipoConnessione
-	                                                   );
+	var params = globals.inizializzaParametriChiusura(forms.giorn_header.idditta,
+		                                              globals.getGruppoLavoratori(),
+													  globals.getPeriodo(),
+													  globals._tipoConnessione
+	                                                  );
 	
 	forms.giorn_controllo_cp._daControlliPreliminari = false;
 	forms.giorn_controllo_annotazioni_ditta._daControlliPreliminari = false;

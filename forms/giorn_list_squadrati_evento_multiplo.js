@@ -59,7 +59,6 @@ function onActionConfermaEventoMultiplo(event)
 			var objDipParams = objDipsParams.lavoratori_giorni[lg];
 			var evParams = globals.inizializzaParametriEvento(globals.getDitta(objDipParams.idlavoratore)
 				                                              ,periodo
-															  ,0
 															  ,objDipParams.giorni_selezionati
 															  ,globals.TipoGiornaliera.NORMALE
 															  ,globals.TipoConnessione.CLIENTE

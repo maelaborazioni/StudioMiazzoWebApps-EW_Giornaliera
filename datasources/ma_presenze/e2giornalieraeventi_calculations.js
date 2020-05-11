@@ -3,13 +3,16 @@
  */
 function tooltip()
 {
-	var retValue = e2giornalieraeventi_to_e2eventi.descriz;
-	if(e2giornalieraeventi_to_eventiproprieta && e2giornalieraeventi_to_eventiproprieta.descrizione)
-	{
-		retValue += ' (' + e2giornalieraeventi_to_eventiproprieta.descrizione + ')';
+	var _tooltip ='';
+	
+	if(e2giornalieraeventi_to_e2eventi)
+	{	
+		_tooltip = e2giornalieraeventi_to_e2eventi.descriz;
+		if(e2giornalieraeventi_to_eventiproprieta && e2giornalieraeventi_to_eventiproprieta.descrizione)
+		   _tooltip += ' (' + e2giornalieraeventi_to_eventiproprieta.descrizione + ')';
 	}
-
-	return retValue;
+	
+	return _tooltip;
 }
 
 /**
@@ -17,14 +20,10 @@ function tooltip()
  */
 function descrizione()
 {
-	var vistaOre;
-	var tipoEvento = e2giornalieraeventi_to_e2eventi.evento;
+	var vistaOre = '';
+	var tipoEvento = e2giornalieraeventi_to_e2eventi ? e2giornalieraeventi_to_e2eventi.evento : null;
 	
-    if (null === tipoEvento)
-    {
-    	vistaOre = null;
-    }
-    else
+    if (tipoEvento != null)
     {
     	if('9' === tipoEvento)
     		tipoEvento = 'L.D.';

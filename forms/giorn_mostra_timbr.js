@@ -449,11 +449,17 @@ function preparaTimbratura(anno, mese, idlavoratore, cartolina, indexToUpdate, f
 			
 			var recordTimbrature, c;
 			
+			// rollback di eventuali transazioni attive
+			databaseManager.rollbackTransaction();
+			
+			// TODO verificare se ancora necessario			
 			databaseManager.startTransaction();
 		
-			/**
-			 * Aggiornamento di righe già calcolate.
-			 */
+//			/**
+//			 * Aggiornamento di righe già calcolate.
+//			 */
+//
+
 			if(isCached(datasourceGiornTimbr, idlavoratore, periodo))
 			{
 				var start = indexToUpdate || 1;
@@ -493,7 +499,8 @@ function preparaTimbratura(anno, mese, idlavoratore, cartolina, indexToUpdate, f
 				setCached(datasourceGiornTimbr, idlavoratore, periodo);
 			}
 			
-			databaseManager.commitTransaction();
+			if(!databaseManager.commitTransaction())
+  			   throw new Error("preparaTimbratura: could not commit transaction (updating existent rows or creating new rows)");;
 		}
 		catch(ex)
 		{

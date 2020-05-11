@@ -18,9 +18,10 @@ function confermaIncolla(event) {
 	
 	scopes.giornaliera.cancellaChiusuraDipPerOperazione([forms.giorn_header.idlavoratore],forms.giorn_header.idditta);
 	
+	/** @type {{ReturnValue: Object, StatusCode: Number, Message: String}} */
 	var response = globals.copiaRigaInGiornaliera(params);
 			
-	if(response['returnValue'])
+	if(response && response.StatusCode == globals.HTTPStatusCode.OK)
 	{
 	   forms.giorn_header.preparaGiornaliera();
 	   globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);

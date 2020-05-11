@@ -1032,7 +1032,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
 	var answer = globals.ma_utl_showYesNoQuestion(msg, 'Rendi i giorni riconteggiabili');
 	if (answer)
 	{
-		var url = globals.WS_URL + '/Timbrature/Riconteggia'
+		var url = globals.WS_STAMPING + '/Stamping32/RendiGiorniRiconteggiabili'
 		var params =
 		{
 			idditta				:	forms.giorn_header.idditta,
@@ -1043,7 +1043,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
 		};
 		
 		var response = globals.getWebServiceResponse(url, params);
-		if (response && response['returnValue'] === true)
+		if (response && response.ReturnValue === true)
 			forms.giorn_header.preparaGiornaliera();
 		else
 			globals.ma_utl_showWarningDialog('Non tutti i giorni potrebbero essere stati resi riconteggiabili, controllare e riprovare','Rendi i giorni riconteggiabili');
@@ -1063,7 +1063,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
  */
 function analizzaPreConteggio(giorno,idLav,periodo)
 {
-    var  url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? globals.WS_URL + "/Giornaliera/AnalizzaPreConteggio" : globals.WS_URL + '/Eventi/AnalizzaPreConteggio';
+    var  url = globals.WS_CALENDAR + "/Calendar32/AnalizzaPreConteggio";
     
     var params = {
     	iddipendenti : idLav ? [idLav] : [forms.giorn_header.idlavoratore],
@@ -1078,7 +1078,7 @@ function analizzaPreConteggio(giorno,idLav,periodo)
 	
 	if(_responseObj != null){
 					   					
-		if(_responseObj['returnValue'] == true)
+		if(_responseObj.ReturnValue == true)
 			return true;
 		else
 			return false;

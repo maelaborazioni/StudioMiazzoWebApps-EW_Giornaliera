@@ -314,7 +314,7 @@ function process_conteggia_squadrature()
 																,periodo
 																,globals.TipoGiornaliera.NORMALE
 																,false);
-			if(retVal && retVal['returnValue'])
+			if(retVal)
 			{
 				switch(selectedTabIndex)
 				{
@@ -325,8 +325,8 @@ function process_conteggia_squadrature()
 						break;
 					case 4 :
 					    globals.aggiornaEventiGiornalieraDipendente(objDipParams.idlavoratore,
-													                     globals.getAnnoDaPeriodo(periodo),
-																		 globals.getMeseDaPeriodo(periodo));
+													                globals.getAnnoDaPeriodo(periodo),
+																	globals.getMeseDaPeriodo(periodo));
 						break;
 					default:
 						break;
@@ -334,7 +334,6 @@ function process_conteggia_squadrature()
 			}
 			else
 				globals.ma_utl_showWarningDialog('Errore la compilazione dei giorni per il dipendente ' + globals.getNominativo(objDipParams.idlavoratore),'Si è verificato un errore durante la compilazione');
-			
 		}
 	}
 	catch(ex)
@@ -776,7 +775,6 @@ function eliminaEventoDaMenuSquadrature(_itemInd, _parItem, _isSel, _parMenTxt, 
 						var objDipParams = objDipsParams.lavoratori_giorni[lg];
 						var evParams = globals.inizializzaParametriEvento(globals.getDitta(objDipParams.idlavoratore)
 							                                              ,periodo
-																		  ,0
 																		  ,objDipParams.giorni_selezionati
 																		  ,globals.TipoGiornaliera.NORMALE
 																		  ,globals.TipoConnessione.CLIENTE
@@ -866,16 +864,6 @@ function cambiaEventoDaMenuSquadrature(_itemInd, _parItem, _isSel, _parMenTxt, _
  */
 function aggiungiEventoMultiploSquadrature(event)
 {
-//	var frmOpt = forms.giorn_list_squadrati_ditta;
-//	var idDitta = frmOpt.idditta;
-//	var periodo = frmOpt.annoRif * 100 + frmOpt.meseRif;
-	
-//	globals.ma_utl_showWarningDialog('NB. Verranno visualizzati tutti gli eventi possibili, è ancora in realizzazione il filtro per ditta');
-
-// TODO filtraggio eventi selezionabili per  la ditta nel periodo
-//	var _idGiornalieraEventi = foundset[event.getElementName()];
-//  globals.FiltraEventiSelezionabiliDittaPeriodo(idDitta,periodo);
-	
 	// visualizza maschera inserimento evento, solo per dipendenti della schermata, indipendenza dai giorni : quelli li trovo dalla selezione 
 	globals.ma_utl_setStatus(globals.Status.EDIT,forms.giorn_list_squadrati_evento_multiplo.controller.getName());
 	globals.ma_utl_showFormInDialog(forms.giorn_list_squadrati_evento_multiplo.controller.getName(),'Aggiungi un evento multiplo');

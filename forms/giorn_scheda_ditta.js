@@ -150,7 +150,7 @@ function annullaModifica(event) {
  */
 function stampaSchedaInternaDitta(event) {
 	// TODO Verificare stampa scheda interna
-	globals.stampa_scheda_interna_ditta(_idditta)
+//	globals.stampa_scheda_interna_ditta(_idditta)
 }
 
 

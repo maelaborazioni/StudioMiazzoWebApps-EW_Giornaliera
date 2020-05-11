@@ -69,7 +69,6 @@ function onRenderGiorn(event)
    {   
 	   recRen.bgcolor = '#767676';
 	   recRen.fgcolor = '#333333';
-//	   recRen.enabled = false;
 	   return;
    }
    else
@@ -823,7 +822,7 @@ function apriPopupVistaMensile(_event)
 	    _item5.enabled = !_isBudget;
 	var _item6 = _popUpMenuStorico.addMenuItem('Inserisci maternità ', lkpInserisciCertificato)
         _item6.methodArguments = [_event,2,_giornoMese]
-	    _item6.enabled = !_isBudget
+	    _item6.enabled = !_isBudget;
 	var _item7 = _popUpMenuStorico.addMenuItem('Inserisci congedo parentale ', lkpInserisciCertificato)
 	    _item7.methodArguments = [_event,3,_giornoMese]
 	    _item7.enabled = !_isBudget
@@ -1191,7 +1190,6 @@ function eliminaEvento(recGiornEventi,idLav,giorno,tipoGiornaliera)
 		var params = globals.inizializzaParametriEvento(
 			idLav ? globals.getDitta(idLav) : forms.giorn_header.idditta,
 			_periodo,
-			0,
 			_arrGiorni, 
 			tipoGiornaliera ? tipoGiornaliera : forms.giorn_vista_mensile._tipoGiornaliera, 
 			globals._tipoConnessione,
@@ -1209,7 +1207,7 @@ function eliminaEvento(recGiornEventi,idLav,giorno,tipoGiornaliera)
 				                                 			idLav ? globals.getDitta(idLav) : forms.giorn_header.idditta);
 
 		var _retObj = globals.eliminaEvento(params);
-		return _retObj.returnValue;
+		return _retObj.ReturnValue;
 
 	} else
 		return false;
@@ -1277,7 +1275,7 @@ function eliminazioneEvento(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _e
 										, true);
 								else
 								{
-									forms.giorn_header.preparaGiornaliera(false);
+									forms.giorn_header.preparaGiornaliera();
 									globals.verificaDipendentiFiltrati(globals.getIdLavoratoreDaIdGiornaliera(_rec.idgiornaliera));
 								}
 							} else
@@ -1301,7 +1299,7 @@ function eliminazioneEvento(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _e
 	} catch (ex) {
 		globals.ma_utl_showWarningDialog(ex.message, "Eliminazione evento");
 	} finally {
-
+		plugins.busy.unblock();
 	}
 }
 
@@ -1358,25 +1356,21 @@ function incollaGiornata(itemInd, parItem, isSel, parMenTxt, menuTxt, giornata)
 	{
 		var ggSel = globals.getGiorniSelezionatiEv();
 				
-		var params = globals.inizializzaParametriCompilaConteggio(
+		var params = globals.inizializzaParametriCopiaGiornata(
 		                     forms.giorn_header.idditta,
 		                     globals.getPeriodo(),
-		                     forms.giorn_vista_mensile._tipoGiornaliera,
-		                     globals._tipoConnessione,
-		                     ggSel,
 		                     [forms.giorn_header.idlavoratore],
-							 false
+		                     forms.giorn_vista_mensile._tipoGiornaliera,
+		                     ggSel,
+							 giornata
 					 );
-		
-			params.giornata = giornata;
 		
 			var form = forms.giorn_incolla_giornata;
 			form.params = params;
 			ggSel.length === 1 ? form.elements.lbl_info.text = globals.formatForHtml("Vuoi davvero sovrascrivere la giornata?") // + _fs.descrizione + ' - ' + utils.dateFormat(_fs.e2giornalieraeventi_to_e2giornaliera.giorno, globals.EU_DATEFORMAT) + ' ?'
                           	   : form.elements.lbl_info.text = globals.formatForHtml("Vuoi davvero sovrascrivere per i giorni :<br/> " + ggSel + "?");  // + _fs.descrizione + ' - ' + utils.dateFormat(_fs.e2giornalieraeventi_to_e2giornaliera.giorno, globals.EU_DATEFORMAT) + ' ?' 	
 	    	
-            globals.ma_utl_showFormInDialog(form.controller.getName(),'Conferma copia/incolla');
-			
+            globals.ma_utl_showFormInDialog(form.controller.getName(),'Conferma copia/incolla');			
 	}	
 }
 
@@ -1545,13 +1539,16 @@ function onFieldSelection(event)
 	{
 		if(_timeStamp - _lastClickTimeStamp < globals.intervalForDblClk)
 			modificaEvento(event);
-		
-		forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
+		if(forms && forms.giorn_vista_mensile)
+		   forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
 	}
 	else
 	{
-		forms.giorn_vista_mensile.last_selected_recordindex = _recordIndex;
-		forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
+		if(forms && forms.giorn_vista_mensile)
+		{	
+			forms.giorn_vista_mensile.last_selected_recordindex = _recordIndex;
+			forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
+		}
 	}
 }
 
@@ -1605,7 +1602,8 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
 {
 	var giorniSelezionati = globals.getGiorniSelezionatiEv();
 	    giorniSelezionati = giorniSelezionati.length > 0 && giorniSelezionati || [_giorno];
-	var arrLav = globals.ma_utl_showLkpWindow({
+	var arrLav = 
+	globals.ma_utl_showLkpWindow({
 	    event							: new JSEvent
 		, lookup						: (globals.getTipologiaDitta(forms.giorn_header.idditta) != globals.Tipologia.STANDARD 
 				                          && globals.getTipoDittaEsterna(forms.giorn_header.idditta) == 0) ? 'AG_Lkp_LavoratoriEsterni' : 'AG_Lkp_Lavoratori'
@@ -1629,7 +1627,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
 														  ,forms.giorn_header.idditta
 														  ,globals.getPeriodo()
 														  ,globals._tipoConnessione);
-		if (response && response['returnValue'] === true)
+		if (response && response.StatusCode == globals.HTTPStatusCode.OK &&  response.ReturnValue === true)
 			forms.giorn_header.preparaGiornaliera();
 		else
 			globals.ma_utl_showWarningDialog('Non tutti i giorni potrebbero essere stati resi riconteggiabili, controllare e riprovare','Rendi i giorni riconteggiabili');
