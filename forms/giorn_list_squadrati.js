@@ -866,16 +866,6 @@ function cambiaEventoDaMenuSquadrature(_itemInd, _parItem, _isSel, _parMenTxt, _
  */
 function aggiungiEventoMultiploSquadrature(event)
 {
-//	var frmOpt = forms.giorn_list_squadrati_ditta;
-//	var idDitta = frmOpt.idditta;
-//	var periodo = frmOpt.annoRif * 100 + frmOpt.meseRif;
-	
-//	globals.ma_utl_showWarningDialog('NB. Verranno visualizzati tutti gli eventi possibili, è ancora in realizzazione il filtro per ditta');
-
-// TODO filtraggio eventi selezionabili per  la ditta nel periodo
-//	var _idGiornalieraEventi = foundset[event.getElementName()];
-//  globals.FiltraEventiSelezionabiliDittaPeriodo(idDitta,periodo);
-	
 	// visualizza maschera inserimento evento, solo per dipendenti della schermata, indipendenza dai giorni : quelli li trovo dalla selezione 
 	globals.ma_utl_setStatus(globals.Status.EDIT,forms.giorn_list_squadrati_evento_multiplo.controller.getName());
 	globals.ma_utl_showFormInDialog(forms.giorn_list_squadrati_evento_multiplo.controller.getName(),'Aggiungi un evento multiplo');

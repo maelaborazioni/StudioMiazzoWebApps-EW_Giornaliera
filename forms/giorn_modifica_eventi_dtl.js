@@ -6,15 +6,14 @@
  */
 function confermaModificaEvento(event)
 {
-	canClose = true;
-	
 	if(event.getElementName() != 'btn_mod_conferma')
 	{
 	    var response = controllaInformativiStatistici();
-		response = gestioneInformativiStatistici(response);
-		
-        return;
+		if(!gestioneInformativiStatistici(response))			
+		   return;
 	}
+	
+	canClose = true;
 	
 	var arrGgSel = globals.getGiorniSelezionatiEv();
 	var arrGiorniSel = [];
@@ -39,6 +38,7 @@ function confermaModificaEvento(event)
 					  , _isInModifica ? [globals.getGiornoDaIdGiornaliera(_idGiornaliera)] : arrGiorniSel
 					  ]
     };
+	plugins.busy.unblock();
 	plugins.busy.block(params);
 		
 }
@@ -104,7 +104,7 @@ function process_modifica_evento(event,idLav,giorni)
 		if(giorniSelezionati.length == 1 && !vCoperturaOrarioTeorico)
 		{
 			var _message = 'Le ore inserite superano l\'orario previsto per questa giornata.<br/>Inserire solo fino a concorrenza dell\'orario teorico?';
-		    var _response = false;
+		    var _response = false; //globals.ma_utl_showYesNoQuestion(_message,'Superamento orario teorico');
 			var _tipologiaEv = globals.getTipologiaEvento(_idevento);
 		    if(_tipologiaEv.tipo === globals.TipologiaEvento.SOSPENSIVO 
 		    		&& _tipologiaEv.scalo === true) 

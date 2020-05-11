@@ -59,7 +59,7 @@ function process_abilita_mese(event)
 		   if(active_filter)
 		   {
 			   globals.disattivaFiltri(event);
-			   forms.giorn_header.preparaGiornaliera(true,null,false);
+			   forms.giorn_header.preparaGiornaliera(true, null, false, true);
 		   }
 		   
 		   globals.attivaMese(params,false,null);
@@ -233,7 +233,7 @@ function process_mese_anno()
 {
 	try
 	{
-		forms.giorn_header.preparaGiornaliera();
+		forms.giorn_header.preparaGiornaliera(false, null, false, true);
 	}
 	catch(ex)
 	{
@@ -296,7 +296,7 @@ function process_disattiva_filtri(event)
 	try
 	{
 		scopes.globals.disattivaFiltri(event);
-		forms.giorn_header.preparaGiornaliera(true,null,false);
+		forms.giorn_header.preparaGiornaliera(true, null, false, true);
 	}
 	catch(ex)
 	{

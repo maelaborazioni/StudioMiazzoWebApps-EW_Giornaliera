@@ -196,7 +196,7 @@ function preparaAnomalieLavoratore(idLavoratore,anno,mese,gg,formContenitore,for
  	   else
  	  	   idtimbr = null;
  	  	   
-	   if(currGiorno == lastGiorno)
+ 	   if(currGiorno == lastGiorno)
 	   {
 		   //se ci sono due timbrature con lo stesso senso bisogna lasciare uno spazio
 		   if(currTimbrSenso == currTimbrSensoPrec)
@@ -210,6 +210,8 @@ function preparaAnomalieLavoratore(idLavoratore,anno,mese,gg,formContenitore,for
 	   // Nuova giornata
 	   else
 	   {
+		   application.output(arrCurrMese);
+		   
 		   // L'indice per l'inserimento nell'array. 
 		   // Salta fino al giorno corretto nel caso di giorni senza timbrature ma non ancora conteggiati (e quindi non presenti nel dataset)
 		   do

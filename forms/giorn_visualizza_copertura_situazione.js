@@ -1066,6 +1066,7 @@ function onDataChangeSingolaDitta(oldValue, newValue, event)
 	elements.btn_lkp_sede.enabled = false;
 	
 	// pulisci eventuale centro di costo su cui filtrare
+	vChkCentroDiCosto = 0;
 	vCentroDiCosto = '';
 	vCodCentroDiCosto = null;
 	vArrCodCentroDiCosto = [];

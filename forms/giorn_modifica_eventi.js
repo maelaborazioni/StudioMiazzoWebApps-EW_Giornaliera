@@ -795,7 +795,7 @@ function verificaOrarioTeorico()
 	{
 		if(elements.lbl_previste_inserite)
 		{
-			elements.lbl_previste_inserite.fgcolor = '#D0373F';
+			elements.lbl_previste_inserite.fgcolor = '#31AD12';
 			_segnalazioniOreInserite = 'Ore previste : ' + (_totOreTeorico / 100).toFixed(2);
 		}
 		else

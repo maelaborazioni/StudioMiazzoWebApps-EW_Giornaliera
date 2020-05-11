@@ -22,8 +22,7 @@ function aggiungiNuovaDitta(event)
 	}
 	
 	globals.svy_mod_closeForm(event);
-     var url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? globals.WS_ADMIN_URL + "/Attivazione/AttivaNuovaDitta" : globals.WS_ADMIN_URL + "/Giornaliera/AttivaNuovaDitta";
+    var url = globals.WS_DOTNET_CASE == globals.WS_DOTNET.CORE ? globals.WS_ADMIN_URL + "/Attivazione/AttivaNuovaDitta" : globals.WS_ADMIN_URL + "/Giornaliera/AttivaNuovaDitta";
 	
 	globals.addJsonWebServiceJob(url,params);
-		
 }

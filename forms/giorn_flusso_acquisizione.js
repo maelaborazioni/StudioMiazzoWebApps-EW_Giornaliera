@@ -16,10 +16,18 @@ function scaricaTimbraturePannello(event)
     var _gruppolav = ''; // globals.getGruppoLavoratori();
 
 	var _timbParams = globals.inizializzaParametriFileTimbrature(_idditta,_periodo,_gruppoinst,_gruppolav,globals._tipoConnessione);
+
+//	var answer = true;
+//	if(globals.ma_utl_hasKey('TestFtp'))
+//	{
+//		answer = globals.verificaPresenzaFileTimbrature(_timbParams)
+//		   || globals.ma_utl_showYesNoQuestion('Nessun nuovo file di timbrature da acquisire presente.\n Si desidera procedere comunque per la riassegnazione di eventuali timbrature precedentemente scartate?','Acquisizione timbrature');
+//	}
+	
 	if(globals.verificaPresenzaFileTimbrature(_timbParams)
 	   || globals.ma_utl_showYesNoQuestion('Nessun nuovo file di timbrature da acquisire presente.\n Si desidera procedere comunque per la riassegnazione di eventuali timbrature precedentemente scartate?','Acquisizione timbrature')
 	)
-	{
+	{	
 //		if(globals.verificaSuperamentoLimiteFileTimbratureScartate(_timbParams)
 //		   && !globals.ma_utl_showYesNoQuestion('Il file delle timbrature scartate o non associate ha superato il numero limite.\n \
 //		                                         L\'operazione di acquisizione potrebbe risultare più lunga del previsto.\n \
@@ -43,8 +51,7 @@ function scaricaTimbraturePannello(event)
 	        processArgs: [event,_timbParams]
 	    };
 		plugins.busy.block(params);
-	}
-	
+	}	
 }
 
 /**

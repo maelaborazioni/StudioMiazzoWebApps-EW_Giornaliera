@@ -372,11 +372,12 @@ function preparaSquadratureLavoratore(idLavoratore,anno,mese,formContenitore)
        _gDataSetGiornList.addRow(gr+1, arrCurrMese[gr]);
     
    // Creazione datasource      
-   var _gDataSourceGiornList = _gDataSetGiornList.createDataSource('_gDataSourceGiornSquadrList_' + idLavoratore + '_' + evTot, types);
-   var datasourceGiornList = datasourceGiornList;
+   var _gDataSourceGiornListName = '_gDataSourceGiornSquadrList_' + idLavoratore + '_' + evTot;
+   var _gDataSourceGiornList = _gDataSetGiornList.createDataSource(_gDataSourceGiornListName, types);
    var foundsetGiornaliera = databaseManager.getFoundSet(_gDataSourceGiornList);
+//   var foundsetGiornaliera = datasources.mem[_gDataSourceGiornListName].getFoundSet();
    foundsetGiornaliera.loadAllRecords();
-   
+
    databaseManager.startTransaction();
    
    for(var fg = 1; fg <= foundsetGiornaliera.getSize(); fg++)
@@ -394,7 +395,7 @@ function preparaSquadratureLavoratore(idLavoratore,anno,mese,formContenitore)
    }
    
    if(!databaseManager.commitTransaction())
-	  throw new Error("preparaGiornaliera: could not commit transaction (updating existent rows or creating new rows)");
+	  throw new Error("preparaGiornalieraSquadrati: could not commit transaction (updating existent rows or creating new rows)");
    
    // Disegna la giornaliera parziale del lavoratore
    disegnaSquadratureLavoratore(idLavoratore,colTot,_gDataSourceGiornList,formContenitore,1,true);

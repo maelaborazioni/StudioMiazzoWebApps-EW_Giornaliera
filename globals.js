@@ -830,6 +830,7 @@ function scaricaTimbratureDaFtp(params,doCallback)
 function verificaPresenzaFileTimbrature(params)
 {
 	var ftpUrl = WS_URL + "/Timbrature/VerificaPresenzaFileTimbrature";
+//	var ftpUrl = globals.RestServerLink +  "/Leaf_Test/Timbrature/VerificaPresenzaFileTimbrature";
 	var response = getWebServiceResponse(ftpUrl,params);
 	
 	if(response)
@@ -1705,7 +1706,7 @@ function ricalcolaGiornaliera(periodo, idDitta, gruppoInstallazione, gruppoLavor
 		if(idLavoratore != null	&& idLavoratore != undefined && employees.lastIndexOf(idLavoratore) != -1)
 			globals.lookupFoundset(idLavoratore,forms[form].foundset);
 				
-		forms.giorn_header.preparaGiornaliera();
+		forms.giorn_header.preparaGiornaliera(false, null, false, true);
 		
 		globals.verificaDipendentiFiltrati(idLavoratore);
 		
@@ -2308,7 +2309,7 @@ function FiltraLavoratoriGiornaliera(_fs)
 {
 	if(globals.objGiornParams[forms.svy_nav_fr_openTabs.vTabNames[forms.svy_nav_fr_openTabs.vSelectedTab]].filtro_anag)
 	{
-		var response = globals.ma_utl_showYesNoQuestion('Sono presenti dei filtri attivi. Rimuoverli prima di proseguire?','Predisposizione invio');
+		var response = globals.ma_utl_showYesNoQuestion('Sono presenti dei filtri attivi. Rimuoverli prima di proseguire?','Filtro giornaliera attivo');
 		if(response)
 		{
 			globals.disattivaFiltri(new JSEvent);
@@ -5455,8 +5456,8 @@ function stampaOreSettimane(event,vIdDitta)
 {
 	var anno = globals.getAnno();
 	var mese = globals.getMese();
-	var primaSettimanaPeriodo = globals.getWeekNumber(new Date(anno,mese - 1,1));
-	var ultimaSettimanaPeriodo = globals.getWeekNumber(new Date(anno,mese - 1,globals.getTotGiorniMese(mese,anno)));
+	var primaSettimanaPeriodo = globals.getWeekNumber(new Date(anno,mese - 1,1))['week'];
+	var ultimaSettimanaPeriodo = globals.getWeekNumber(new Date(anno,mese - 1,globals.getTotGiorniMese(mese,anno)))['week'];
 	
 	try
 	{		
@@ -6203,7 +6204,8 @@ function ottieniDataSetAnomalie(idDip,dal,al)
 	/** @type {String} */
 	var _anoQuery = "SELECT * FROM [E2Giornaliera] WHERE "
 	var _anoWhereEU = "IdDip = ? AND Giorno BETWEEN ? AND ? \
-	                   AND Anomalie NOT IN (0,1,2,16,32,64,128,512) AND TipoDiRecord = 'N'";  
+	                   AND Anomalie NOT IN (0,1,2,16,32,64,128,512) AND TipoDiRecord = 'N' \
+	                   ORDER BY Giorno ASC";  
 	var _parArrAno = [];
 	
 	_anoQuery += _anoWhereEU;
@@ -6312,6 +6314,7 @@ function ottieniArrayDipConAnomalie(idDitta,dal,al,arrDipFiltrati)
  */
 function ottieniArrayDipConSquadrature(idDitta,dal,al,opzioniSquadrature,arrEvFiltro,arrDipFiltrati)
 {
+	var isDittaEsterna = globals.isEsterna(idDitta);
 	var dsSqDitta = null;
 	
 	/** @type {JSFoundSet<db:/ma_anagrafiche/lavoratori>}*/
@@ -6326,10 +6329,13 @@ function ottieniArrayDipConSquadrature(idDitta,dal,al,opzioniSquadrature,arrEvFi
 		var arrLav = globals.foundsetToArray(fsLav,'idlavoratore');
 	
 		// insieme unione tra i dipendenti squadrati rispetto all'orario e quelli con l'evento ? in giornaliera
-	 	var _sqDittaQuery = 'SELECT L.idLavoratore,P.Nominativo FROM Lavoratori L \
-	                         INNER JOIN Persone P ON L.CodiceFiscale = P.CodiceFiscale \
-	                         WHERE idLavoratore IN (' + arrLav.join(',') + ')\
-							 AND idLavoratore IN ';
+	 	var _sqDittaQuery = 'SELECT L.idLavoratore, \
+	 	                     P.Nominativo FROM Lavoratori L \
+	                         INNER JOIN '
+	 		isDittaEsterna ? _sqDittaQuery += ' Lavoratori_PersoneEsterne P ON L.idLavoratore = P.idLavoratore' : _sqDittaQuery += ' Persone P ON L.CodiceFiscale = P.CodiceFiscale ';
+	        
+	 		_sqDittaQuery += ' WHERE L.idLavoratore IN (' + arrLav.join(',') + ') AND L.idLavoratore IN ';
+	 		
 		var _sqDittaArr;
 		
 		switch(opzioniSquadrature)
@@ -9099,8 +9105,8 @@ function inizializzaGiornProgFasceNonCompilate(arrLav,periodo,arrGiorni)
 		{
 			var currGiorno = new Date(anno, mese - 1, arrGiorni[g]);
 			var regolaGiorno = globals.getRegolaLavoratoreGiorno(arrLav[l],currGiorno);
-			if(regolaGiorno && regolaGiorno.ammettedistribuzione)
-				continue;
+			if(regolaGiorno && !regolaGiorno.ammettedistribuzione)
+			   break;
 			
 			var currEvGiornNormale = getRecGiornaliera(arrLav[l],currGiorno,globals.TipoGiornaliera.NORMALE);
 			var currEvGiornBudget = getRecGiornaliera(arrLav[l],currGiorno,globals.TipoGiornaliera.BUDGET);
@@ -9423,7 +9429,7 @@ function disegnaVisualizzazioneCoperturaTurni(dSCop, frmName, frmContName, dal, 
 		// per ogni giorno richiesto costruiamo il relativo campo
 		for (var i = 1; i <= numGiorni; i++) 
 		{
-			_nuovoGiorno.setDate(dal.getDate() + (i - 1));
+			_nuovoGiorno = new Date(dal.getFullYear(), dal.getMonth(),dal.getDate() + (i - 1));
 			
 			// per gestione codici evento con differenziazione normale/budget/richieste in sospeso
 			var calcDescTurnoName = 'calc_to_desc_turno_' + globals.dateFormat(_nuovoGiorno,globals.ISO_DATEFORMAT);
@@ -9802,7 +9808,7 @@ function disegnaVisualizzazioneCoperturaCalendario(dSCop, idDitta, numGiorni, nu
 		// per ogni giorno richiesto costruiamo il relativo campo
 		for (var g = 1; g <= numGiorni; g++) 
 		{
-			_nuovoGiorno.setDate(dal.getDate() + (g - 1));
+			_nuovoGiorno = new Date(dal.getFullYear(), dal.getMonth(), dal.getDate() + (g - 1));
 			
 			//TODO periodicità = 7 in questo caso...
             if(g > offset && currBlocco == 1)

@@ -69,7 +69,6 @@ function onRenderGiorn(event)
    {   
 	   recRen.bgcolor = '#767676';
 	   recRen.fgcolor = '#333333';
-//	   recRen.enabled = false;
 	   return;
    }
    else
@@ -1277,7 +1276,7 @@ function eliminazioneEvento(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _e
 										, true);
 								else
 								{
-									forms.giorn_header.preparaGiornaliera(false);
+									forms.giorn_header.preparaGiornaliera();
 									globals.verificaDipendentiFiltrati(globals.getIdLavoratoreDaIdGiornaliera(_rec.idgiornaliera));
 								}
 							} else
@@ -1301,7 +1300,7 @@ function eliminazioneEvento(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _e
 	} catch (ex) {
 		globals.ma_utl_showWarningDialog(ex.message, "Eliminazione evento");
 	} finally {
-
+		plugins.busy.unblock();
 	}
 }
 
@@ -1545,13 +1544,16 @@ function onFieldSelection(event)
 	{
 		if(_timeStamp - _lastClickTimeStamp < globals.intervalForDblClk)
 			modificaEvento(event);
-		
-		forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
+		if(forms && forms.giorn_vista_mensile)
+		   forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
 	}
 	else
 	{
-		forms.giorn_vista_mensile.last_selected_recordindex = _recordIndex;
-		forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
+		if(forms && forms.giorn_vista_mensile)
+		{	
+			forms.giorn_vista_mensile.last_selected_recordindex = _recordIndex;
+			forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
+		}
 	}
 }
 
