@@ -3500,13 +3500,12 @@ function rendiGiorniRiconteggiabiliWS(employeesIds, giorniSelezionati, idDitta,p
 		userid              :   security.getUserName(), 
 		clientid            :   security.getClientID(),
 		server              :   globals.server_db_name,
-		databasecliente     :   globals.customer_dbserver_name,
 		idditta				:	idDitta,
 		periodo				:	periodo,
 		giorniselezionati	:	giorniSelezionati,
 		iddipendenti		:	employeesIds,
 		tipoconnessione     :   globals.TipoConnessione.CLIENTE,
-		databasecliente     :   databaseCliente
+		databasecliente     :   databaseCliente ? databaseCliente : globals.customer_dbserver_name
 	};
 	
     var response = globals.getWebServiceResponseWS(url,params,databaseCliente);
