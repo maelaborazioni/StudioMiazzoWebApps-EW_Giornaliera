@@ -8,20 +8,19 @@ function confermaModificaEvento(event)
 {
 	if(event.getElementName() != 'btn_mod_conferma')
 	{
-	    var response = controllaInformativiStatistici();
+	    var response = controllaInformativiStatistici(_idDipendente,_periodo,_arrGiorni);
 		if(!gestioneInformativiStatistici(response))			
 		   return;
 	}
 	
 	canClose = true;
 	
-	var arrGgSel = globals.getGiorniSelezionatiEv();
 	var arrGiorniSel = [];
-	var anno = globals.getAnno();
-	var mese = globals.getMese();
+	var anno = globals.getAnnoDaPeriodo(_periodo);
+	var mese = globals.getMeseDaPeriodo(_periodo);
 	
-	for(var g = 0; g < arrGgSel.length; g++)
-		arrGiorniSel.push(new Date(anno,mese - 1,arrGgSel[g]));
+	for(var g = 0; g < _arrGiorni.length; g++)
+		arrGiorniSel.push(new Date(anno,mese - 1,_arrGiorni[g]));
 		
 	var params = {
         processFunction: process_modifica_evento,
@@ -65,11 +64,11 @@ function process_modifica_evento(event,idLav,giorni)
 			return;
 		}
 		
-		var idLavoratore = idLav ? idLav : forms.giorn_header.idlavoratore;
+		var idLavoratore = idLav ? idLav : _idDipendente;
 		var idDitta = globals.getDitta(idLavoratore);
 		var anno = giorni? giorni[0].getFullYear() : globals.getAnno(); 
 		var mese = giorni ? giorni[0].getMonth() + 1 : globals.getMese();
-		var giorniSelezionati = giorni ? globals.getGiorniSelezionatiFromDates(giorni) : (_isInModifica ? [forms[event.getFormName()].foundset.getSelectedIndex() - globals.offsetGg] : globals.getGiorniSelezionatiEv()); 
+		var giorniSelezionati = giorni ? globals.getGiorniSelezionatiFromDates(giorni) : _arrGiorni; 
 		
 		for(var g = 0; g < giorniSelezionati.length; g++)
 		{
@@ -171,7 +170,7 @@ function process_modifica_evento(event,idLav,giorni)
 			   forms.giorn_vista_mensile_pannello.preparaGiornaliera(idLav,anno,mese,globals.TipoGiornaliera.NORMALE,null,true,true);
 			else
 			{
-			   forms.giorn_header.preparaGiornaliera();
+			   forms.giorn_header.preparaGiornaliera(false,null,forms.svy_nav_fr_openTabs.vOpenTabs[forms.svy_nav_fr_openTabs.vSelectedTab] == 'LEAF_CartolinaDipendente',true);
 			   globals.verificaDipendentiFiltrati(forms.giorn_header.idlavoratore);
 			}
 			
