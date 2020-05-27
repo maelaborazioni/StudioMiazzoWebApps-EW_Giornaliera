@@ -335,16 +335,15 @@ function aggiungiEvento(_event)
 {
 	var _frm = forms.giorn_modifica_eventi_dtl;
 	    _frm._isInModifica = false;
-	var _idGiornaliera = forms[_event.getFormName()].foundset['idgiornaliera'];//forms['giorn_list_temp'].foundset['idgiornaliera'];
-	    _frm._idGiornaliera= _idGiornaliera;
-		
-	var _totOre = globals.getTotOreGiornata(_idGiornaliera);
+    _frm._idGiornaliera= _event.data.idgiornaliera;
+	var _totOre = globals.getTotOreGiornata(_event.data.idgiornaliera);
 	//var _totOreTeorico = parseFloat(forms['giorn_list_temp'].foundset['orarioprevisto'])*100;
-    var _totOreTeorico = globals.ottieniOreTeoricheGiorno(forms[_event.getFormName()].foundset['idlavoratore'],forms[_event.getFormName()].foundset.foundset['giorno']);
-	var _giorno = foundset.getSelectedIndex() - globals.offsetGg;
+    var _totOreTeorico = globals.ottieniOreTeoricheGiorno(_event.data.iddipendente,_event.data.giorno);
 	    
     //inizializza valori nuovo evento
-	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','',null,_giorno);
+	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','',null,_event.data.giorno,
+		                         _event.data.iddipendente,_event.data.giorniselezionati,_event.data.periodo,
+								 _event.data.tipogiornaliera,_event.data.idgiornaliera,null);
 	//setta il valore delle ore lavorate
 	_frm._totOre = _totOre;
 	//setta il valore delle ore lavorabili teoriche
@@ -443,11 +442,18 @@ function modificaEvento(_event)
 	var _idGiornalieraEventi = foundset[_event.getElementName()];
 	var _frm = forms.giorn_modifica_eventi_dtl;
 	    _frm._isInModifica = true;
-	var _idGiornaliera = forms[_event.getFormName()].foundset['idgiornaliera'];
+	var _idGiornaliera = _event.data.idgiornaliera;
 	    _frm.idgiornaliera = _idGiornaliera;
-	var _totOre = _idGiornaliera ? globals.getTotOreGiornata(_idGiornaliera) : 0;
-	var _totOreTeorico = parseFloat(forms[_event.getFormName()].foundset['orarioprevisto'])*100;
-	var _giorno = foundset.getSelectedIndex() - globals.offsetGg;
+	_frm._idGiornaliera= _event.data.idgiornaliera;
+	var _totOre = globals.getTotOreGiornata(_event.data.idgiornaliera);
+	var _totOreTeorico = globals.ottieniOreTeoricheGiorno(_event.data.iddipendente,_event.data.giorno);
+	    
+    //inizializza valori nuovo evento
+	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','',null,_event.data.giorno,
+		                         _event.data.iddipendente,_event.data.giorniselezionati,_event.data.periodo,
+								 _event.data.tipogiornaliera,_event.data.idgiornaliera,_event.data.idgiornalieraevento);
+
+	    
 	var _fs = _frm.foundset;
 	var _rows = -1;
 	
@@ -511,7 +517,13 @@ function modificaEvento(_event)
 											  ,_fs.e2giornalieraeventi_to_e2eventi.evento
 											  ,_fs.codiceproprieta ? _fs.codiceproprieta : ''
 											  ,_fs.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassiproprieta.ideventoclasseproprieta
-											  ,null);
+											  ,_event.data.giorno
+											  ,_event.data.iddipendente
+											  ,_event.data.giorniselezionati
+											  ,_event.data.periodo
+											  ,_event.data.tipogiornaliera
+											  ,_event.data.idgiornaliera
+											  ,_idGiornalieraEventi);
 		    	 //setta il valore delle ore lavorate
 		    	 _frm._totOre = _totOre;
 		    	 //setta il valore delle ore lavorabili teoriche
@@ -530,7 +542,14 @@ function modificaEvento(_event)
 	    else
 	    {		
 	    	//inizializza i valori dell'evento
-	    	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','', _giorno);
+	    	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'',''
+	    		  ,_event.data.giorno
+				  ,_event.data.iddipendente
+				  ,_event.data.giorniselezionati
+				  ,_event.data.periodo
+				  ,_event.data.tipogiornaliera
+				  ,_event.data.idgiornaliera
+				  ,null);
 	    	//setta il valore delle ore lavorate
 	        _frm._totOre = _totOre;
 	    	//setta il valore delle ore lavorabili teoriche
@@ -752,6 +771,15 @@ function apriPopupVistaMensile(_event)
 	var _source = _event.getSource();
 	var _popUpMenu = plugins.window.createPopupMenu();
 	
+	_event.data = { 
+		iddipendente : _rec['idlavoratore'],
+		giorno : _rec['giorno'],
+		periodo : _rec['giorno'].getFullYear() * 100 + _rec['giorno'].getMonth() + 1,
+		giorniselezionati : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg],
+		idgiornaliera : _rec['idgiornaliera'],
+		tipogiornaliera : forms.giorn_vista_mensile._tipoGiornaliera
+	}
+		
 	// Copincolla giornata
 	var copiaGiornataMenu = _popUpMenu.addMenuItem('Copia giornata', copiaGiornata);
 		copiaGiornataMenu.methodArguments = [foundset.getSelectedIndex() - globals.offsetGg];
@@ -1235,7 +1263,7 @@ function eliminazioneEvento(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _e
 
 		//recupero l'id dell'evento in giornaliera selezionato
 		var _idGiornalieraEventi = foundset[_event.getElementName()];
-		var _arrGiorni = globals.getGiorniSelezionatiEv();
+		var _arrGiorni = _event.data.giorniselezionati || globals.getGiorniSelezionatiEv();
 		var msg;
 
 		if (_idGiornalieraEventi) {
@@ -1538,7 +1566,19 @@ function onFieldSelection(event)
 	if(_recordIndex == _lastSelectedRecordIndex)
 	{
 		if(_timeStamp - _lastClickTimeStamp < globals.intervalForDblClk)
+		{
+			var _rec = forms[event.getFormName()].foundset.getSelectedRecord();
+			event.data = { 
+				iddipendente : _rec['idlavoratore'],
+				giorno : _rec['giorno'],
+				periodo : _rec['giorno'].getFullYear() * 100 + _rec['giorno'].getMonth() + 1,
+				giorniselezionati : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg],
+				idgiornaliera : _rec['idgiornaliera'],
+				tipogiornaliera : forms.giorn_vista_mensile._tipoGiornaliera
+			}
 			modificaEvento(event);
+		}
+		
 		if(forms && forms.giorn_vista_mensile)
 		   forms.giorn_vista_mensile.last_click_timestamp = _timeStamp;
 	}
