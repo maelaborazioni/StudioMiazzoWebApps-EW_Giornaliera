@@ -110,11 +110,11 @@ var _oldOre = -1;
 var _oldImporto = -1;
 
 /**
- * @type {Number}
+ * @type {Date}
  *
- * @properties={typeid:35,uuid:"0F5929FE-FCDE-4970-B770-F334B6092A3D",variableType:4}
+ * @properties={typeid:35,uuid:"0F5929FE-FCDE-4970-B770-F334B6092A3D",variableType:93}
  */
-var _giornoEvento = 0;
+var _giornoEvento = null;
 
 /**
  * @type {Number}
@@ -137,13 +137,36 @@ var vCopiaSucc = 0;
 var vPortaInBudget = 0;
 
 /**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"D59176E8-693F-4563-ACBB-ED4E31C809C8",variableType:4}
+ */
+var _idDipendente = -1;
+/**
+ * @type {Array<Number>}
+ * 
+ *
+ * @properties={typeid:35,uuid:"70C26E4F-BC57-4F92-BFC5-840BBA55A775",variableType:-4}
+ */
+var _arrGiorni = null;
+/**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"D9040569-5802-4D90-88C8-E2EF4849EAEC",variableType:4}
+ */
+var _periodo = -1;
+/**
+ * @type {String}
+ *
+ * @properties={typeid:35,uuid:"4BAFB859-37A3-4FF3-88E0-ED1B5CB661DB"}
+ */
+var _tipoGiornaliera = null;
+/**
  * @type {Object}
  *
  * @properties={typeid:35,uuid:"613FEAF0-7E99-4F0E-915E-9BBAB25711F8",variableType:-4}
  */
 var _ftrEvParams = null;
-
-
 /**
  * @type {Array}
  *
@@ -178,7 +201,12 @@ var _isInModifica = false
  * @properties={typeid:35,uuid:"40BF20AA-7757-41F9-BC3C-7D2735895E69",variableType:4}
  */
 var _idGiornaliera = -1
-
+/**
+ * @type {Number}
+ *
+ * @properties={typeid:35,uuid:"26A597E4-3901-4B9E-87EC-5187C14ADC5A",variableType:4}
+ */
+var _idGiornalieraEvento = -1;
 /**
  * @type {String}
  *
@@ -186,12 +214,6 @@ var _idGiornaliera = -1
  */
 var _segnalazioniOreInserite = '';
 
-/**
- * @type {String}
- *
- * @properties={typeid:35,uuid:"8950946F-C7A4-47AD-B1E6-94CAEC616309"}
- */
-var tipo_giornaliera = null;
 
 /**
  * @param {Number} idEvento
@@ -206,11 +228,18 @@ var tipo_giornaliera = null;
  * @param {String} oldCodEvento
  * @param {String} oldCodProp
  * @param {Number} idPropCl
- * @param {Number} [giornoEvento]
- *
+ * @param {Date} giornoEvento
+ * @param {Number} idLavoratore
+ * @param {Array<Number>} arrGiorniSelezionati
+ * @param {Number} periodo
+ * @param {String} tipoGiornaliera
+ * @param {Number} idGiornaliera
+ * @param {Number} idGiornalieraEvento
+ * 
  * @properties={typeid:24,uuid:"DEE5061F-FA05-49A9-A088-691885FA2933"}
  */
-function inizializzaValoriEvento(idEvento,idEventoClasse,codEvento,descEvento,codProp,descProp,hh,importo,oldIdEvento,oldCodEvento,oldCodProp,idPropCl,giornoEvento){
+function inizializzaValoriEvento(idEvento,idEventoClasse,codEvento,descEvento,codProp,descProp,hh,importo,oldIdEvento,oldCodEvento,oldCodProp,idPropCl,
+	                             giornoEvento,idLavoratore,arrGiorniSelezionati,periodo,tipoGiornaliera,idGiornaliera,idGiornalieraEvento){
 	
 	_idevento = idEvento;
 	_ideventoclasse = idEventoClasse;
@@ -226,6 +255,12 @@ function inizializzaValoriEvento(idEvento,idEventoClasse,codEvento,descEvento,co
 	_oldCodProp = oldCodProp;
 	_giornoEvento = giornoEvento;
 	_ore != null ? vCoperturaOrarioTeorico = 0 : vCoperturaOrarioTeorico = 1;
+	_idDipendente = idLavoratore;
+	_arrGiorni = arrGiorniSelezionati;
+	_periodo = periodo;
+	_tipoGiornaliera = tipoGiornaliera;
+	_idGiornaliera = _idGiornaliera;
+	_idGiornalieraEvento = idGiornalieraEvento;
 }
 
 /**
@@ -239,10 +274,10 @@ function getParametriEvento()
 		_codprop = '';
 	
 	return globals.inizializzaParametriEvento(
-			 	 forms.giorn_header.idditta
-				,globals.getPeriodo()
+			 	 globals.getDitta(_idDipendente)
+				,_periodo
 				,[]
-				,forms.giorn_operazionemultipla_aggiungievento.vPortaInBudget == 1 ? globals.TipoGiornaliera.BUDGET : forms.giorn_vista_mensile._tipoGiornaliera //,globals.TipoGiornaliera.NORMALE
+				,_tipoGiornaliera
 				,globals._tipoConnessione
 				,[]
 				,_idevento
@@ -298,7 +333,10 @@ function AggiornaSelezioneEvento(_rec,_event){
 	_idevento = _rec['idevento'];
 	_ideventoclasse = _rec['ideventoclasse'];
 	
-	var response = controllaInformativiStatistici();
+	
+	var response = controllaInformativiStatistici(_idDipendente,
+		                                          _periodo,
+												  _arrGiorni);
 	
 	response = gestioneInformativiStatistici(response);
 	if(!response)
@@ -306,7 +344,7 @@ function AggiornaSelezioneEvento(_rec,_event){
 	
 	if (globals.needsCertificate(_ideventoclasse)) 
     {
-    	globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
+    	globals.showStorico(_ideventoclasse, _giornoEvento.getDate(), _idDipendente, globals.getDitta(_idDipendente));
     	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
 			
     	if(_event)
@@ -509,7 +547,8 @@ function onDataChangeEvento(oldValue, newValue, event) {
 	{
 		_foundset.idevento = globals._arrIdEvSelezionabili;
 		_foundset.evento = newValue;
-		if (forms.giorn_vista_mensile._tipoGiornaliera == globals.TipoGiornaliera.BUDGET)
+		
+		if (_tipoGiornaliera == globals.TipoGiornaliera.BUDGET)
 		{
 			_foundset.usainbudget = 1;
 			_foundset.e2eventi_to_e2eventiclassi.gestitoconstorico = 0;
@@ -530,7 +569,7 @@ function onDataChangeEvento(oldValue, newValue, event) {
 				
 				globals.svy_mod_closeForm(event);
 				// Open the form to handle the correct type of certificate
-				globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
+				globals.showStorico(_ideventoclasse, _giornoEvento.getDate(), _idDipendente, globals.getDitta(_idDipendente));
 
 			} 
 			else
@@ -625,7 +664,7 @@ function onDataChangeOre(oldValue, newValue, event)
 		_totOre = _totOre - oldValue * 100 + newValue * 100;
 	
 	// controllo informativi statistici per i casi con controllo su ore
-    var response = controllaInformativiStatistici();
+    var response = controllaInformativiStatistici(_idDipendente, _periodo, _arrGiorni);
 	
 	gestioneInformativiStatistici(response);
 	
@@ -657,7 +696,11 @@ function isValid(value)
  */
 function FiltraProprietaSelezionabili(idEvento,idLav,periodo,gg,tipoGiorn)
 {	
-	var response = globals.getProprietaSelezionabili(idEvento,idLav,periodo,gg,tipoGiorn);
+	var response = globals.getProprietaSelezionabili(idEvento,
+		idLav || _idDipendente,
+		periodo || _periodo,
+		gg || _giornoEvento.getDate(),
+		tipoGiorn || _tipoGiornaliera);
 
 	if(response && response.StatusCode == globals.HTTPStatusCode.OK)
 	{
@@ -725,9 +768,9 @@ function verificaOrarioTeorico()
 /**
  * Gestisce la presenza di messaggi per eventi informativi e statistici
  * 
- * @param {Number} [idLav]
- * @param {Number} [periodo]
- * @param {Array<Number>} [giorni]
+ * @param {Number} idLav
+ * @param {Number} periodo
+ * @param {Array<Number>} giorni
  * 
  * @return {{ ReturnValue: Boolean, Message: String }}
  * 
@@ -739,17 +782,16 @@ function controllaInformativiStatistici(idLav,periodo,giorni)
 // TODO caso evento multiplo	
 //	var giorniSelezionati = giorni ? giorni : globals.getGiorniSelezionatiEv();
 //	var url = giorniSelezionati.length == 1 ? globals.WS_URL + '/Eventi/ControllaInformativi' : globals.WS_URL + '/Eventi/ControllaInformativiMultiplo';
-	var giorniSelezionati = giorni ? giorni : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg];
-    var url = globals.WS_EVENT + '/Event32/ControllaInformativi';
+	var url = globals.WS_EVENT + '/Event32/ControllaInformativi';
 	var params = {
 		userid              :   security.getUserName(), 
 		clientid            :   security.getClientID(),
 		server              :   globals.server_db_name,
 		databasecliente     :   globals.customer_dbserver_name,
-		periodo : periodo ? periodo : globals.getPeriodo(),
-		giorniselezionati: giorniSelezionati,
-		iddipendenti: idLav ? [idLav] : [forms.giorn_header.idlavoratore],
-		idditta: idLav ? globals.getDitta(idLav) : globals.getDitta(forms.giorn_header.idlavoratore),
+		periodo : periodo,
+		giorniselezionati: giorni,
+		iddipendenti: [idLav],
+		idditta: globals.getDitta(idLav),
 		idevento: _idevento,
 		ore: _ore != null ? _ore * 100 : 0, 
 		codproprieta: '',
@@ -884,10 +926,8 @@ function onShowForm(_firstShow, _event)
 {
 	plugins.busy.prepare();
 	
-	if(globals._arrIdEvSelezionabili == null)
-	   globals.FiltraEventiSelezionabili(forms.giorn_header.idlavoratore,
-		                                 globals.getAnno() * 100 + globals.getMese(),
-										 tipo_giornaliera || forms.giorn_vista_mensile._tipoGiornaliera);
+	if(globals._arrIdEvSelezionabili == null || globals._arrIdEvSelezionabili == [])
+	   globals.FiltraEventiSelezionabili(_idDipendente,_periodo,_tipoGiornaliera);
 		
 	// se in modifica di un evento esistente la copertura dev'essere sflaggata 
 	if(_isInModifica)
