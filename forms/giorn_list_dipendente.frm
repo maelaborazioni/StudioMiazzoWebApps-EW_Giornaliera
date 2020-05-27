@@ -17,7 +17,7 @@ parameters:null\
 extendsID:"BF120247-B8A0-4EB9-BA63-E4A49D24D230",
 location:"327,0",
 onActionMethodID:"-1",
-onRightClickMethodID:"-1",
+onRightClickMethodID:"1D0A6E79-E4C6-40A7-87BE-201574768832",
 size:"90,15",
 typeid:4,
 uuid:"1C052377-E17F-4259-98BE-0CAB3D58DCFB"
@@ -37,7 +37,7 @@ parameters:null\
 extendsID:"2A55A35B-04FB-408F-B0F3-6EA33F744029",
 location:"509,0",
 onActionMethodID:"-1",
-onRightClickMethodID:"-1",
+onRightClickMethodID:"1D0A6E79-E4C6-40A7-87BE-201574768832",
 size:"90,15",
 typeid:4,
 uuid:"22692862-E04D-4517-8C4E-3324126F779C"
@@ -57,7 +57,7 @@ parameters:null\
 extendsID:"EAF3C736-5F63-43BA-9DDB-41EAAAC63F84",
 location:"414,0",
 onActionMethodID:"-1",
-onRightClickMethodID:"-1",
+onRightClickMethodID:"1D0A6E79-E4C6-40A7-87BE-201574768832",
 size:"90,15",
 typeid:4,
 uuid:"6C0F8BDE-75FE-4A57-81B8-C4A41C982FF4"
@@ -77,7 +77,7 @@ parameters:null\
 extendsID:"807D721A-1C1D-488D-B97C-45455A7A64B2",
 location:"60,0",
 onActionMethodID:"-1",
-onRightClickMethodID:"-1",
+onRightClickMethodID:"1D0A6E79-E4C6-40A7-87BE-201574768832",
 size:"90,15",
 typeid:4,
 uuid:"6C71595B-E9E4-4AC6-B8E4-36958A42816D"
@@ -97,7 +97,7 @@ parameters:null\
 extendsID:"3CCBA774-8EA1-4DE5-8D78-2B18C883E011",
 location:"150,0",
 onActionMethodID:"-1",
-onRightClickMethodID:"-1",
+onRightClickMethodID:"1D0A6E79-E4C6-40A7-87BE-201574768832",
 size:"90,15",
 typeid:4,
 uuid:"89E78644-B024-4ECF-B79C-1463A699046D"
@@ -129,7 +129,7 @@ parameters:null\
 extendsID:"8605A7C2-DC5F-4034-9F94-9CC0A057A8C4",
 location:"238,0",
 onActionMethodID:"-1",
-onRightClickMethodID:"-1",
+onRightClickMethodID:"1D0A6E79-E4C6-40A7-87BE-201574768832",
 size:"90,15",
 typeid:4,
 uuid:"F49C5064-DAD7-44EB-860F-1523AFC3E255"
