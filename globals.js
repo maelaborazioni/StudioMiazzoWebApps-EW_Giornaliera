@@ -789,7 +789,7 @@ function importaDaFtp(params)
 	
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
-	var ftpUrl = WS_LU + "/Lu32/ImportaDaFtpAsync";
+	var ftpUrl = WS_LU + "/CalendarLu32/ImportCalendarAsync";
 	addJsonWebServiceJob(ftpUrl,
 		                 params,
 						 vUpdateOperationStatusFunction);
@@ -815,7 +815,7 @@ function scaricaTimbratureDaFtp(params,doCallback)
 	}
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
-	var ftpUrl = WS_CALENDAR + "/Stamping32/ScaricaTimbratureDaFtpAsync";
+	var ftpUrl = WS_CALENDAR + "/Stamping32/ImportAsync";
 	if(doCallback)
 	{
 	   apriGestioneAnomalie();	
@@ -836,7 +836,7 @@ function scaricaTimbratureDaFtp(params,doCallback)
  */
 function verificaPresenzaFileTimbrature(params)
 {
-	var ftpUrl = WS_LU + "/Ftp32/VerificaPresenzaFileTimbrature";
+	var ftpUrl = WS_LU + "/Ftp32/VerifyStampingData";
 	var response = getWebServiceResponse(ftpUrl,params);
 	
 	if(response)
@@ -1001,7 +1001,7 @@ function inviaGiornalieraSuFtp(params)
 	}
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
-	var ftpUrl = WS_LU + "/Lu32/InviaGiornalieraSuFtpAsync";
+	var ftpUrl = WS_LU + "/CalendarLu32/SendCalendarAsync";
 	addJsonWebServiceJob(ftpUrl,params);
 	
 }
@@ -1027,7 +1027,7 @@ function chiusuraMese(params)
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
 	
-	var url = WS_CALENDAR + "/Consolidating32/ChiusuraMeseAsync";
+	var url = WS_CALENDAR + "/Consolidating32/ConsolidateAsync";
 	addJsonWebServiceJob(url,params);	
 }
 
@@ -1068,7 +1068,7 @@ function chiusuraEdInvio(params)
 		// settaggio del parametro 'iddipendenti' per l'operazione di chiusura del mese
 		params.iddipendenti = arrIdDipDaChiudere;
 		
-		var url = WS_CALENDAR + "/Consolidating32/ChiusuraMeseAsync";
+		var url = WS_CALENDAR + "/Consolidating32/ConsolidateAsync";
 		addJsonWebServiceJob(url,
 					         params,
 							 vUpdateOperationStatusFunction,
@@ -1448,7 +1448,7 @@ function setPeriodo(periodo)
  */
 function eliminaEvento(_evParams)
 {
-	var url = WS_EVENT + "/Event32/EliminaEvento";	
+	var url = WS_EVENT + "/Event32/Delete";	
 	var response = getWebServiceResponse(url,_evParams);
 	return response;
 }
@@ -2720,7 +2720,7 @@ function compilaDalAlSingolo(employeesId, arrayGiorni, askYesNo, periodo)
 	             );
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_CALENDAR + "/Calendar32/CompilaDalAlSingolo";
+	var url = WS_CALENDAR + "/Calendar32/CompileSingleSync";
 	
 	var msg = "Procedere con la compilazione?";
 	var answer =  askYesNo ? globals.ma_utl_showYesNoQuestion(msg,'Compilazione giorni') : true;
@@ -2771,7 +2771,7 @@ function compilaDalAlSingoloSync(employeesId, arrayGiorni, periodo)
 	             );
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_CALENDAR + "/Calendar32/CompilaDalAlSingolo";
+	var url = WS_CALENDAR + "/Calendar32/CompileSingleSync";
 	
 	var response = globals.getWebServiceResponse(url, params);
 	if (!response.ReturnValue)
@@ -2788,7 +2788,7 @@ function process_conteggia_singolo_dip(url,params)
 {		
 	try
 	{
-		var response = globals.getWebServiceResponse(url + 'Singolo', params);
+		var response = globals.getWebServiceResponse(url + 'Single', params);
 		if (!response.ReturnValue)
 			globals.ma_utl_showErrorDialog('Si è verificato un errore durante il conteggio, riprovare', 'Conteggia timbrature giorni');
 		else
@@ -2929,10 +2929,10 @@ function process_compila_singolo_dip_da_commesse(idLavoratore,anno,mese,arrayGio
 															 );
 	
 			//lanciamo il calcolo per la compilazione
-			var url = WS_CALENDAR + "/Calendar32/CompilaDalAl"
+			var url = WS_CALENDAR + "/Calendar32/CompileSingleSync";
 			
 			// operazione di compilazione iniziale
-			globals.getWebServiceResponse(url + 'Singolo', params);
+			globals.getWebServiceResponse(url, params);
 	
 			if(oreComm == null)
 				oreComm = 0;
@@ -3034,7 +3034,7 @@ function compilaDalAl(employeesIds, arrayGiorni, soloNonConteggiati, idDitta, pe
 	params.operationhash = operation.operationHash;
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_CALENDAR + "/Calendar32/CompilaDalAlAsync";
+	var url = WS_CALENDAR + "/Calendar32/CompileAsync";
 	
 	var msg = "Procedere con la compilazione?";
 	var answer = askYesNo ? globals.ma_utl_showYesNoQuestion(msg,'Compilazione giorni') : true;
@@ -3064,7 +3064,7 @@ function compilaDalAlSync(params, nonInteractive)
 	nonInteractive = nonInteractive == true;
 	
 	var result;
-	var url = WS_CALENDAR + "/Giornaliera/CompilaDalAlSync";
+	var url = WS_CALENDAR + "/Giornaliera/CompileSync";
 	
 	var answer = nonInteractive || globals.ma_utl_showYesNoQuestion('Procedere con la compilazione?', 'Compilazione giorni');
 	if (answer)
@@ -3117,7 +3117,7 @@ function salvaEventoMultiplo(employeesIds, arrayGiorni, unknown, argsEvento)
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
 	
-	var url = WS_EVENT + "/Event32/SalvaEventoAsync";
+	var url = WS_EVENT + "/Event32/SaveAsync";
 	
 	//teniamo traccia dei dipendenti che sono stati modificati e che risulteranno da chiudere
 	if(!scopes.giornaliera.cancellaChiusuraDipPerOperazione(employeesIds, forms.giorn_header.idditta))
@@ -3267,7 +3267,7 @@ function conteggiaTimbratureSingolo(employeesIds, arrayGiorni, soloNonConteggiat
 	             );
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_STAMPING + "/Stamping32/Conteggia";
+	var url = WS_STAMPING + "/Stamping32/Count";
 	
 	var msg =  "Procedere con il conteggio?";
 	var answer = askYesNo ? globals.ma_utl_showYesNoQuestion(msg ,'Conteggia timbrature') : true;
@@ -3320,7 +3320,7 @@ function conteggiaTimbratureSingoloDiretto(employeesIds, arrayGiorni, soloNonCon
 					    );
 
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_STAMPING + "/Stamping32/Conteggia";
+	var url = WS_STAMPING + "/Stamping32/Count";
 	
 	//teniamo traccia dei dipendenti che sono stati modificati e che risulteranno da chiudere
 	if(!scopes.giornaliera.cancellaChiusuraDipPerOperazione(employeesIds
@@ -3328,7 +3328,7 @@ function conteggiaTimbratureSingoloDiretto(employeesIds, arrayGiorni, soloNonCon
 							                                , periodo ? periodo : globals.getPeriodo()))
 							                                return false;
 	
-	var response = globals.getWebServiceResponse(url + 'Singolo', params);
+	var response = globals.getWebServiceResponse(url + 'Single', params);
 	return response;
 }
 
@@ -3357,7 +3357,7 @@ function conteggiaTimbratureSingoloDaMenu(employeesIds, arrayGiorni, soloNonCont
 	             );
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_STAMPING + "/Stamping32/Conteggia";
+	var url = WS_STAMPING + "/Stamping32/Count";
 	
 	var msg =  "Procedere con il conteggio?";
 	var answer = askYesNo ? globals.ma_utl_showYesNoQuestion(msg ,'Conteggia timbrature') : true;
@@ -3370,7 +3370,7 @@ function conteggiaTimbratureSingoloDaMenu(employeesIds, arrayGiorni, soloNonCont
 			                                         , periodo ? periodo : globals.getPeriodo()))
 			return false;
 		
-		return globals.getWebServiceResponse(url + 'Singolo', params).ReturnValue == true;
+		return globals.getWebServiceResponse(url + 'Single', params).ReturnValue == true;
 	}
 	else
 		return false;
@@ -3413,7 +3413,7 @@ function conteggiaTimbrature(employeesIds, arrayGiorni, soloNonConteggiati,idDit
 	params.operationhash = operation.operationHash;
 	
 	//lanciamo il calcolo per la compilazione 
-	var url = WS_STAMPING + "/Stamping32/ConteggiaAsync";
+	var url = WS_STAMPING + "/Stamping32/CountAsync";
 	
 	var msg =  "Procedere con il conteggio?";
 	var answer = askYesNo ? globals.ma_utl_showYesNoQuestion(msg ,'Conteggia timbrature') : true;
@@ -3462,7 +3462,7 @@ function conteggiaTimbrature(employeesIds, arrayGiorni, soloNonConteggiati,idDit
  */
 function rendiGiorniRiconteggiabili(employeesIds, giorniSelezionati, idDitta,periodo,tipoConn)
 {
-	var url = globals.WS_STAMPING + '/Stamping32/RendiGiorniRiconteggiabili';
+	var url = globals.WS_STAMPING + '/Stamping32/Recount';
 	var params =
 	{
 		userid              :   security.getUserName(), 
@@ -3571,7 +3571,7 @@ function controlliPreliminari(employeesIds, singoloDipendente, idDitta, anno, me
     params.tipogiornaliera = globals.TipoGiornaliera.NORMALE;
     _paramsPostControlli = params;
 
-    var url = WS_CALENDAR + "/Control32/ControlliPreliminariAsync";
+    var url = WS_CALENDAR + "/Control32/PreliminaryControlAsync";
     //singoloDipendente ? url += "Sync" : url += "Async";
     
     // nel caso cliente va verificato che il flusso sia completo quindi che abbia
@@ -3757,7 +3757,7 @@ function showCambiaEvento(idDitta, periodo, dallaData, allaData, idEvento, propE
  */
 function controlloFestivita(params, openProg, progParams, primoIngresso) {
 	
-	var url = WS_CALENDAR + "/Holiday32/ElencoFestivita";
+	var url = WS_CALENDAR + "/Holiday32/List";
 
 	var response = getWebServiceResponse(url, params);
 	if (response && response.StatusCode === HTTPStatusCode.OK)
@@ -4004,7 +4004,7 @@ function attivaMese(params, openProg, progParams, primoIngresso)
  */
 function copiaRigaInGiornaliera(params)
 {
-	var url = WS_EVENT + '/Event32/CopiaGiornata';	
+	var url = WS_EVENT + '/Event32/CopyPasteDay';	
 	return getWebServiceResponse(url, params);
 }
 
@@ -5337,7 +5337,7 @@ function importaTracciatoDaFileEsterno(idDitta,periodo,idGruppoInst)
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
 	
-	var url = globals.WS_CALENDAR + "/Track32/ImportaTracciatoEsternoAsync";
+	var url = globals.WS_CALENDAR + "/Track32/ExternalTrackImportAsync";
 
 	addJsonWebServiceJob(url,params,vUpdateOperationStatusFunction);
 }
@@ -7174,7 +7174,7 @@ function ottieniTimbratureGiorno(event,giorno)
 	{
 		var giorniSelezionati = globals.getGiorniSelezionatiTimbr();
 			giorniSelezionati = giorniSelezionati.length > 0 && giorniSelezionati || [giorno];
-		var url = globals.WS_STAMPING + '/Stamping32/Ripristina'
+		var url = globals.WS_STAMPING + '/Stamping32/Restore'
 		var params =
 		{
 			idditta				:	forms.giorn_header.idditta,
@@ -7210,7 +7210,7 @@ function ottieniTimbratureMancantiGiorno(event,idLavoratore,giorno)
 		includiManuali = true;
 		
 		var giorniSelezionati = [giorno.getDate()];
-		var url = globals.WS_STAMPING + '/Stamping32/Ripristina'
+		var url = globals.WS_STAMPING + '/Stamping32/Restore'
 		var params =
 		{
 			idditta				:	globals.getDitta(idLavoratore),
@@ -7568,23 +7568,16 @@ function preparaProgrammazioneTurni(_idDip, _anno, _mese, _tipoGiorn, _forceRedr
 	forms.giorn_prog_turni_fasce.setStatusNeutral();
 	
 	// impostiamo i parametri necessari
-	var params = globals.inizializzaParametriAttivaMese(globals.getDitta(_idDip),
-		                                                _anno * 100 + _mese,
-														globals.getGruppoInstallazioneDitta(globals.getDitta(_idDip)),
-														'',
-														globals._tipoConnessione,
-														_idDip
-														);
-	
+	var params = inizializzaParametriRegistrazione(globals.getDitta(_idDip),[_idDip],_anno * 100 + _mese, globals.getGruppoInstallazioneDitta(globals.getDitta(_idDip)));
 	// otteniamo la risposta contenente la stringa per la query
 	var objResponse = globals.getFiltroProgrammazioneTurni(params);
 	
 	// se abbiamo ottenuto una risposta con una stringa per la query non vuota
 	if (objResponse 
-			&& objResponse['ftrString']
-			&& objResponse['ftrString'] != '')
+			&& objResponse['ReturnValue']
+			&& objResponse['ReturnValue'] != '')
 	{
-		var dsProgTurni = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE, objResponse['ftrString'], [], -1);
+		var dsProgTurni = databaseManager.getDataSetByQuery(globals.Server.MA_PRESENZE, objResponse['ReturnValue'], [], -1);
 		var blocco = 0;
 		
 		// costruzione tabella programmazione in maniera da poterla esporre
@@ -8158,7 +8151,7 @@ function apriGestioneFileTimbrature()
  */
 function getFileTimbratureScartate(params)
 {
-	var url = globals.WS_STAMPING + "/Stamping32/GetFileTimbrature";
+	var url = globals.WS_STAMPING + "/Stamping32/GetFile";
 	var response = globals.getWebServiceResponse(url,params);
 	
 	return response;
@@ -8697,7 +8690,7 @@ function cambiaEventoAsync(idDitta,periodo,dipSel,dalGg,alGg,idEventoOld,idEvent
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
 
-	var url = globals.WS_EVENT + "/Event32/CambiaEvento";
+	var url = globals.WS_EVENT + "/Event32/ChangeAsync";
 	globals.addJsonWebServiceJob(url,
 		                         params,
 								 null,
@@ -8744,7 +8737,7 @@ function cambiaEventoSync(idDitta,periodo,dipSel,dalGg,alGg,idEventoOld,idEvento
 		tipoconnessione: tipoConnessione
 	}
 
-	var url = globals.WS_EVENT + "/Event32/CambiaEventoSync";
+	var url = globals.WS_EVENT + "/Event32/ChangeSync";
 	return globals.getWebServiceResponse(url,params);
 }
 
@@ -8925,7 +8918,7 @@ function generaTracciatoMensa(idDitta,periodo,idDittaMensa)
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
     
-	var url = WS_CALENDAR + "/Track32/GeneraTracciatoMensaAsync";
+	var url = WS_CALENDAR + "/Track32/GenerateCanteenTrackAsync";
 	addJsonWebServiceJob(url,
 		                 params,
 						 vUpdateOperationStatusFunction);
@@ -10184,4 +10177,51 @@ function getCategoriaParticolare(idLavoratore)
 	}
 	
 	return null;
+}
+
+/**
+ * Gestisce la presenza di messaggi per eventi informativi e statistici
+ * 
+ * @param {Number} idLav
+ * @param {Number} periodo
+ * @param {Array<Number>} giorni
+ * @param {Number} idEvento
+ * @param {Number} ore
+ * @param {String} codiceProprieta
+ * 
+ * @return  {{ ReturnValue: Boolean, Message: String }}
+ * 
+ * @properties={typeid:24,uuid:"00E45E6F-8741-4083-A0F6-26C10305CC17"}
+ */
+function controllaInformativiStatistici(idLav,periodo,giorni,idEvento,ore,codiceProprieta)
+{
+	// eventuale blocco informativi statistici
+    // TODO caso evento multiplo	
+    //	var giorniSelezionati = giorni ? giorni : globals.getGiorniSelezionatiEv();
+    //	var url = giorniSelezionati.length == 1 ? globals.WS_URL + '/Eventi/ControllaInformativi' : globals.WS_URL + '/Eventi/ControllaInformativiMultiplo';
+	var giorniSelezionati = giorni ? giorni : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg];
+    var url = WS_EVENT + '/Event32/ControlInformation';
+	var params = {
+		userid                  : security.getUserName(), 
+		clientid                : security.getClientID(),
+		server                  : globals.server_db_name,
+		databasecliente         : globals.customer_dbserver_name,
+		periodo : periodo,
+		giorniselezionati: giorniSelezionati,
+		iddipendenti: [idLav],
+		idditta: globals.getDitta(idLav),
+		idevento: idEvento,
+		ore: ore != null ? ore * 100 : 0, 
+		codproprieta: codiceProprieta,
+		tipoconnessione : globals._tipoConnessione
+	};
+
+	/**@type {{ StatusCode : Number, ReturnValue: Boolean, Message: String }} */
+	var _response = globals.getWebServiceResponse(url, params);
+	if (_response) 
+		return _response;
+	else {
+		globals.ma_utl_showErrorDialog('Controlla informativi non riuscito', 'Errore del server');
+		return null;
+	}
 }

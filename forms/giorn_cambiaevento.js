@@ -185,9 +185,33 @@ function confermaCambiaEvento(event)
 function process_cambia_evento(event)
 {
 	try
-	{
+	{		
+		/** @type { Array<Number> } */
 		var dipendentiSelezionati = forms[elements.dipendenti_tabless.getTabFormNameAt(1)].getSelectedElements();
-			
+		/** @type { Array<Number> } */
+		var giorniSelezionati = [];
+		
+		for(var d = vDateFrom; d <= vDateTo; d = new Date(d.getFullYear(), d.getMonth(), d.getDate() +1))
+			giorniSelezionati.push(d.getDate());
+		
+		// controllo informativi statistici per i casi con controllo su ore
+//		for(var dip = 0; dip < dipendentiSelezionati.length; dip++ )
+//		{
+//			/** @type {{ ReturnValue: Boolean, Message: String }} */
+//    	    var response = globals.controllaInformativiStatistici(dipendentiSelezionati[dip], 
+//		    	                                                  globals.getPeriodo(),
+//																  giorniSelezionati,
+//																  vIdEventoNew,
+//																  0,
+//																  vCodProprietaNew);	
+//			//se non ci sono blocchi su informativi statistici
+//			if (response['retValue'] == true && response.message && response.message != '')
+//			{
+//				globals.ma_utl_showWarningDialog(globals.getNominativo(dipendentiSelezionati[dip]) + ':' + response.message, 'Controllo informativi statistici');
+//		        return;
+//			}			
+//		}
+	
 		globals.cambiaEventoAsync(vIdDitta
 				                 ,vPeriodo
 								 ,dipendentiSelezionati
@@ -380,7 +404,7 @@ function FiltraProprieta(_fs)
  */
 function FiltraProprietaSelezionabili(idEvento)
 {	
-	var url = globals.WS_EVENT + "/Event32/FiltraProprieta";
+	var url = globals.WS_EVENT + "/Event32/FilterProperties";
 	/** @type Number*/
 	var periodo = globals.getPeriodo();
 	

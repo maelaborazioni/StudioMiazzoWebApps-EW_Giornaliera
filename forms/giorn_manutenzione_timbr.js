@@ -99,7 +99,7 @@ function process_conferma_eliminazione(event)
 		var params = globals.inizializzaParametriUpdateFileTimbrature(globals.getIdDitta(vCodDitta),
 				                                                      vGrInstDitta,
 																	  strNewTimbr)
-		var url = globals.WS_STAMPING + "/Stamping32/SetFileTimbrature";
+		var url = globals.WS_STAMPING + "/Stamping32/SetFile";
 		var response = globals.getWebServiceResponse(url,params);
 		
 		globals.svy_mod_closeForm(event);

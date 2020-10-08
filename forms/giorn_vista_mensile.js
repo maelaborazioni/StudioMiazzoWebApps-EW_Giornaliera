@@ -1045,6 +1045,7 @@ function disegnaGiornaliera(_numEv, _dataSource, _daPannello, _forzaRidisegno, _
 
 		// Associamo alle form temporanee i datasources ottenuti in precedenza
 		solutionModel.getForm(_tempFormName).dataSource = _dataSource;
+		
 		// Crea una nuova relazione per ogni evento in giornaliera ed assegnane la descrizione al campo associato
 		var ev = 0;
 		for (ev = 0; ev < _numColNecessarie; ev++) 

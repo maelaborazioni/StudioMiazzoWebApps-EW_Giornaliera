@@ -132,8 +132,18 @@ function onRightClickGiornPannello(event)
  */
 function apriPopupVistaMensilePannello(_event)
 {	
+	var _rec = forms[_event.getFormName()].foundset.getSelectedRecord();
 	var _source = _event.getSource();
 	var _popUpMenu = plugins.window.createPopupMenu();
+	
+	_event.data = { 
+		iddipendente : _rec['idlavoratore'],
+		giorno : _rec['giorno'],
+		periodo : _rec['giorno'].getFullYear() * 100 + _rec['giorno'].getMonth() + 1,
+		giorniselezionati : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg],
+		idgiornaliera : _rec['idgiornaliera'],
+		tipogiornaliera : forms.giorn_vista_mensile._tipoGiornaliera
+	}
 	
 	// Copincolla giornata
 	var copiaGiornataMenu = _popUpMenu.addMenuItem('Copia giornata', copiaGiornata);

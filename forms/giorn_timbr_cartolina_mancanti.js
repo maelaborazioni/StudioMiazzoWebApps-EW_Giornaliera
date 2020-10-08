@@ -1142,9 +1142,9 @@ function conteggiaGiornoAnomalie(_idLavoratore,_giorno)
 		return null;
 
 	//lanciamo il calcolo per la compilazione
-	var url = globals.WS_STAMPING + "/Stamping32/Conteggia";
+	var url = globals.WS_STAMPING + "/Stamping32/Count";
 	// nel caso di dipendente singolo il conteggio è sincrono
-	var response = globals.getWebServiceResponse(url + 'Singolo', params);
+	var response = globals.getWebServiceResponse(url + 'Single', params);
 	return response;
 }
 

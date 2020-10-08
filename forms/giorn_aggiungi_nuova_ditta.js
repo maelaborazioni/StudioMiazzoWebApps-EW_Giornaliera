@@ -35,7 +35,7 @@ function aggiungiNuovaDitta(event)
 	params.operationhash = operation.operationHash;
 	
 	globals.svy_mod_closeForm(event);
-    var url = globals.WS_CALENDAR + "/Admin32/AttivazioneNuovaDitta";
+    var url = globals.WS_CALENDAR + "/Admin32/ActivateNewFactory";
 	
 	globals.addJsonWebServiceJob(url,params);
 }

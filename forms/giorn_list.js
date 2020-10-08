@@ -337,10 +337,12 @@ function aggiungiEvento(_event)
 	    _frm._isInModifica = false;
     _frm._idGiornaliera= _event.data.idgiornaliera;
 	var _totOre = globals.getTotOreGiornata(_event.data.idgiornaliera);
-	//var _totOreTeorico = parseFloat(forms['giorn_list_temp'].foundset['orarioprevisto'])*100;
-    var _totOreTeorico = globals.ottieniOreTeoricheGiorno(_event.data.iddipendente,_event.data.giorno);
-	    
-    //inizializza valori nuovo evento
+	var _totOreTeorico = globals.ottieniOreTeoricheGiorno(_event.data.iddipendente,_event.data.giorno);
+	
+	// recupera valore selezione dei giorni attuale 
+	_event.data.giorniselezionati = _event.getFormName() == "giorn_list_dipendente_temp" ? [foundset.getSelectedIndex() - globals.offsetGg] : globals.getGiorniSelezionatiEv();    
+    
+	//inizializza valori nuovo evento
 	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','',null,_event.data.giorno,
 		                         _event.data.iddipendente,_event.data.giorniselezionati,_event.data.periodo,
 								 _event.data.tipogiornaliera,_event.data.idgiornaliera,null);
@@ -437,6 +439,10 @@ function modificaEventoDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, 
  */
 function modificaEvento(_event)
 {
+	// Ticket 18169
+	if(globals.ma_utl_hasKey(globals.Key.BLOCCA_OPERATIVITA_VISTA_MENSILE))
+		return;
+	
 	databaseManager.setAutoSave(false);
 
 	var _idGiornalieraEventi = foundset[_event.getElementName()];
@@ -448,6 +454,9 @@ function modificaEvento(_event)
 	var _totOre = globals.getTotOreGiornata(_event.data.idgiornaliera);
 	var _totOreTeorico = globals.ottieniOreTeoricheGiorno(_event.data.iddipendente,_event.data.giorno);
 	    
+	// recupera valore selezione dei giorni attuale 
+	_event.data.giorniselezionati = _event.getFormName() == "giorn_list_dipendente_temp" ? [foundset.getSelectedIndex() - globals.offsetGg] : globals.getGiorniSelezionatiEv();
+	
     //inizializza valori nuovo evento
 	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','',null,_event.data.giorno,
 		                         _event.data.iddipendente,_event.data.giorniselezionati,_event.data.periodo,
@@ -542,14 +551,14 @@ function modificaEvento(_event)
 	    else
 	    {		
 	    	//inizializza i valori dell'evento
-	    	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'',''
+	    	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','',-1
 	    		  ,_event.data.giorno
 				  ,_event.data.iddipendente
 				  ,_event.data.giorniselezionati
 				  ,_event.data.periodo
 				  ,_event.data.tipogiornaliera
 				  ,_event.data.idgiornaliera
-				  ,null);
+				  ,-1);
 	    	//setta il valore delle ore lavorate
 	        _frm._totOre = _totOre;
 	    	//setta il valore delle ore lavorabili teoriche
@@ -762,6 +771,10 @@ function FiltraCongedoParentalePaterno(_fs){
  */
 function apriPopupVistaMensile(_event)
 {	
+	// Ticket 18169
+	if(globals.ma_utl_hasKey(globals.Key.BLOCCA_OPERATIVITA_VISTA_MENSILE))
+		return;
+	
 	var _rec = forms[_event.getFormName()].foundset.getSelectedRecord();
 	var _giornoMese = _rec['giornomese'];
 	var _isBudget = forms.giorn_vista_mensile._tipoGiornaliera == globals.TipoGiornaliera.BUDGET ? true : false;
@@ -775,7 +788,6 @@ function apriPopupVistaMensile(_event)
 		iddipendente : _rec['idlavoratore'],
 		giorno : _rec['giorno'],
 		periodo : _rec['giorno'].getFullYear() * 100 + _rec['giorno'].getMonth() + 1,
-		giorniselezionati : [forms['giorn_list_temp'].foundset.getSelectedIndex() - globals.offsetGg],
 		idgiornaliera : _rec['idgiornaliera'],
 		tipogiornaliera : forms.giorn_vista_mensile._tipoGiornaliera
 	}
@@ -1197,7 +1209,7 @@ function FiltraLavoratoriGiornaliera(_fs)
  */
 function eliminaEvento(recGiornEventi,idLav,giorno,tipoGiornaliera) 
 {
-	var _index = foundset.getSelectedIndex() - globals.offsetGg;
+ 	var _index = foundset.getSelectedIndex() - globals.offsetGg;
 	/** @type {Array<Number>} */
 	var _arrGiorni = globals.getGiorniSelezionatiEv();
 
@@ -1263,7 +1275,9 @@ function eliminazioneEvento(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt, _e
 
 		//recupero l'id dell'evento in giornaliera selezionato
 		var _idGiornalieraEventi = foundset[_event.getElementName()];
-		var _arrGiorni = _event.data.giorniselezionati || globals.getGiorniSelezionatiEv();
+		// recupera valore selezione dei giorni attuale 
+		var _arrGiorni = _event.data.giorniselezionati = _event.getFormName() == "giorn_list_dipendente_temp" ? [foundset.getSelectedIndex() - globals.offsetGg] : globals.getGiorniSelezionatiEv();
+		
 		var msg;
 
 		if (_idGiornalieraEventi) {

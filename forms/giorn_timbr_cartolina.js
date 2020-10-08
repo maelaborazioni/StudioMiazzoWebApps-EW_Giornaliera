@@ -299,7 +299,7 @@ function stampaCartolinaMensileDipendente(_itemInd, _parItem, _isSel, _parMenTxt
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
 	
-	var url = globals.WS_REPORT + "/Report32/StampaCartolinaPresenzeAsync";
+	var url = globals.WS_REPORT + "/Report32/PresencesAsync";
 	globals.addJsonWebServiceJob(url, params);
 }
 
@@ -359,7 +359,7 @@ function stampaAnomalieTimbratureDipendente(_itemInd, _parItem, _isSel, _parMenT
 	params.operationid = operation.operationId;
 	params.operationhash = operation.operationHash;
 	
-    var url = globals.WS_REPORT + "/Report32/StampaAnomalieTimbrature";
+    var url = globals.WS_REPORT + "/Report32/StampingAnomaliesAsync";
     globals.addJsonWebServiceJob(url,params);	
 }
 

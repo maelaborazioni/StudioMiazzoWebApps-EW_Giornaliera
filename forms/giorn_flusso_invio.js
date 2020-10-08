@@ -147,7 +147,8 @@ function inviaGiornalieraPannello(event)
 						else 
 						{
 							// controllo presenza di eventuali giornaliere ancora da importare da parte dello studio
-							var ctrlUrl = globals.WS_LU + "/Ftp32/ControlloGioInviate";
+							var ctrlUrl = globals.WS_LU + "/Ftp32/VerifyCalendarData";
+							_params["sede"] = true;
 							ctrlRes = globals.getWebServiceResponse(ctrlUrl,_params);
 							_result = ctrlRes.ReturnValue;
 						}

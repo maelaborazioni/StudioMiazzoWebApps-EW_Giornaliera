@@ -9,7 +9,6 @@ function apriPopupVistaMensileDipendente(_event)
 {	
 	var _source = _event.getSource();
 	var _popUpMenu = plugins.window.createPopupMenu();
-	var _disabled = false; // TODO globals.isGiornoConteggiato(foundset.iddip,foundset.giorno);
 	
 	if (globals.ma_utl_hasKey(globals.Key.EVENTI_DIPENDENTE)) 
 	{
@@ -21,6 +20,9 @@ function apriPopupVistaMensileDipendente(_event)
 			idgiornaliera : foundset.getSelectedRecord()['idgiornaliera'],
 			tipogiornaliera : globals.TipoGiornaliera.NORMALE
 		}
+		
+		// solamente in un giorno conteggiato è possibile inserire degli eventi in giornaliera normale
+		var _disabled = !globals.isGiornoConteggiato(_event.data.iddipendente,_event.data.giorno);
 		
 		var _popUpMenuEventi = _popUpMenu.addMenu('Gestione eventi ');
 		var _addEvento = _popUpMenuEventi.addMenuItem('Aggiungi un evento ', aggiungiEventoDaMenu);

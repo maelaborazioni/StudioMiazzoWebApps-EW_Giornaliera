@@ -1032,7 +1032,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
 	var answer = globals.ma_utl_showYesNoQuestion(msg, 'Rendi i giorni riconteggiabili');
 	if (answer)
 	{
-		var url = globals.WS_STAMPING + '/Stamping32/RendiGiorniRiconteggiabili'
+		var url = globals.WS_STAMPING + '/Stamping32/Recount'
 		var params =
 		{
 			idditta				:	forms.giorn_header.idditta,
@@ -1063,7 +1063,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
  */
 function analizzaPreConteggio(giorno,idLav,periodo)
 {
-    var  url = globals.WS_CALENDAR + "/Calendar32/AnalizzaPreConteggio";
+    var  url = globals.WS_CALENDAR + "/Calendar32/PreCountingAnalisys";
     
     var params = {
     	iddipendenti : idLav ? [idLav] : [forms.giorn_header.idlavoratore],
