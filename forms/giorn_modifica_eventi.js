@@ -333,15 +333,6 @@ function AggiornaSelezioneEvento(_rec,_event){
 	_idevento = _rec['idevento'];
 	_ideventoclasse = _rec['ideventoclasse'];
 	
-	
-	var response = controllaInformativiStatistici(_idDipendente,
-		                                          _periodo,
-												  _arrGiorni);
-	
-	response = gestioneInformativiStatistici(response);
-	if(!response)
-		return;
-	
 	if (globals.needsCertificate(_ideventoclasse)) 
     {
     	globals.showStorico(_ideventoclasse, _giornoEvento.getDate(), _idDipendente, globals.getDitta(_idDipendente));
@@ -662,12 +653,7 @@ function onDataChangeOre(oldValue, newValue, event)
 		_ore = oldValue;
 	else
 		_totOre = _totOre - oldValue * 100 + newValue * 100;
-	
-	// controllo informativi statistici per i casi con controllo su ore
-    var response = controllaInformativiStatistici(_idDipendente, _periodo, _arrGiorni);
-	
-	gestioneInformativiStatistici(response);
-	
+		
 	verificaOrarioTeorico();
 	
 	return true;
@@ -766,49 +752,6 @@ function verificaOrarioTeorico()
 }
 
 /**
- * Gestisce la presenza di messaggi per eventi informativi e statistici
- * 
- * @param {Number} idLav
- * @param {Number} periodo
- * @param {Array<Number>} giorni
- * 
- * @return {{ ReturnValue: Boolean, Message: String }}
- * 
- * @properties={typeid:24,uuid:"352C06A3-D7AF-4488-A25E-7F711953537D"}
- */
-function controllaInformativiStatistici(idLav,periodo,giorni)
-{
-	// eventuale blocco informativi statistici
-// TODO caso evento multiplo	
-//	var giorniSelezionati = giorni ? giorni : globals.getGiorniSelezionatiEv();
-//	var url = giorniSelezionati.length == 1 ? globals.WS_URL + '/Eventi/ControllaInformativi' : globals.WS_URL + '/Eventi/ControllaInformativiMultiplo';
-	var url = globals.WS_EVENT + '/Event32/ControllaInformativi';
-	var params = {
-		userid              :   security.getUserName(), 
-		clientid            :   security.getClientID(),
-		server              :   globals.server_db_name,
-		databasecliente     :   globals.customer_dbserver_name,
-		periodo : periodo,
-		giorniselezionati: giorni,
-		iddipendenti: [idLav],
-		idditta: globals.getDitta(idLav),
-		idevento: _idevento,
-		ore: _ore != null ? _ore * 100 : 0, 
-		codproprieta: '',
-		tipoconnessione : globals._tipoConnessione
-	};
-    
-	/**@type {{ StatusCode : Number, ReturnValue: Boolean, Message: String }} */
-	var _response = globals.getWebServiceResponse(url, params);
-	if (_response && _response.StatusCode == globals.HTTPStatusCode.OK) 
-		return _response;
-	else {
-		globals.ma_utl_showErrorDialog('Controlla informativi non riuscito', 'Errore del server');
-		return null;
-	}
-}
-
-/**
  * Gestione della risposta alla chiamata sugli informativi dell'evento
  * 
  * @param {{ ReturnValue: Boolean, Message: String }} response
@@ -817,29 +760,32 @@ function controllaInformativiStatistici(idLav,periodo,giorni)
  */
 function gestioneInformativiStatistici(response)
 {
-	//se non ci sono blocchi su informativi statistici
-	if(!response.ReturnValue) 
+	//se ci sono messaggi visualizziamoli
+	if(response.Message && response.Message != '') 
 	{
-		//e resettato l'inserimento dell'evento
-		_idevento = null;
-		_codevento = ''
-		_descevento = '';
-		_ideventoclasse = null;
-		_idpropcl = null;
-		_codprop = '';
-		_descprop = '';
-		_importo = 0;
-		_ore = null;
-		_oldIdEvento = null;
-		_oldCodEvento = '';
-		_oldIdPropCl = null;
-		_oldCodProp = '';
-		_oldOre = -1;
-		_oldImporto = -1;
-		vCoperturaOrarioTeorico = 1;
+		//se ci sono blocchi su informativi statistici resettiamo l'inserimento dell'evento
+		if(!response.ReturnValue)
+		{
+			_idevento = null;
+			_codevento = ''
+			_descevento = '';
+			_ideventoclasse = null;
+			_idpropcl = null;
+			_codprop = '';
+			_descprop = '';
+			_importo = 0;
+			_ore = null;
+			_oldIdEvento = null;
+			_oldCodEvento = '';
+			_oldIdPropCl = null;
+			_oldCodProp = '';
+			_oldOre = -1;
+			_oldImporto = -1;
+			vCoperturaOrarioTeorico = 1;
+		}
 		
 		//se c'è il blocco viene mostrato il messaggio
-		var innerMsg = response.Message ? ("<p><strong>Dettagli</strong><br/>"  + response.Message + '</p>') : ''
+		var innerMsg = ("<p>" + response.Message + '</p>');
 		globals.ma_utl_showWarningDialog(innerMsg, 'Controllo informativi statistici');
 	}	
 	return response.ReturnValue;
