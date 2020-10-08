@@ -474,7 +474,13 @@ function aggiungiEventoSquadrature(_event,_idLav,_giorno,_daEventiSel)
 	var _totOre = globals.getTotOreGiornata(_idGiornaliera);
 	var _totOreTeorico = parseFloat(foundset['orarioprevisto'])*100;
     
-	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','',null,_frm._giornoEvento);
+	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','',null,_frm._giornoEvento,
+		                         _idLav, 
+								 [_frm._giornoEvento.getDate()], 
+								 _frm._periodo, 
+								 globals.TipoGiornaliera.NORMALE,
+								 _idGiornaliera,
+								 -1);
 	//setta il valore delle ore lavorate
 	_frm._totOre = _totOre;
 	//setta il valore delle ore lavorabili teoriche
@@ -592,8 +598,8 @@ function modificaEventoSquadrature(_event,_idLav,_giorno,_daEventiSel)
 			 if(globals.needsCertificate(_fs.e2giornalieraeventi_to_e2eventi.ideventoclasse))
 			    globals.showStorico(_fs.e2giornalieraeventi_to_e2eventi.ideventoclasse,
 			    	                foundset.getSelectedIndex() - globals.offsetGg,
-									forms.giorn_header.idlavoratore,
-									forms.giorn_header.idditta);
+									_idLav,
+									globals.getDitta((_idLav)));
 			 //in presenza di un evento sospensivo mostra la gestione del periodo associato
 //			 else if(_fs.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassi.gestitoconperiodi)
 //				 forms.giorn_eventi_sospensivi.showRiepilogoSospensivi(_fs.idevento,forms.giorn_header.idlavoratore,_giorno);
@@ -615,7 +621,13 @@ function modificaEventoSquadrature(_event,_idLav,_giorno,_daEventiSel)
 											  ,_fs.e2giornalieraeventi_to_e2eventi.evento
 											  ,_fs.codiceproprieta ? _fs.codiceproprieta : ''
 											  ,_fs.e2giornalieraeventi_to_e2eventi.e2eventi_to_e2eventiclassiproprieta.ideventoclasseproprieta
-											  ,_giorno.getDate());
+											  ,_giorno
+											  ,_idLav
+											  ,[_giorno.getDate()]
+											  ,_giorno.getFullYear() * 100 + _giorno.getMonth() + 1
+											  ,globals.TipoGiornaliera.NORMALE
+											  ,_idGiornaliera
+											  ,_idGiornalieraEventi);
 		    	 //setta il valore delle ore lavorate
 		    	 _frm._totOre = _totOre;
 		    	 //setta il valore delle ore lavorabili teoriche
@@ -634,7 +646,14 @@ function modificaEventoSquadrature(_event,_idLav,_giorno,_daEventiSel)
 	    else
 	    {		
 	    	//inizializza i valori dell'evento
-	    	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','', _frm._giornoEvento);
+	    	_frm.inizializzaValoriEvento(-1,-1,'','','','',null,0,-1,'','', null
+							    		  ,_giorno
+										  ,_idLav
+										  ,[_giorno.getDate()]
+										  ,_giorno.getFullYear() * 100 + _giorno.getMonth() + 1
+										  ,globals.TipoGiornaliera.NORMALE
+										  ,_idGiornaliera
+										  ,_idGiornalieraEventi);
 	    	//setta il valore delle ore lavorate
 	        _frm._totOre = _totOre;
 	    	//setta il valore delle ore lavorabili teoriche
