@@ -25,7 +25,7 @@ function onShowForm(firstShow, event)
 	if(globals._arrIdEvSelezionabili == null)
 		   globals.FiltraEventiSelezionabili(forms.giorn_header.idlavoratore,
 			                                 globals.getAnno() * 100 + globals.getMese(),
-			                                 frmOpt.tipo_giornaliera || forms.giorn_vista_mensile._tipoGiornaliera);
+			                                 frmOpt._tipoGiornaliera || forms.giorn_vista_mensile._tipoGiornaliera);
 	// Automatically put the event form in edit mode
 	if(controller.readOnly)
 		controller.readOnly = false;
@@ -74,6 +74,31 @@ function salvaEventoMultiplo(event)
 		globals.ma_utl_showWarningDialog('Selezionare una opzione tra le ore dell\'evento o la copertura teorica', 'i18n:hr.msg.attention');
 		return;
 	}
+	
+	// controllo informativi statistici per i casi con controllo su ore
+	/** @type {Array<Number>} */
+	var giorniSelezionati = forms[elements.giorni_tabless.getTabFormNameAt(1)].getSelectedElements(false,true);
+	/** @type {Array<Number>} */
+	var dipendentiSelezionati = forms[elements.dipendenti_tabless.getTabFormNameAt(1)].getSelectedElements(false,true);
+	
+	for(var dip = 0; dip < dipendentiSelezionati.length; dip++ )
+	{
+		/** @type {{ ReturnValue: Boolean, Message: String }} */
+	    var response = globals.controllaInformativiStatistici(dipendentiSelezionati[dip], 
+	    	                                                  globals.getPeriodo(),
+															  giorniSelezionati,
+															  frmOpt._idevento,
+															  frmOpt._ore,
+															  frmOpt._codprop);
+		
+	    //se ci sono blocchi su informativi statistici
+		if (response && response.ReturnValue && response.Message && response.Message != '')
+		{
+			globals.ma_utl_showWarningDialog(globals.getNominativo(dipendentiSelezionati[dip]) + ':' + response.Message, 'Controllo informativi statistici');
+	        return;
+		}
+	}	
+	
 	vOperationArgs = globals.inizializzaParametriEvento(forms.giorn_header.idditta,
 		                                                globals.getPeriodo(),
 														[],
