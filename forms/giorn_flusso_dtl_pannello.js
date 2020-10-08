@@ -131,6 +131,33 @@ function aggiornaTabForms(frmAcquisizioneName,frmOperativaName,frmControlloName,
 			frmAcquisizione.elements['btn_ricevi_tabelle'].enabled =
 				frmAcquisizione.elements['btn_scarica_giornaliera'].enabled = false;
 		}
+		
+		// verifica l'eventuale presenza di ulteriori blocchi impostati sulle operazioni della giornaliera tramite chiave
+		if(globals.ma_utl_hasKey(globals.Key.BLOCCA_INVIO_GIORNALIERA))
+		{
+			frmInvio.elements['btn_chiusura_mese'].enabled = 
+				frmInvio.elements['btn_invia_giornaliera'].enabled = false;
+		}
+		
+		if(globals.ma_utl_hasKey(globals.Key.BLOCCA_IMPORTAZIONE_TIMBR))
+		{
+			frmAcquisizione.elements['btn_scarica'].enabled = false;
+		}
+		
+		if(globals.ma_utl_hasKey(globals.Key.FTP_NO_CONTROLLO))
+		{
+			frmAcquisizione.elements['btn_ricevi_tabelle'].enabled =
+				frmAcquisizione.elements['btn_scarica_giornaliera'].enabled = false;
+		}
+		
+		if(globals.ma_utl_hasKey(globals.Key.BLOCCA_COMPILA))
+		  frmOperativa.elements['btn_compila'].enabled = false;
+		
+		if(globals.ma_utl_hasKey(globals.Key.BLOCCA_CONTEGGIA))
+			  frmOperativa.elements['btn_conteggia_timbrature'].enabled = false;
+		
+		if(globals.ma_utl_hasKey(globals.Key.BLOCCA_CONTROLLI_PRELIMINARI))
+			  frmOperativa.elements['btn_controlli_preliminari'].enabled = false;
 	}
 }
 
