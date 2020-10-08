@@ -275,6 +275,10 @@ function AggiornaTimbratureGiorno(_rec){
  */
 function apriPopupMostraTimbr(_event)
 {
+	// Ticket 18169
+	if(globals.ma_utl_hasKey(globals.Key.BLOCCA_OPERATIVITA_MOSTRA_TIMBR))
+		return;
+	
     var _enableGgSucc = false;
     var _enableGgPrec = false;
     
@@ -558,6 +562,10 @@ function modificaTimbraturaDaMenu(_itemInd, _parItem, _isSel, _parMenTxt, _menuT
  */
 function modificaTimbratura(_event,_cartolina)
 {
+	// Ticket 18169
+	if(globals.ma_utl_hasKey(globals.Key.BLOCCA_OPERATIVITA_MOSTRA_TIMBR))
+		return;
+	
 	var autosave = databaseManager.getAutoSave();
 	try
 	{
@@ -894,7 +902,7 @@ function rendiGiorniRiconteggiabili(_itemInd, _parItem, _isSel, _parMenTxt, _men
  */
 function analizzaPreConteggio(giorno,idLav,periodo)
 {
-	var  url = globals.WS_CALENDAR + "/Calendar32/AnalizzaPreConteggio";
+	var  url = globals.WS_CALENDAR + "/Calendar32/PreCountingAnalysis";
 	
     var params = {
     	idditta : globals.getDitta(idLav ? idLav : forms.giorn_header.idlavoratore),
@@ -1533,7 +1541,7 @@ function ricalcolaCausalizzateGiorno(_itemInd, _parItem, _isSel, _parMenTxt, _me
 {
 	var _giorno = forms['giorn_timbr_temp'].foundset.getSelectedIndex() - globals.offsetGg;
 	
-	var url = globals.WS_STAMPING + '/Stamping32/RicalcolaCausalizzate'
+	var url = globals.WS_STAMPING + '/Stamping32/RecountServiced'
 	var params =
 	{
 		idditta				:	forms.giorn_header.idditta,
@@ -1566,7 +1574,7 @@ function ricalcolaForzateGiorno(_itemInd, _parItem, _isSel, _parMenTxt, _menuTxt
 {
 	var _giorno = forms['giorn_timbr_temp'].foundset.getSelectedIndex() - globals.offsetGg;
 	
-	var url = globals.WS_STAMPING + '/Stamping32/RicalcolaForzate'
+	var url = globals.WS_STAMPING + '/Stamping32/RecountForced'
 	var params =
 	{
 		idditta				:	forms.giorn_header.idditta,
