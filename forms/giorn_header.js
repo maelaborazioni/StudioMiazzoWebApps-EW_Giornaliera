@@ -251,7 +251,7 @@ function onShowForm(_firstShow, _event,_soloCartolina) {
 		tabElements = forms['Commesse_Lavoratore_tab'].elements['tabs'];
 	    _haOrologio = globals.haOrologio(forms['comm_lav_header_dtl'].idditta);
 	    
-	    if(!_haOrologio)
+	    if(!_haOrologio || globals.ma_utl_hasKey(globals.Key.BLOCCA_VISUALIZZAZIONE_MOSTRA_TIMBR))
 	    	tabElements.removeTabAt(2);
 	}
 	else
@@ -270,7 +270,7 @@ function onShowForm(_firstShow, _event,_soloCartolina) {
 			
 			tabElements.removeTabAt(4);
 		
-			if(!_haOrologio)
+			if(!_haOrologio || globals.ma_utl_hasKey(globals.Key.BLOCCA_VISUALIZZAZIONE_MOSTRA_TIMBR))
 			{
 				if(tabElements.getMaxTabIndex() === 3)
 					tabElements.removeTabAt(3);
@@ -281,25 +281,29 @@ function onShowForm(_firstShow, _event,_soloCartolina) {
 				// passando da una situazione senza timbrature ad una con timbrature va riaggiunto il tab!
 				if(!(tabElements.getMaxTabIndex() === 3))
 					tabElements.addTab('giorn_mostra_timbr','LEAF_GI_MostraTimbr','Mostra timbrature',
-		                'Mostra timbrature',null,null,'lavoratori_to_e2timbratura',2);
+									   'Mostra timbrature',null,null,'lavoratori_to_e2timbratura',2);
 				
 			}
 		}
 		else
 		{
-			if(!_haOrologio)
+			if(!_haOrologio || globals.ma_utl_hasKey(globals.Key.BLOCCA_VISUALIZZAZIONE_MOSTRA_TIMBR))
 			{
 				if(tabElements.getMaxTabIndex() === 4)
 					tabElements.removeTabAt(3);
-			}else
+			}
+			else
 			{	
 				// passando da una situazione senza timbrature ad una con timbrature va riaggiunto il tab!
 				if(!(tabElements.getMaxTabIndex() === 4))
 					tabElements.addTab('giorn_mostra_timbr','LEAF_GI_MostraTimbr','Mostra timbrature',
-		                'Mostra timbrature',null,null,'lavoratori_to_e2timbratura',2);
+		                               'Mostra timbrature',null,null,'lavoratori_to_e2timbratura',2);
 			}
 		}
 	}
+	
+	if(globals.ma_utl_hasKey(globals.Key.BLOCCA_VISUALIZZAZIONE_VISTA_MENSILE))
+	   tabElements.removeTabAt(1);	
 }
 
 /**
