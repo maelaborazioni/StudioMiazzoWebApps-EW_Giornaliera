@@ -6,13 +6,6 @@
 var _idLav = null;
 
 /**
- * @type {Number}
- * 
- * @properties={typeid:35,uuid:"2B2721FD-A4CE-4EF3-9FC6-500EB43B456D",variableType:8}
- */
-var _periodo = null;
-
-/**
  * @type {Boolean}
  *
  * @properties={typeid:35,uuid:"34BF4DD1-0F7B-4203-8B68-74501451E5B2",variableType:-4}
@@ -95,6 +88,14 @@ function process_modifica_evento_squadrature(event)
 				                                     idlavoratore : frmOpt.arrDipSquadrati[l],
 								                     giorni_selezionati : arrGiorniSel
 							                        });
+		
+		/** @type {{ReturnValue: Boolean, Message: String}} */
+		var response = globals.controllaInformativiStatistici(frmOpt.arrDipSquadrati[1],_periodo,[_giornoEvento.getDate()],_idevento, _ore, _codprop);
+		
+		response = gestioneInformativiStatistici(response);
+		
+		if(!response)
+			return;
 	}
 
 	var retVal;
@@ -117,6 +118,7 @@ function process_modifica_evento_squadrature(event)
 														  ,objDipsParams.idevento
 														  ,objDipsParams.proprieta
 														  ,objDipsParams.copertura_teorico);
+		
 		// se cambia un evento il dipendente dovrà essere (ri)chiuso in fase di consolidamento
 		scopes.giornaliera.cancellaChiusuraDipPerOperazione(objDipParams.idlavoratore,globals.getDitta(objDipParams.idlavoratore),periodo);
 		retVal = globals.salvaEvento(evParams);
@@ -299,7 +301,7 @@ function onDataChangeEventoSquadrature(oldValue, newValue, event)
 			// Open the form to handle the correct type of certificate
 			globals.svy_mod_closeForm(event);
 			globals.showStorico(_ideventoclasse,
-				                _giornoEvento,
+				                _giornoEvento.getDate(),
 								_idLav ? _idLav : forms.giorn_header.idlavoratore,
 								_idLav ? globals.getDitta(_idLav) :	forms.giorn_header.idditta);
 		
@@ -325,18 +327,10 @@ function AggiornaSelezioneEventoSquadrature(rec,event,idLavoratore)
 {
 	_idevento = rec['idevento'];
 	_ideventoclasse = rec['ideventoclasse'];
-	
-	/** @type {{ReturnValue: Boolean, Message: String}} */
-	var response = controllaInformativiStatistici(idLavoratore,_periodo,[_giornoEvento]);
-	
-	response = gestioneInformativiStatistici(response);
-	
-	if(!response)
-		return;
-
+		
 	if (globals.needsCertificate(_ideventoclasse)) 
     {
-    	globals.showStorico(_ideventoclasse, _giornoEvento, forms.giorn_header.idlavoratore, forms.giorn_header.idditta);
+    	globals.showStorico(_ideventoclasse, _giornoEvento.getDate(), idLavoratore, globals.getDitta(idLavoratore));
     	globals.ma_utl_setStatus(globals.Status.BROWSE,controller.getName());
 			
     	if(event)
@@ -382,7 +376,7 @@ function AggiornaProprietaEventoSquadrature(_rec)
 	}
 
 	// Seleziona la prima proprietà disponibile per l'evento selezionato nel giorno selezionato
-	FiltraProprietaSelezionabili(_idevento,_idLav,_periodo,_giornoEvento,globals.TipoGiornaliera.NORMALE);
+	FiltraProprietaSelezionabili(_idevento,_idLav,_periodo,_giornoEvento.getDate(),globals.TipoGiornaliera.NORMALE);
 
 	var proprietaFoundset = _rec.e2eventi_to_e2eventiclassiproprieta;
 
@@ -531,14 +525,7 @@ function onDataChangeOre(oldValue, newValue, event)
 		{
 			if(frmSquadratureDip.foundset.getRecord(sq)['checked'])
 				arrGiorniSel.push(globals.getGiornoDaIdGiornaliera(frmSquadratureDip.foundset.getRecord(sq)['idgiornaliera']).getDate());
-		}
-		
-		if(arrGiorniSel.length > 0)
-		{
-			// controllo informativi statistici per i casi con controllo su ore
-		    var response = controllaInformativiStatistici(frmOpt.arrDipSquadrati[l],_periodo,arrGiorniSel);
-			return gestioneInformativiStatistici(response);			
-		}
+		}		
 	}
 	
 	verificaOrarioTeorico();
