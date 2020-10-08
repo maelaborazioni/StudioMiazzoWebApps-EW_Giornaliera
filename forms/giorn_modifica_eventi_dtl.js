@@ -6,13 +6,6 @@
  */
 function confermaModificaEvento(event)
 {
-	if(event.getElementName() != 'btn_mod_conferma')
-	{
-	    var response = controllaInformativiStatistici(_idDipendente,_periodo,_arrGiorni);
-		if(!gestioneInformativiStatistici(response))			
-		   return;
-	}
-	
 	canClose = true;
 	
 	var arrGiorniSel = [];
@@ -62,6 +55,14 @@ function process_modifica_evento(event,idLav,giorni)
 			globals.ma_utl_showWarningDialog('Controllare i valori inseriti prima di poter proseguire','Conferma modifica evento');
 			canClose = false;
 			return;
+		}
+		
+		// verifica presenza di informativi statistici
+	    var response = globals.controllaInformativiStatistici(_idDipendente,_periodo,_arrGiorni, _idevento, vCoperturaOrarioTeorico ? _totOreTeorico : _ore, _codprop);
+		if(!gestioneInformativiStatistici(response))	
+		{
+			plugins.busy.unblock();
+		    return;
 		}
 		
 		var idLavoratore = idLav ? idLav : _idDipendente;
